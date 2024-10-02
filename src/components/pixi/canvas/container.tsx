@@ -4,6 +4,7 @@ import { Toggle } from "@/components/ui/toggle";
 import { ImageUp } from "lucide-react";
 import { ICON } from "@/lib/utils/const";
 import { loadImageWithDialog } from "@/lib/utils/viewport/loadImageWithDialog";
+import { loadImageFromFile } from "@/lib/utils/viewport/loadImageFromFile";
 import { useTranslation } from "react-i18next";
 import { CanvasToolbarStore } from "@/lib/stores/CanvasToolbar";
 import { useCanvasContext } from "./hooks/useCanvasContext";
@@ -43,6 +44,9 @@ export function CanvasContainer({ ...props }: CanvasContainerProps) {
             className="w-full h-full relative flex items-center justify-center"
             ref={divRef}
             {...props}
+            onDrop={event =>
+                loadImageFromFile(viewport!, event.dataTransfer.files[0])
+            }
         >
             {isViewportHidden && viewport !== null && (
                 <Toggle
