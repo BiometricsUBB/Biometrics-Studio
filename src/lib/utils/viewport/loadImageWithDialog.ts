@@ -24,7 +24,7 @@ export async function loadImageWithDialog(viewport: Viewport) {
         DashboardToolbarStore.actions.settings.viewport.setLockedViewport(
             false
         );
-        const imageData = await open({
+        const path = await open({
             title: t("Load forensic mark image", {
                 ns: "tooltip",
             }),
@@ -39,7 +39,7 @@ export async function loadImageWithDialog(viewport: Viewport) {
             multiple: false,
         });
 
-        if (imageData === null) throw "cancel";
+        if (path === null) throw "cancel";
 
         const id = viewport.name as CanvasMetadata["id"] | null;
         if (id === null) throw new Error(`Canvas ID: ${id} not found`);
@@ -52,13 +52,12 @@ export async function loadImageWithDialog(viewport: Viewport) {
                 "Are you sure you want to load this image?\n\nIt will remove the previously loaded image and all existing forensic marks.",
                 {
                     kind: "warning",
-                    title: imageData?.name ?? "Are you sure?",
+                    title: path ?? "Are you sure?",
                 }
             );
             if (!confirmed) throw "cancel";
         }
 
-        const { path } = imageData;
         const sprite = await loadSprite(path);
         const normalizedSprite = normalizeSpriteSize(viewport, sprite);
 

@@ -52,7 +52,7 @@ function inferMarking(
 
 export async function loadMarkingsDataWithDialog(viewport: Viewport) {
     try {
-        const fileResponse = await open({
+        const path = await open({
             title: t("Load markings data from file", {
                 ns: "tooltip",
             }),
@@ -68,12 +68,12 @@ export async function loadMarkingsDataWithDialog(viewport: Viewport) {
             multiple: false,
         });
 
-        if (fileResponse === null) throw "cancel";
+        if (path === null) throw "cancel";
 
         const id = viewport.name as CanvasMetadata["id"] | null;
         if (id === null) throw new Error(`Canvas ID: ${id} not found`);
 
-        const file = await readTextFile(fileResponse.path);
+        const file = await readTextFile(path);
         const filedata: unknown = JSON.parse(file);
         if (!validateFileData(filedata)) {
             throw new Error("Invalid markings data file");
@@ -86,7 +86,7 @@ export async function loadMarkingsDataWithDialog(viewport: Viewport) {
                 `The markings data was created with a different version of the application (${filedata.metadata.software.version}). Loading it might not work.\n\nAre you sure you want to load it?`,
                 {
                     kind: "warning",
-                    title: fileResponse?.name ?? "Are you sure?",
+                    title: path ?? "Are you sure?",
                 }
             );
             if (!confirmed) throw "cancel";
@@ -97,7 +97,7 @@ export async function loadMarkingsDataWithDialog(viewport: Viewport) {
                 "Are you sure you want to load this image?\n\nIt will remove the previously loaded image and all existing forensic marks.",
                 {
                     kind: "warning",
-                    title: fileResponse?.name ?? "Are you sure?",
+                    title: path ?? "Are you sure?",
                 }
             );
             if (!confirmed) throw "cancel";
