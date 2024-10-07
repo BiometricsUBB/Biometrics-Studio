@@ -13,9 +13,16 @@
             "core:resources:default",
             "core:menu:default",
             "core:tray:default",
+            {
+                "identifier": "fs:allow-exists",
+                "allow": ["**", "**/*", "/**/*"]
+            },
             "fs:allow-read-file",
+            {
+                "identifier": "fs:allow-read-text-file",
+                "allow": ["**", "**/*", "/**/*"]
+            },
             "fs:allow-write-text-file",
-            "fs:allow-read-text-file",
             "store:allow-set",
             "store:allow-get",
             "store:allow-save",

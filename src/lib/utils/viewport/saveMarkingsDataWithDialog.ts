@@ -230,16 +230,18 @@ export async function saveMarkingsDataWithDialog(viewport: Viewport) {
                 },
             ],
             canCreateDirectories: true,
-            defaultPath: `${picture === undefined || picture.name === null ? "marking" : path.parse(picture.name).name}.json`,
+            defaultPath: `${
+                picture === undefined || picture.name === null
+                    ? "marking"
+                    : path.parse(picture.name).base
+            }.json`,
         });
 
-        if (filepath === null) throw "cancel";
+        if (filepath === null) return;
 
         const data = await getData(viewport, picture, oppositePicture);
         await writeTextFile(filepath, data);
     } catch (error) {
-        if (typeof error === "string" && error === "cancel") return;
-
         showErrorDialog(error);
     }
 }
