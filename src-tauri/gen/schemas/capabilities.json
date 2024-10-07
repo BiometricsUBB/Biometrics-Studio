@@ -5,17 +5,24 @@
         "local": true,
         "windows": ["bioparallel"],
         "permissions": [
-            "path:default",
-            "event:default",
-            "window:default",
-            "app:default",
-            "image:default",
-            "resources:default",
-            "menu:default",
-            "tray:default",
+            "core:path:default",
+            "core:event:default",
+            "core:window:default",
+            "core:app:default",
+            "core:image:default",
+            "core:resources:default",
+            "core:menu:default",
+            "core:tray:default",
+            {
+                "identifier": "fs:allow-exists",
+                "allow": ["**", "**/*", "/**/*"]
+            },
             "fs:allow-read-file",
+            {
+                "identifier": "fs:allow-read-text-file",
+                "allow": ["**", "**/*", "/**/*"]
+            },
             "fs:allow-write-text-file",
-            "fs:allow-read-text-file",
             "store:allow-set",
             "store:allow-get",
             "store:allow-save",
@@ -24,7 +31,10 @@
             "dialog:allow-save",
             "dialog:allow-message",
             "dialog:allow-ask",
-            "dialog:allow-confirm"
+            "dialog:allow-confirm",
+            "store:default",
+            "dialog:default",
+            "fs:default"
         ]
     }
 }
