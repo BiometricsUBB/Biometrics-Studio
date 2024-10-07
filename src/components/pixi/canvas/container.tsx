@@ -1,12 +1,13 @@
-import { HTMLAttributes, useCallback, useState } from "react";
+import { HTMLAttributes, useCallback, useEffect, useState } from "react";
 import { cn } from "@/lib/utils/shadcn";
 import { Toggle } from "@/components/ui/toggle";
 import { ImageUp } from "lucide-react";
 import { ICON } from "@/lib/utils/const";
-import { loadImageWithDialog } from "@/lib/utils/viewport/loadImageWithDialog";
-import { loadImageFromFile } from "@/lib/utils/viewport/loadImageFromFile";
+import { loadImage, loadImageWithDialog } from "@/lib/utils/viewport/loadImage";
 import { useTranslation } from "react-i18next";
 import { CanvasToolbarStore } from "@/lib/stores/CanvasToolbar";
+import { listen } from "@tauri-apps/api/event";
+import { showErrorDialog } from "@/lib/errors/showErrorDialog";
 import { useCanvasContext } from "./hooks/useCanvasContext";
 import { CanvasToolbar } from "./canvas-toolbar";
 import { Canvas } from "./canvas";
@@ -18,7 +19,6 @@ export function CanvasContainer({ ...props }: CanvasContainerProps) {
     const { t } = useTranslation();
     const { id } = useCanvasContext();
     const viewport = useGlobalViewport(id, { autoUpdate: true });
-
     const [divSize, setDivSize] = useState({ width: 0, height: 0 });
 
     const divRef = useCallback((node: HTMLDivElement | null) => {
@@ -39,14 +39,51 @@ export function CanvasContainer({ ...props }: CanvasContainerProps) {
         state => state.settings.viewport.showInformation
     );
 
+    useEffect(() => {
+        const setupTauriFileDropListener = async () => {
+            const unlisten = await listen(
+                "tauri://drag-drop",
+                async (event: {
+                    payload: {
+                        position: { x: number; y: number };
+                        paths: string[];
+                    };
+                }) => {
+                    const targetCanvasId = document
+                        .elementsFromPoint(
+                            event.payload.position.x,
+                            event.payload.position.y
+                        )
+                        .find(el => el.id.includes("canvas-container-"))
+                        ?.id.replace("canvas-container-", "");
+
+                    if (viewport && targetCanvasId === id) {
+                        if (event.payload.paths.length !== 1) {
+                            showErrorDialog(
+                                "Only one file can be dropped at a time."
+                            );
+                            return;
+                        }
+                        loadImage(event.payload.paths[0] as string, viewport);
+                    }
+                }
+            );
+
+            // Cleanup listener when component unmounts
+            return () => {
+                unlisten();
+            };
+        };
+
+        setupTauriFileDropListener();
+    }, [viewport]);
+
     return (
         <div
             className="w-full h-full relative flex items-center justify-center"
+            id={`canvas-container-${id}`}
             ref={divRef}
             {...props}
-            onDrop={event =>
-                loadImageFromFile(viewport!, event.dataTransfer.files[0])
-            }
         >
             {isViewportHidden && viewport !== null && (
                 <Toggle

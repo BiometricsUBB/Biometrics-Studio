@@ -13,7 +13,7 @@
         "resolveJsonModule": true,
         "skipLibCheck": true,
         "sourceMap": true,
-        "target": "es2018",
+        "target": "ES2022",
         // Strict mode (9)
         "strict": true,
         "alwaysStrict": true,
