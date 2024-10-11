@@ -12,12 +12,13 @@ import { arrayMax } from "@/lib/utils/array/minmax";
 // eslint-disable-next-line import/no-cycle
 import {
     EmptyableMarking,
-    isInternalMarking,
+    isMarkingBase,
 } from "@/components/information-tabs/markings-info/columns";
+import { MarkingBase } from "@/lib/markings/MarkingBase";
+import { PointMarking } from "@/lib/markings/PointMarking";
+import { RayMarking } from "@/lib/markings/RayMarking";
 import { ActionProduceCallback } from "../immer.helpers";
 import {
-    InternalMarking,
-    Marking,
     MarkingsState as State,
     _createMarkingsStore as createStore,
 } from "./Markings.store";
@@ -47,9 +48,9 @@ class StoreClass {
 
     private getInferredMarking(
         canvasId: CANVAS_ID,
-        marking: Marking
-    ): InternalMarking {
-        return produce(marking, (draft: Draft<InternalMarking>) => {
+        marking: MarkingBase
+    ): MarkingBase {
+        return produce(marking, (draft: Draft<MarkingBase>) => {
             draft.id = crypto.randomUUID();
 
             if (draft.label !== undefined && draft.label !== -1) {
@@ -111,7 +112,7 @@ class StoreClass {
             // Przypadek gdy ostatnio dodany marking jest z tego samego canvasa
             // Po prostu wygeneruj nowy znacznik
             draft.label = this.labelGenerator.generateId();
-        }) as InternalMarking;
+        }) as MarkingBase;
     }
 
     private setMarkingsHash(
@@ -185,7 +186,7 @@ class StoreClass {
                 });
                 this.setMarkingsAndUpdateHash(() => []);
             },
-            addOne: (marking: Marking) => {
+            addOne: (marking: MarkingBase) => {
                 const inferredMarking = this.getInferredMarking(
                     this.id,
                     marking
@@ -197,7 +198,7 @@ class StoreClass {
                 );
                 return inferredMarking;
             },
-            addMany: (markings: Marking[]) => {
+            addMany: (markings: MarkingBase[]) => {
                 this.setMarkingsAndUpdateHash(
                     produce(state => {
                         state.push(
@@ -214,7 +215,7 @@ class StoreClass {
                 });
                 if (
                     this.state.selectedMarking !== null &&
-                    isInternalMarking(this.state.selectedMarking) &&
+                    isMarkingBase(this.state.selectedMarking) &&
                     this.state.selectedMarking.id === id
                 ) {
                     this.setSelectedMarking(() => null);
@@ -225,7 +226,7 @@ class StoreClass {
                     markings.filter(marking => !ids.includes(marking.id))
                 );
             },
-            editOneById: (id: string, newMarking: Partial<Marking>) => {
+            editOneById: (id: string, newMarking: Partial<MarkingBase>) => {
                 this.setMarkingsAndUpdateHash(markings => {
                     return markings.map(marking => {
                         if (marking.id === id) {
@@ -261,21 +262,23 @@ class StoreClass {
         },
         temporaryMarking: {
             setTemporaryMarking: (
-                marking: Marking | null,
-                label?: InternalMarking["label"],
-                id?: InternalMarking["id"]
+                marking: MarkingBase | null,
+                label?: MarkingBase["label"],
+                id?: MarkingBase["id"] | null
             ) => {
                 if (marking === null) {
                     this.setTemporaryMarking(() => null);
                     return;
                 }
                 this.setTemporaryMarking(() => ({
+                    ...marking,
                     id: id ?? "\0",
                     label: label ?? -1,
-                    ...marking,
                 }));
             },
-            updateTemporaryMarking: (props: Partial<Marking>) => {
+            updateTemporaryMarking: (
+                props: Partial<PointMarking | RayMarking>
+            ) => {
                 this.setTemporaryMarking(
                     produce(state => {
                         if (state !== null) {

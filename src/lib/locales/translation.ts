@@ -1,5 +1,5 @@
+import { MARKING_TYPE, MarkingBase } from "@/lib/markings/MarkingBase";
 import { PRERENDER_RADIUS_OPTIONS, THEMES } from "../stores/GlobalSettings";
-import { InternalMarking, Marking } from "../stores/Markings";
 
 type Recordify<T extends string> = { [K in T as `${K}`]: string };
 
@@ -26,10 +26,11 @@ export type i18nCursor = {
 export type i18nObject = {
     Marking: {
         Name: string;
-        Keys: Omit<Recordify<keyof InternalMarking>, "type"> & {
+        // TODO D ogarniecia, gryzie sie z immerem jak dam RayMarking. Prawodpodobnie utworzyc specjalny typ albo sie tego pozbyc
+        Keys: Omit<Recordify<keyof MarkingBase | "angleRad">, "type"> & {
             type: {
                 Name: string;
-                Keys: Recordify<Marking["type"]>;
+                Keys: Recordify<MARKING_TYPE>;
             };
         };
     };

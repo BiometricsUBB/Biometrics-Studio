@@ -4,9 +4,9 @@ import {
     DashboardToolbarStore,
 } from "@/lib/stores/DashboardToolbar";
 import { CUSTOM_GLOBAL_EVENTS, MOUSE_BUTTONS } from "@/lib/utils/const";
-import { Marking, MARKING_TYPES } from "@/lib/stores/Markings";
 import { getAngle } from "@/lib/utils/math/getAngle";
-import { isInternalMarking } from "@/components/information-tabs/markings-info/columns";
+import { isMarkingBase } from "@/components/information-tabs/markings-info/columns";
+import { MARKING_TYPE, MarkingBase } from "@/lib/markings/MarkingBase";
 import {
     ViewportHandlerParams,
     addOrEditMarking,
@@ -16,7 +16,7 @@ import {
 
 type HandlerParams = {
     e: FederatedPointerEvent;
-    markingType: MARKING_TYPES;
+    markingType: MARKING_TYPE;
     interrupt: () => void;
     params: ViewportHandlerParams;
 };
@@ -26,7 +26,7 @@ let onMouseUp: (e: FederatedPointerEvent) => void = () => {};
 let onMouseDown: (e: FederatedPointerEvent) => void = () => {};
 
 function setTemporaryMarkingToEitherNewOrExisting(
-    newMarking: Marking | null,
+    newMarking: MarkingBase | null,
     params: ViewportHandlerParams
 ) {
     const { markingsStore } = params;
@@ -34,7 +34,7 @@ function setTemporaryMarkingToEitherNewOrExisting(
     const { editOneById: editMarkingById } = markingsStore.actions.markings;
     const { setTemporaryMarking } = markingsStore.actions.temporaryMarking;
 
-    const isInternal = selectedMarking && isInternalMarking(selectedMarking);
+    const isInternal = selectedMarking && isMarkingBase(selectedMarking);
 
     if (isInternal) {
         const { size, backgroundColor, textColor } =
@@ -75,7 +75,7 @@ function handlePointMarking({
 
     onMouseMove = (e: FederatedPointerEvent) => {
         updateTemporaryMarking({
-            position: getNormalizedMousePosition(e, viewport),
+            origin: getNormalizedMousePosition(e, viewport),
         });
     };
 
@@ -116,7 +116,7 @@ function handleRayMarking({
 
     onMouseMove = (e: FederatedPointerEvent) => {
         updateTemporaryMarking({
-            position: getNormalizedMousePosition(e, viewport),
+            origin: getNormalizedMousePosition(e, viewport),
         });
     };
 
@@ -209,12 +209,12 @@ export const handleMouseDown = (
         const args = { e, params, markingType, interrupt };
 
         switch (markingType) {
-            case MARKING_TYPES.POINT: {
+            case MARKING_TYPE.POINT: {
                 handlePointMarking(args);
                 break;
             }
 
-            case MARKING_TYPES.RAY: {
+            case MARKING_TYPE.RAY: {
                 handleRayMarking(args);
                 break;
             }

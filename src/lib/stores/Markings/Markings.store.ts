@@ -1,44 +1,20 @@
 import { devtools } from "zustand/middleware";
-import { ColorSource } from "pixi.js";
 import { CanvasMetadata } from "@/components/pixi/canvas/hooks/useCanvasContext";
 import { createWithEqualityFn } from "zustand/traditional";
 // eslint-disable-next-line import/no-cycle
 import { EmptyableMarking } from "@/components/information-tabs/markings-info/columns";
+import { MarkingBase } from "@/lib/markings/MarkingBase";
 import { Immer, produceCallback } from "../immer.helpers";
 
-export const enum MARKING_TYPES {
-    POINT = "point",
-    RAY = "ray",
-}
-
-export type InternalMarking = {
-    id: string;
-    hidden: boolean;
-    label: number;
-    position: {
-        x: number;
-        y: number;
-    };
-    backgroundColor: ColorSource;
-    textColor: ColorSource;
-    size: number;
-    type: MARKING_TYPES;
-    angleRad: number | null;
-    boundMarkingId?: InternalMarking["id"] | undefined;
-};
-
-export type RenderableMarking = InternalMarking & {
+export type RenderableMarking = MarkingBase & {
     visible: boolean;
 };
 
-export type Marking = Omit<InternalMarking, "id" | "label"> &
-    Partial<Pick<InternalMarking, "label">>;
-
 type State = {
     markingsHash: string;
-    markings: InternalMarking[];
+    markings: MarkingBase[];
     selectedMarking: EmptyableMarking | null;
-    temporaryMarking: InternalMarking | null;
+    temporaryMarking: MarkingBase | null;
 };
 
 const INITIAL_STATE: State = {

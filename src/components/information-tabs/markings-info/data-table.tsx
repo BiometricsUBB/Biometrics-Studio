@@ -35,7 +35,7 @@ import { GlobalStateStore } from "@/lib/stores/GlobalState";
 import {
     EmptyableMarking,
     isEmptyBoundMarking,
-    isInternalMarking,
+    isMarkingBase,
 } from "./columns";
 
 // Original Table is wrapped with a <div> (see https://ui.shadcn.com/docs/components/table#radix-:r24:-content-manual),
@@ -76,7 +76,7 @@ const TableRowComponent = <TData,>(rows: Row<TData>[], canvasId: CANVAS_ID) => {
 
         const marking = row.original as EmptyableMarking;
         const { selectedMarking } = MarkingsStore(canvasId).state;
-        const selected = isInternalMarking(marking)
+        const selected = isMarkingBase(marking)
             ? selectedMarking === marking
             : false;
         const cells = row.getVisibleCells();
@@ -85,7 +85,7 @@ const TableRowComponent = <TData,>(rows: Row<TData>[], canvasId: CANVAS_ID) => {
             selectedMarking &&
             selectedMarking.label === marking.label &&
             selectedMarking.boundMarkingId === marking.boundMarkingId &&
-            (isInternalMarking(selectedMarking) && isInternalMarking(marking)
+            (isMarkingBase(selectedMarking) && isMarkingBase(marking)
                 ? selectedMarking.id === marking.id
                 : true);
 

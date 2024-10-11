@@ -7,12 +7,14 @@ import { t } from "i18next";
 import { Viewport } from "pixi-viewport";
 import { writeTextFile } from "@tauri-apps/plugin-fs";
 import { showErrorDialog } from "@/lib/errors/showErrorDialog";
-import { InternalMarking, MarkingsStore } from "@/lib/stores/Markings";
+import { MarkingsStore } from "@/lib/stores/Markings";
 import { BaseTexture, Sprite } from "pixi.js";
 import { getOppositeCanvasId } from "@/components/pixi/canvas/utils/get-opposite-canvas-id";
 import { getCanvas } from "@/components/pixi/canvas/hooks/useCanvas";
 import path from "path";
-import { round } from "../math/round";
+import { MARKING_TYPE, MarkingBase } from "@/lib/markings/MarkingBase";
+import { RayMarking } from "@/lib/markings/RayMarking";
+import { round } from "@/lib/utils/math/round";
 
 type ImageInfo = {
     name: string | null;
@@ -31,10 +33,10 @@ type SoftwareInfo = {
 
 type MarkingStyleType = {
     typeId: number;
-    type: InternalMarking["type"];
-    background_color: InternalMarking["backgroundColor"];
-    text_color: InternalMarking["textColor"];
-    size: InternalMarking["size"];
+    type: MarkingBase["type"];
+    background_color: MarkingBase["backgroundColor"];
+    text_color: MarkingBase["textColor"];
+    size: MarkingBase["size"];
 };
 
 export type ExportObject = {
@@ -45,11 +47,14 @@ export type ExportObject = {
     };
     data: {
         marking_types: MarkingStyleType[];
-        markings: ({ typeId: MarkingStyleType["typeId"] } & Pick<
-            InternalMarking,
-            "label" | "position"
-        > &
-            Partial<Pick<InternalMarking, "angleRad">>)[];
+        markings: ({
+            typeId: MarkingStyleType["typeId"];
+        } & {
+            angleRad?: number;
+            typeId: number;
+            label: number;
+            origin: { x: number; y: number };
+        })[];
     };
 };
 
@@ -75,7 +80,7 @@ function getImageData(picture: Sprite | undefined): ImageInfo | null {
     };
 }
 
-function getMarkingTypes(markings: InternalMarking[]): MarkingStyleType[] {
+function getMarkingTypes(markings: MarkingBase[]): MarkingStyleType[] {
     const markingTypes: MarkingStyleType[] = [];
 
     let typeId = 0;
@@ -108,9 +113,14 @@ function getMarkingTypes(markings: InternalMarking[]): MarkingStyleType[] {
 }
 
 function getReducedMarkings(
-    markings: InternalMarking[],
+    markings: MarkingBase[],
     styleTypes: MarkingStyleType[]
-): ExportObject["data"]["markings"] {
+): {
+    angleRad?: number;
+    typeId: number;
+    label: number;
+    origin: { x: number; y: number };
+}[] {
     return markings.map(marking => {
         const { backgroundColor, textColor, size, type } = marking;
 
@@ -132,11 +142,13 @@ function getReducedMarkings(
         return {
             typeId: markingType.typeId,
             label: marking.label,
-            position: {
-                x: round(marking.position.x),
-                y: round(marking.position.y),
+            origin: {
+                x: round(marking.origin.x),
+                y: round(marking.origin.y),
             },
-            ...(marking.angleRad !== null && { angleRad: marking.angleRad }),
+            ...(marking.type === MARKING_TYPE.RAY && {
+                angleRad: (marking as RayMarking).angleRad,
+            }),
         };
     });
 }

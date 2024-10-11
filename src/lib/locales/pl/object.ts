@@ -6,11 +6,12 @@ const d: Dictionary = {
         Keys: {
             id: "ID",
             hidden: "Ukryty",
+            visible: "Widoczny",
             label: "Znacznik",
             angleRad: "Kąt",
             backgroundColor: "Kolor tła",
             boundMarkingId: "ID powiązanej adnotacji",
-            position: "Pozycja",
+            origin: "Źródło", // TODO ogarnąć inną nazwę na źródło
             size: "Rozmiar",
             textColor: "Kolor tekstu",
             type: {

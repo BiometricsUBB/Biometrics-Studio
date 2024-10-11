@@ -1,15 +1,17 @@
 /* eslint-disable no-param-reassign */
 /* eslint-disable sonarjs/prefer-single-boolean-return */
 import { BitmapText, Graphics } from "@pixi/react";
-import { Graphics as PixiGraphics } from "pixi.js";
+import { ColorSource, Graphics as PixiGraphics } from "pixi.js";
 import { memo, useCallback, useEffect, useState } from "react";
+import { MarkingsStore } from "@/lib/stores/Markings";
+import { isMarkingBase } from "@/components/information-tabs/markings-info/columns";
 import {
-    InternalMarking,
-    MARKING_TYPES,
-    MarkingsStore,
-    RenderableMarking,
-} from "@/lib/stores/Markings";
-import { isInternalMarking } from "@/components/information-tabs/markings-info/columns";
+    MARKING_TYPE,
+    MarkingBase,
+    Position,
+} from "@/lib/markings/MarkingBase";
+import { PointMarking } from "@/lib/markings/PointMarking";
+import { RayMarking } from "@/lib/markings/RayMarking";
 import { useGlobalViewport } from "../../viewport/hooks/useGlobalViewport";
 import { CanvasMetadata } from "../../canvas/hooks/useCanvasContext";
 import { useGlobalApp } from "../../app/hooks/useGlobalApp";
@@ -29,20 +31,19 @@ const getFontName = (fontSize: number) => {
     return `${FONT_FAMILY_NAME} 64`;
 };
 
-type MarkingTextProps = Pick<
-    InternalMarking,
-    "label" | "size" | "position" | "textColor"
-> & {
-    visible: boolean;
-};
-
 function MarkingText({
     visible,
     label,
     size,
     position,
     textColor,
-}: MarkingTextProps) {
+}: {
+    visible: boolean;
+    label: number;
+    size: number;
+    position: Position;
+    textColor: ColorSource;
+}) {
     const text = label === -1 ? "" : String(label);
     const fontSize = Math.ceil(
         +(
@@ -72,7 +73,7 @@ function MarkingText({
 }
 
 export type MarkingsProps = {
-    markings: InternalMarking[];
+    markings: MarkingBase[];
     canvasMetadata: CanvasMetadata;
     showMarkingLabels?: boolean;
 };
@@ -86,24 +87,17 @@ export const Markings = memo(
         );
 
         const [renderableMarkings, setRenderableMarkings] = useState<
-            RenderableMarking[]
+            MarkingBase[]
         >([]);
 
-        const updateRenderableMarkings = useCallback(
-            () =>
-                setRenderableMarkings(
-                    markings.map(marking => ({
-                        ...marking,
-                        visible: isVisible(
-                            marking,
-                            markings.length,
-                            app,
-                            viewport
-                        ),
-                    }))
-                ),
-            [app, markings, viewport]
-        );
+        const updateRenderableMarkings = useCallback(() => {
+            setRenderableMarkings(
+                markings.map(marking => ({
+                    ...marking,
+                    visible: isVisible(marking, markings.length, app, viewport),
+                }))
+            );
+        }, [app, markings, viewport]);
 
         useEffect(() => {
             viewport?.addEventListener("moved-end", updateRenderableMarkings);
@@ -131,25 +125,25 @@ export const Markings = memo(
                 g.removeChildren();
                 renderableMarkings.forEach(marking => {
                     const selected =
-                        selectedMarking && isInternalMarking(selectedMarking)
+                        selectedMarking && isMarkingBase(selectedMarking)
                             ? selectedMarking.id === marking.id
                             : false;
                     switch (marking.type) {
-                        case MARKING_TYPES.POINT:
+                        case MARKING_TYPE.POINT:
                             drawPointMarking(
                                 g,
                                 selected,
-                                marking,
+                                marking as PointMarking,
                                 showMarkingLabels,
                                 lineWidth,
                                 shadowWidth
                             );
                             break;
-                        case MARKING_TYPES.RAY:
+                        case MARKING_TYPE.RAY:
                             drawRayMarking(
                                 g,
                                 selected,
-                                marking,
+                                marking as RayMarking,
                                 showMarkingLabels,
                                 lineWidth,
                                 shadowWidth,
@@ -179,7 +173,7 @@ export const Markings = memo(
                             id,
                             label,
                             size,
-                            position,
+                            origin,
                             textColor,
                         }) => {
                             return (
@@ -188,7 +182,7 @@ export const Markings = memo(
                                     key={id}
                                     label={label}
                                     size={size}
-                                    position={position}
+                                    position={origin}
                                     textColor={textColor}
                                 />
                             );

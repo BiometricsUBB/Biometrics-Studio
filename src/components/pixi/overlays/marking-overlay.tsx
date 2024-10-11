@@ -1,8 +1,9 @@
 import { Container } from "@pixi/react";
 import { useCallback, useMemo } from "react";
-import { InternalMarking, MarkingsStore } from "@/lib/stores/Markings";
+import { MarkingsStore } from "@/lib/stores/Markings";
 import { ShallowViewportStore } from "@/lib/stores/ShallowViewport";
 import { CanvasToolbarStore } from "@/lib/stores/CanvasToolbar";
+import { MarkingBase, Position } from "@/lib/markings/MarkingBase";
 import { CanvasMetadata } from "../canvas/hooks/useCanvasContext";
 import { useGlobalViewport } from "../viewport/hooks/useGlobalViewport";
 import { useGlobalApp } from "../app/hooks/useGlobalApp";
@@ -55,16 +56,16 @@ export function MarkingOverlay({ canvasMetadata }: MarkingOverlayProps) {
     );
 
     const getMarkingRelativePosition = useCallback(
-        (marking: InternalMarking): InternalMarking["position"] => {
+        (marking: MarkingBase): Position => {
             return {
-                x: marking.position.x * viewportWidthRatio,
-                y: marking.position.y * viewportHeightRatio,
+                x: marking.origin.x * viewportWidthRatio,
+                y: marking.origin.y * viewportHeightRatio,
             };
         },
         [viewportHeightRatio, viewportWidthRatio]
     );
 
-    const relativeMarkings: InternalMarking[] = useMemo(
+    const relativeMarkings: MarkingBase[] = useMemo(
         () =>
             viewport === null
                 ? markings
@@ -75,12 +76,12 @@ export function MarkingOverlay({ canvasMetadata }: MarkingOverlayProps) {
         [getMarkingRelativePosition, markings, viewport]
     );
 
-    const relativeTemporaryMarking: InternalMarking | null =
+    const relativeTemporaryMarking: MarkingBase | null =
         temporaryMarking === null
             ? null
             : {
                   ...temporaryMarking,
-                  position: getMarkingRelativePosition(temporaryMarking),
+                  origin: getMarkingRelativePosition(temporaryMarking),
               };
 
     if (viewport === null || app == null) {
