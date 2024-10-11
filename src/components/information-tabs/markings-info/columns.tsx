@@ -9,31 +9,30 @@ import { Toggle } from "@/components/ui/toggle";
 import { CanvasMetadata } from "@/components/pixi/canvas/hooks/useCanvasContext";
 import { getOppositeCanvasId } from "@/components/pixi/canvas/utils/get-opposite-canvas-id";
 // eslint-disable-next-line import/no-cycle
-import { InternalMarking, MarkingsStore } from "@/lib/stores/Markings";
+import { MarkingsStore } from "@/lib/stores/Markings";
+import { MarkingBase } from "@/lib/markings/MarkingBase";
 
-export type ExtendedMarking = InternalMarking & {
+export type ExtendedMarking = MarkingBase & {
     x: number;
     y: number;
 };
 
 export type EmptyBoundMarking = {
-    boundMarkingId: NonNullable<InternalMarking["boundMarkingId"]>;
-    label: InternalMarking["label"];
+    boundMarkingId: NonNullable<MarkingBase["boundMarkingId"]>;
+    label: MarkingBase["label"];
 };
-export type EmptyableMarking = InternalMarking | EmptyBoundMarking;
+export type EmptyableMarking = MarkingBase | EmptyBoundMarking;
 type EmptyableCellContext = CellContext<EmptyableMarking, unknown>;
-type DataCellContext = CellContext<InternalMarking, unknown>;
+type DataCellContext = CellContext<MarkingBase, unknown>;
 
-export function isInternalMarking(
-    cell: EmptyableMarking
-): cell is InternalMarking {
+export function isMarkingBase(cell: EmptyableMarking): cell is MarkingBase {
     return "id" in cell;
 }
 
 export function isEmptyBoundMarking(
     cell: EmptyableMarking
 ): cell is EmptyBoundMarking {
-    return !isInternalMarking(cell) && "boundMarkingId" in cell;
+    return !isMarkingBase(cell) && "boundMarkingId" in cell;
 }
 
 const formatCell = <T,>(
@@ -43,7 +42,7 @@ const formatCell = <T,>(
 ) => {
     const row = context.row.original;
 
-    if (isInternalMarking(row)) {
+    if (isMarkingBase(row)) {
         return callback(context as DataCellContext);
     }
 
@@ -74,7 +73,7 @@ export const getColumns = (
                         e.stopPropagation();
                     }}
                 >
-                    {isInternalMarking(marking) && marking.id && (
+                    {isMarkingBase(marking) && marking.id && (
                         <Toggle
                             size="sm-icon"
                             variant="outline"
@@ -112,7 +111,7 @@ export const getColumns = (
                               cell,
                               ({ row }) =>
                                   row.original.id.slice(0, 8) +
-                                  (isInternalMarking(row.original) &&
+                                  (isMarkingBase(row.original) &&
                                   GlobalStateStore.state.lastAddedMarking
                                       ?.id === row.original.id
                                       ? " (last) "
@@ -140,7 +139,7 @@ export const getColumns = (
                     <div className="flex flex-row gap-1">
                         <div>{marking.label}</div>
                         <div className="size-5 inline-flex items-center justify-center">
-                            {isInternalMarking(marking) &&
+                            {isMarkingBase(marking) &&
                                 marking.boundMarkingId && (
                                     <Link
                                         size={ICON.SIZE}

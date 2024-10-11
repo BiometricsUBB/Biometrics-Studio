@@ -1,12 +1,12 @@
-/* eslint-disable sonarjs/prefer-single-boolean-return */
-/* eslint-disable no-param-reassign */
-import { InternalMarking, RenderableMarking } from "@/lib/stores/Markings";
 import { Application, ICanvas, Graphics as PixiGraphics } from "pixi.js";
 import { Viewport as PixiViewport } from "pixi-viewport";
 import {
     GlobalSettingsStore,
     PRERENDER_RADIUS_OPTIONS,
 } from "@/lib/stores/GlobalSettings";
+import { RayMarking } from "@/lib/markings/RayMarking";
+import { PointMarking } from "@/lib/markings/PointMarking";
+import { MarkingBase } from "@/lib/markings/MarkingBase";
 
 export const getFontName = (fontSize: number) => {
     const ceiledFontSize = Math.ceil(fontSize);
@@ -23,7 +23,7 @@ export const getFontName = (fontSize: number) => {
 };
 
 export function isVisible(
-    marking: InternalMarking,
+    marking: MarkingBase,
     markingsLength: number,
     app: Application<ICanvas> | null,
     viewport: PixiViewport | null
@@ -60,14 +60,13 @@ export function isVisible(
         }
     })();
 
-    const { x, y } = marking.position;
+    const { x, y } = marking.origin;
+    // TODO: Prawdopodobnie trzeba będzie docelowo sprawdzać dowolna część oznaczenia jest widoczna (np. przy odcinku)
 
     if (x + viewport.x < app.screen.left - PRERENDER_MARGIN) return false;
     if (y + viewport.y < app.screen.top - PRERENDER_MARGIN) return false;
     if (x + viewport.x > app.screen.right + PRERENDER_MARGIN) return false;
-    if (y + viewport.y > app.screen.bottom + PRERENDER_MARGIN) return false;
-
-    return true;
+    return !(y + viewport.y > app.screen.bottom + PRERENDER_MARGIN);
 }
 
 export const drawPointMarking = (
@@ -78,9 +77,9 @@ export const drawPointMarking = (
         visible,
         backgroundColor,
         textColor,
-        position: { x, y },
+        origin: { x, y },
         size,
-    }: RenderableMarking,
+    }: PointMarking,
     showMarkingLabels?: boolean,
     lineWidth: number = 2,
     shadowWidth: number = 0.5
@@ -115,10 +114,10 @@ export const drawRayMarking = (
         visible,
         backgroundColor,
         textColor,
-        position: { x, y },
+        origin: { x, y },
         size,
         angleRad,
-    }: RenderableMarking,
+    }: RayMarking,
     showMarkingLabels?: boolean,
     lineWidth: number = 2,
     shadowWidth: number = 0.5,

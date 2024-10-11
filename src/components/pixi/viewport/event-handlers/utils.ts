@@ -6,14 +6,12 @@ import {
 } from "@/lib/stores/CachedViewport";
 import { Viewport as PixiViewport } from "pixi-viewport";
 import { FederatedPointerEvent } from "pixi.js";
-import {
-    InternalMarking,
-    MARKING_TYPES,
-    Marking,
-    MarkingsStoreClass,
-} from "@/lib/stores/Markings";
+import { MarkingsStoreClass } from "@/lib/stores/Markings";
 import { DashboardToolbarStore } from "@/lib/stores/DashboardToolbar";
-import { isInternalMarking } from "@/components/information-tabs/markings-info/columns";
+import { isMarkingBase } from "@/components/information-tabs/markings-info/columns";
+import { MARKING_TYPE, MarkingBase } from "@/lib/markings/MarkingBase";
+import { RayMarking } from "@/lib/markings/RayMarking";
+import { PointMarking } from "@/lib/markings/PointMarking";
 import { getNormalizedPosition } from "../../overlays/utils/get-viewport-local-position";
 import { CanvasMetadata } from "../../canvas/hooks/useCanvasContext";
 
@@ -46,50 +44,66 @@ export function getNormalizedMousePosition(
     });
 }
 
+// TODO: Do przerobienia, prawdopodobnie na dwie metody lub do usuniecia
 export function createMarking(
-    type: Marking["type"],
-    angleRad: Marking["angleRad"],
-    position: Marking["position"],
-    label?: InternalMarking["label"]
-): Marking {
+    type: MarkingBase["type"],
+    angleRad: number | null,
+    origin: MarkingBase["origin"],
+    label?: MarkingBase["label"]
+): MarkingBase {
     const { size, backgroundColor, textColor } =
         DashboardToolbarStore.state.settings.marking;
 
-    return {
-        ...(label !== undefined && { label }),
-        hidden: false,
-        size,
-        position,
-        backgroundColor,
-        textColor,
-        type,
-        angleRad,
-    };
+    if (type === MARKING_TYPE.POINT) {
+        return new PointMarking(
+            "",
+            label ?? -1,
+            origin,
+            false,
+            true,
+            backgroundColor,
+            textColor,
+            size,
+            ""
+        ) as MarkingBase;
+    }
+
+    if (type === MARKING_TYPE.RAY) {
+        return new RayMarking(
+            "",
+            label ?? -1,
+            origin,
+            false,
+            true,
+            backgroundColor,
+            textColor,
+            size,
+            "",
+            angleRad!
+        ) as MarkingBase;
+    }
+
+    throw new Error(`Unknown marking type: ${type}`);
 }
 
 export function addMarkingToStore(
-    newMarking: Marking & Partial<InternalMarking>,
+    newMarking: MarkingBase,
     params: ViewportHandlerParams
 ) {
     const { markingsStore } = params;
 
-    const {
-        type: markingType,
-        position: markingPos,
-        angleRad,
-        label,
-    } = newMarking;
+    const { type: markingType, origin: markingPos, label } = newMarking;
     const { addOne: addMarking } = markingsStore.actions.markings;
 
     switch (markingType) {
-        case MARKING_TYPES.POINT: {
+        case MARKING_TYPE.POINT: {
             const marking = createMarking(markingType, null, markingPos, label);
             return addMarking(marking);
         }
-        case MARKING_TYPES.RAY: {
+        case MARKING_TYPE.RAY: {
             const marking = createMarking(
                 markingType,
-                angleRad,
+                (newMarking as RayMarking).angleRad,
                 markingPos,
                 label
             );
@@ -102,7 +116,7 @@ export function addMarkingToStore(
 }
 
 export function addOrEditMarking(
-    marking: InternalMarking,
+    marking: MarkingBase,
     params: ViewportHandlerParams
 ) {
     const { markingsStore } = params;
@@ -113,7 +127,7 @@ export function addOrEditMarking(
         return;
     }
 
-    if (isInternalMarking(selectedMarking)) {
+    if (isMarkingBase(selectedMarking)) {
         const { size, backgroundColor, textColor } =
             DashboardToolbarStore.state.settings.marking;
 

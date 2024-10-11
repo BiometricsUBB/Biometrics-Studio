@@ -6,11 +6,12 @@ const d: Dictionary = {
         Keys: {
             id: "ID",
             hidden: "Hidden",
+            visible: "Visible",
             label: "Label",
             angleRad: "Angle",
             backgroundColor: "Background color",
             boundMarkingId: "Bound marking ID",
-            position: "Position",
+            origin: "Position",
             size: "Size",
             textColor: "Text color",
             type: {
