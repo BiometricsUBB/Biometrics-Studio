@@ -16,9 +16,9 @@ import { ICON } from "@/lib/utils/const";
 import { ToolbarGroup } from "@/components/toolbar/group";
 import { Toggle } from "@/components/ui/toggle";
 import { useTranslation } from "react-i18next";
-import { loadImageWithDialog } from "@/lib/utils/viewport/loadImageWithDialog";
+import { loadImageWithDialog } from "@/lib/utils/viewport/loadImage";
 import { saveMarkingsDataWithDialog } from "@/lib/utils/viewport/saveMarkingsDataWithDialog";
-import { loadMarkingsDataWithDialog } from "@/lib/utils/viewport/loadMarkingsDataWithDialog";
+import { loadMarkingsDataWithDialog } from "@/lib/utils/viewport/loadMarkingsData";
 import { useGlobalViewport } from "../viewport/hooks/useGlobalViewport";
 import { useCanvasContext } from "./hooks/useCanvasContext";
 import {

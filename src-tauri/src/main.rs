@@ -4,12 +4,6 @@
 use tauri::Manager;
 use tauri_plugin_window_state::StateFlags;
 
-#[derive(Clone, serde::Serialize)]
-struct Payload {
-    args: Vec<String>,
-    cwd: String,
-}
-
 #[tauri::command]
 async fn show_main_window_if_hidden(window: tauri::Window) {
     let main_window = window
@@ -37,13 +31,15 @@ async fn close_splashscreen_if_exists(window: tauri::Window) {
 
 fn main() {
     tauri::Builder::default()
+        .plugin(tauri_plugin_store::Builder::new().build())
         .plugin(tauri_plugin_fs::init())
         .plugin(tauri_plugin_dialog::init())
         .plugin(tauri_plugin_single_instance::init(|app, argv, cwd| {
             println!("{}, {argv:?}, {cwd}", app.package_info().name);
-
-            app.emit("single-instance", Payload { args: argv, cwd })
-                .unwrap();
+            let _ = app
+                .get_webview_window("bioparallel")
+                .expect("no main window")
+                .set_focus();
         }))
         .plugin(tauri_plugin_store::Builder::default().build())
         .plugin(

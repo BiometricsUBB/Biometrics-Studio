@@ -3,7 +3,7 @@ import { produce } from "immer";
 export type ProduceCallback<T> = (callback: (draft: T) => void) => void;
 export const produceCallback = <T>(callback: (draft: T) => void) =>
     produce(state => {
-        callback(state as T);
+        callback(state);
     });
 
 export type Immer<T> = T & {
