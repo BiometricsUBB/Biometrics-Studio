@@ -7,8 +7,8 @@ use tauri_plugin_window_state::StateFlags;
 #[tauri::command]
 async fn show_main_window_if_hidden(window: tauri::Window) {
     let main_window = window
-        .get_webview_window("bioparallel")
-        .expect("no window labeled 'bioparallel' found");
+        .get_webview_window("main")
+        .expect("no window labeled 'main' found");
 
     if let Ok(is_visible) = main_window.is_visible() {
         if !is_visible {
@@ -37,7 +37,7 @@ fn main() {
         .plugin(tauri_plugin_single_instance::init(|app, argv, cwd| {
             println!("{}, {argv:?}, {cwd}", app.package_info().name);
             let _ = app
-                .get_webview_window("bioparallel")
+                .get_webview_window("main")
                 .expect("no main window")
                 .set_focus();
         }))
@@ -51,14 +51,6 @@ fn main() {
             show_main_window_if_hidden,
             close_splashscreen_if_exists,
         ])
-        .setup(|_app| {
-            #[cfg(debug_assertions)] // only include this code on debug builds
-            {
-                let window = _app.get_webview_window("bioparallel").unwrap();
-                window.open_devtools();
-            }
-            Ok(())
-        })
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }

@@ -19,7 +19,7 @@ const application = path.resolve(
     "src-tauri",
     "target",
     "release",
-    "bioparallel.exe"
+    "biometrics-studio.exe"
 );
 
 const tauriDriverPath = path.resolve(
@@ -61,8 +61,12 @@ beforeAll(async () => {
 
 afterAll(async () => {
     tauriDriver?.kill();
-    const bioparallelProcesses = await find("name", "bioparallel.exe", true);
-    bioparallelProcesses.forEach(({ pid }) => {
+    const biometricsStudioProcesses = await find(
+        "name",
+        "biometrics-studio.exe",
+        true
+    );
+    biometricsStudioProcesses.forEach(({ pid }) => {
         process?.kill(pid);
     });
     const msedgedriverProcesses = await find("name", "msedgedriver.exe", true);

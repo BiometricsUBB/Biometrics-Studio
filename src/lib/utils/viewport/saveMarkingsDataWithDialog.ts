@@ -160,7 +160,7 @@ async function getData(
     const exportObject: ExportObject = {
         metadata: {
             software: {
-                name: "bioparallel",
+                name: "biometrics-studio",
                 version: appVersion,
             },
             image: getImageData(picture),

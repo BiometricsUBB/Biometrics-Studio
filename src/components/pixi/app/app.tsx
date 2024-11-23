@@ -1,7 +1,5 @@
 /* eslint-disable security/detect-object-injection */
 
-"use client";
-
 import { useApp } from "@pixi/react";
 import { useEffect, useRef } from "react";
 import { Viewport as PixiViewport } from "pixi-viewport";

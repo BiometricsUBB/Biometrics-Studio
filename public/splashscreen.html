@@ -149,7 +149,6 @@
             user-select: none;
             user-drag: none;
             -webkit-user-drag: none;
-            user-select: none;
             -moz-user-select: none;
             -webkit-user-select: none;
             -ms-user-select: none;
@@ -163,8 +162,8 @@
             padding: 1rem;
             overflow: hidden;
             flex-direction: row;
-            width: 384;
-            height: 216;
+            width: 384px;
+            height: 216px;
         }
 
         .splashscreen__logo {
@@ -188,6 +187,11 @@
             align-items: center;
             width: 50%;
             height: 100%;
+            text-align: center;
+        }
+
+        .splashscreen__text h1 {
+            margin-bottom: 0;
         }
     </style>
 </head>
@@ -198,7 +202,7 @@
             <img draggable="false" src="logo.svg" alt="Logo">
         </div>
         <div class="splashscreen__text">
-            <h1>bioparallel</h1>
+            <h1>Biometrics<br>Studio</h1>
             <h2>Loading...</h2>
         </div>
     </div>

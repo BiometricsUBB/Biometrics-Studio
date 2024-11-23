@@ -1,18 +1,9 @@
+import React, { useState, Suspense } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Settings } from "@/components/tabs/settings/settings";
-import React, { Suspense, useEffect, useState } from "react";
-import { cn } from "@/lib/utils/shadcn";
 import { GlobalToolbar } from "@/components/toolbar/toolbar";
 import { useTranslation } from "react-i18next";
-import { CUSTOM_GLOBAL_EVENTS } from "@/lib/utils/const";
-import { MarkingsStore } from "@/lib/stores/Markings";
-import { CANVAS_ID } from "@/components/pixi/canvas/hooks/useCanvasContext";
-import { GlobalStateStore } from "@/lib/stores/GlobalState";
-
-const enum TABS {
-    HOMEPAGE = "homepage",
-    SETTINGS = "settings",
-}
+import { cn } from "@/lib/utils/shadcn";
 
 const Homepage = React.lazy(() =>
     import("@/components/tabs/homepage/homepage").then(module => ({
@@ -20,31 +11,14 @@ const Homepage = React.lazy(() =>
     }))
 );
 
-export default function Home() {
+const enum TABS {
+    HOMEPAGE = "homepage",
+    SETTINGS = "settings",
+}
+
+export default function App() {
     const { t } = useTranslation();
-
-    const initialTab = TABS.HOMEPAGE;
-    const [currentTab, setCurrentTab] = useState<TABS>(initialTab);
-
-    useEffect(() => {
-        const performCleanup = () => {
-            document.dispatchEvent(
-                new Event(CUSTOM_GLOBAL_EVENTS.INTERRUPT_MARKING)
-            );
-            MarkingsStore(CANVAS_ID.LEFT).actions.labelGenerator.reset();
-            MarkingsStore(CANVAS_ID.RIGHT).actions.labelGenerator.reset();
-            GlobalStateStore.actions.lastAddedMarking.setLastAddedMarking(null);
-        };
-
-        document.addEventListener(CUSTOM_GLOBAL_EVENTS.CLEANUP, performCleanup);
-
-        return () => {
-            document.removeEventListener(
-                CUSTOM_GLOBAL_EVENTS.CLEANUP,
-                performCleanup
-            );
-        };
-    });
+    const [currentTab, setCurrentTab] = useState<TABS>(TABS.HOMEPAGE);
 
     return (
         <main
@@ -53,7 +27,7 @@ export default function Home() {
         >
             <Tabs
                 onValueChange={tab => setCurrentTab(tab as TABS)}
-                defaultValue={initialTab}
+                defaultValue={TABS.HOMEPAGE}
                 className="w-full flex flex-col items-center flex-grow"
             >
                 <TabsList className="w-fit">
@@ -64,6 +38,7 @@ export default function Home() {
                         {t("Settings")}
                     </TabsTrigger>
                 </TabsList>
+
                 <TabsContent
                     forceMount
                     value={TABS.HOMEPAGE}
@@ -79,7 +54,14 @@ export default function Home() {
                         <Homepage />
                     </Suspense>
                 </TabsContent>
-                <TabsContent value={TABS.SETTINGS} className="w-full h-full">
+
+                <TabsContent
+                    forceMount
+                    value={TABS.SETTINGS}
+                    className={cn("w-full h-full", {
+                        hidden: currentTab !== TABS.SETTINGS,
+                    })}
+                >
                     <Settings />
                 </TabsContent>
             </Tabs>
