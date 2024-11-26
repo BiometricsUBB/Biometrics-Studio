@@ -1,6 +1,6 @@
 [package]
 name = "biometrics-studio"
-version = "0.2.1"
+version = "0.3.0"
 description = "Application for forensic trace comparision"
 authors = ["Cyprian Zdebski", "Konrad Boryś"]
 license = ""
