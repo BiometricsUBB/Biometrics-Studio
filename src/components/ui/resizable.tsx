@@ -1,7 +1,5 @@
 /* eslint-disable react/require-default-props */
 
-"use client";
-
 import * as ResizablePrimitive from "react-resizable-panels";
 
 import { cn } from "@/lib/utils/shadcn";

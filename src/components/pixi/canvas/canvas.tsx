@@ -1,5 +1,3 @@
-"use client";
-
 import * as PIXI from "pixi.js";
 import { Stage } from "@pixi/react";
 import { useCanvasContext } from "@/components/pixi/canvas/hooks/useCanvasContext";

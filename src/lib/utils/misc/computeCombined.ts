@@ -6,7 +6,6 @@ type Last<T extends readonly any[]> = T extends readonly [...infer _, infer L]
 
 export function computeCombined<
     const T extends readonly ((...args: any[]) => any)[],
-    // @ts-expect-error it's fine
 >(fns: T): ReturnType<Last<T>> {
     let args: any[] | undefined = [];
 
@@ -24,6 +23,5 @@ export function computeCombined<
         args = func(...args);
     }
 
-    // @ts-expect-error it's fine
     return args as ReturnType<Last<T>>;
 }
