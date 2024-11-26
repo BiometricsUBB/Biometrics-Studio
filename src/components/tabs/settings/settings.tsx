@@ -1,6 +1,6 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { RadioGroupItem } from "@/components/ui/radio-group";
-import { useTheme } from "next-themes";
+import { useTheme } from "@/lib/hooks/useTheme";
 import {
     GlobalSettingsStore,
     LANGUAGES,
@@ -23,7 +23,7 @@ const enum TABS {
 }
 
 export function Settings() {
-    const { resolvedTheme, setTheme } = useTheme();
+    const { theme: resolvedTheme, setTheme } = useTheme();
 
     const { i18n, t } = useTranslation();
     const setLanguage = (lng: LANGUAGES) => {

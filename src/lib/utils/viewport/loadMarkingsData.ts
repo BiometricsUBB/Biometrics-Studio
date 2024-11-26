@@ -22,7 +22,7 @@ function validateFileData(_data: unknown): _data is ExportObject {
         fileData !== null &&
         "software" in fileData.metadata &&
         "name" in fileData.metadata.software &&
-        fileData.metadata.software.name === "bioparallel" &&
+        fileData.metadata.software.name === "biometrics-studio" &&
         "version" in fileData.metadata.software
     );
 }

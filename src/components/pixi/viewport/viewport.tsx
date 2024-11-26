@@ -1,7 +1,5 @@
 /* eslint-disable no-underscore-dangle */
 
-"use client";
-
 import { useApp } from "@pixi/react";
 import { ReactNode, forwardRef } from "react";
 import { Viewport as PixiViewport } from "pixi-viewport";

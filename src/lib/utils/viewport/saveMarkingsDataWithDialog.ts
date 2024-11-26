@@ -11,7 +11,7 @@ import { InternalMarking, MarkingsStore } from "@/lib/stores/Markings";
 import { BaseTexture, Sprite } from "pixi.js";
 import { getOppositeCanvasId } from "@/components/pixi/canvas/utils/get-opposite-canvas-id";
 import { getCanvas } from "@/components/pixi/canvas/hooks/useCanvas";
-import path from "path";
+import { basename } from "@tauri-apps/api/path";
 import { round } from "../math/round";
 
 type ImageInfo = {
@@ -160,7 +160,7 @@ async function getData(
     const exportObject: ExportObject = {
         metadata: {
             software: {
-                name: "bioparallel",
+                name: "biometrics-studio",
                 version: appVersion,
             },
             image: getImageData(picture),
@@ -233,7 +233,7 @@ export async function saveMarkingsDataWithDialog(viewport: Viewport) {
             defaultPath: `${
                 picture === undefined || picture.name === null
                     ? "marking"
-                    : path.parse(picture.name).base
+                    : await basename(picture.name)
             }.json`,
         });
 
