@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/bioparallel.iml" filepath="$PROJECT_DIR$/.idea/bioparallel.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/biometrics-studio.iml" filepath="$PROJECT_DIR$/.idea/biometrics-studio.iml" />
     </modules>
   </component>
 </project>

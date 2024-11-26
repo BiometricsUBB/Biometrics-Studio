@@ -1,5 +1,3 @@
-"use client";
-
 import { PixiComponent, useApp } from "@pixi/react";
 import { IViewportOptions, Viewport } from "pixi-viewport";
 import * as PIXI from "pixi.js";

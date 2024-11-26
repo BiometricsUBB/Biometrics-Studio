@@ -1,11 +1,11 @@
 [package]
-name = "bioparallel"
-version = "0.2.1"
+name = "biometrics-studio"
+version = "0.3.0"
 description = "Application for forensic trace comparision"
-authors = ["Cyprian Zdebski"]
+authors = ["Cyprian Zdebski", "Konrad Boryś"]
 license = ""
 repository = ""
-default-run = "bioparallel"
+default-run = "biometrics-studio"
 edition = "2021"
 rust-version = "1.60"
 

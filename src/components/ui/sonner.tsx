@@ -1,6 +1,4 @@
-"use client";
-
-import { useTheme } from "next-themes";
+import { useTheme } from "@/lib/hooks/useTheme";
 import { ComponentProps } from "react";
 import { Toaster as Sonner } from "sonner";
 

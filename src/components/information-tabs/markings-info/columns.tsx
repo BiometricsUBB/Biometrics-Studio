@@ -1,5 +1,3 @@
-"use client";
-
 import { CellContext, ColumnDef } from "@tanstack/react-table";
 import { t } from "i18next";
 import { ICON, IS_DEV_ENVIRONMENT } from "@/lib/utils/const";

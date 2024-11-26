@@ -1,20 +1,18 @@
-= bioparallel
+= biometrics-studio
 
 Application for forensic trace comparison
 
-image::./docs/bioparallel.png[]
+image::./docs/biometrics-studio.png[]
 
 == Development
 
 === Pre-requisites
 
-First, you need to have https://beta.tauri.app/guides/prerequisites/[Tauri] installed (v2 beta at the time of writing)
+First, you need to have https://beta.tauri.app/guides/prerequisites/[Tauri] installed (v2 at the time of writing)
 
 Then just run the following commands to start the app:
 
 ....
-git clone https://github.com/shipurjan/bioparallel.git
-cd bioparallel
 pnpm i
 pnpm tauri dev
 ....

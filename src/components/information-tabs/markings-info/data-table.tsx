@@ -2,8 +2,6 @@
 /* eslint-disable security/detect-object-injection */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 
-"use client";
-
 import {
     ColumnDef,
     Row,

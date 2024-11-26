@@ -3,8 +3,8 @@
     "build": {
         "beforeBuildCommand": "pnpm build",
         "beforeDevCommand": "pnpm dev",
-        "frontendDist": "../out",
-        "devUrl": "http://localhost:3000"
+        "frontendDist": "../dist",
+        "devUrl": "http://localhost:1420"
     },
     "bundle": {
         "active": true,
@@ -40,15 +40,15 @@
             }
         }
     },
-    "productName": "bioparallel",
-    "version": "0.2.1",
-    "identifier": "com.parallel.bio",
+    "productName": "biometrics-studio",
+    "version": "0.3.0",
+    "identifier": "com.biometrics-studio.app",
     "plugins": {},
     "app": {
         "windows": [
             {
-                "title": "bioparallel",
-                "label": "bioparallel",
+                "title": "Biometrics Studio",
+                "label": "main",
                 "width": 1280,
                 "height": 720,
                 "minWidth": 640,
@@ -69,7 +69,8 @@
                 "decorations": false,
                 "transparent": true,
                 "url": "splashscreen.html",
-                "label": "splashscreen"
+                "label": "splashscreen",
+                "visible": true
             }
         ],
         "security": {
