@@ -4,6 +4,9 @@ import { InternalMarking, Marking } from "../stores/Markings";
 type Recordify<T extends string> = { [K in T as `${K}`]: string };
 
 export type i18nKeywords = Recordify<
+    | "Biometrics Studio"
+    | "Please select your working mode"
+    | "Working mode"
     | "Homepage"
     | "Settings"
     | "Interface"
