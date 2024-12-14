@@ -68,42 +68,14 @@ if (Get-Command winget -ErrorAction SilentlyContinue) {
 
     # Clean up installer file
     Remove-Item -Force "Setup.msix"
+    # Clean up temporary file
+    Remove-Item -Force $tempFile
 }
 
-# Clean up temporary file
-Remove-Item -Force $tempFile
-
-# Clear the console
-Clear-Host
-
-# Install Node.js using Winget
-if (-not (winget install -e --id OpenJS.NodeJS --accept-source-agreements --accept-package-agreements)) {
-    Write-Host "Failed to install Node.js."
-    exit 1
-}
-
-# Install Rust (MSVC version) using Winget
-if (-not (winget install -e --id Rustlang.Rust.MSVC --accept-source-agreements --accept-package-agreements)) {
-    Write-Host "Failed to install Rust."
-    exit 1
-}
-
-# Install pnpm using Winget
-if (-not (winget install -e --id pnpm.pnpm --accept-source-agreements --accept-package-agreements)) {
-    Write-Host "Failed to install pnpm."
-    exit 1
-}
-
-# Install Visual Studio 2022 Community with the desktop C++ workload using Winget
-if (-not (winget install Microsoft.VisualStudio.2022.Community --accept-source-agreements --accept-package-agreements --override "--wait --quiet --add ProductLang Pl-pl --add Microsoft.VisualStudio.Workload.NativeDesktop --includeRecommended")) {
-    Write-Host "Failed to install Visual Studio 2022 Community with the desktop C++ workload."
-    exit 1
-}
-
-# Install Microsoft Visual C++ 2015-2022 Redistributable (x64) using Winget
-if (-not (winget install -e --id Microsoft.VCRedist.2015+.x64 --accept-source-agreements --accept-package-agreements)) {
-    Write-Host "Failed to install Microsoft Visual C++ 2015-2022 Redistributable (x64)."
-    exit 1
-}
+winget install -e --id OpenJS.NodeJS --accept-source-agreements --accept-package-agreements
+winget install -e --id Rustlang.Rust.MSVC --accept-source-agreements --accept-package-agreements
+Invoke-WebRequest https://get.pnpm.io/install.ps1 -UseBasicParsing | Invoke-Expression
+winget install Microsoft.VisualStudio.2022.Community --accept-source-agreements --accept-package-agreements --override "--wait --quiet --add ProductLang Pl-pl --add Microsoft.VisualStudio.Workload.NativeDesktop --includeRecommended"
+winget install -e --id Microsoft.VCRedist.2015+.x64 --accept-source-agreements --accept-package-agreements
 
 Write-Host "Installation complete!"
