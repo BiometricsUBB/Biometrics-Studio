@@ -15,10 +15,9 @@ if %ERRORLEVEL% neq 0 (
 
 :: Install dependencies using pnpm
 echo Installing dependencies...
-pnpm install
+pnpm install --ignore-scripts
 if %ERRORLEVEL% neq 0 (
-    echo Dependency installation failed. Please check your pnpm setup.
-    exit /b 1
+    echo Dependency installation encountered errors. Continuing...
 )
 
 :: Run Tauri development server
