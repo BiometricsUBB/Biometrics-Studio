@@ -4,6 +4,20 @@ Application for forensic trace comparison
 
 image::./docs/biometrics-studio.png[]
 
+== Installation on Windows
+
+You have three options to install the application on Windows:
+
+1. (easiest) Download the installer from the releases page and run it on your system. The installer will download all the necessary dependencies and install the application on your system. You can then run the application by opening the `biometrics-studio` shortcut on your desktop.
+
+2. (moderate) Follow the https://github.com/BiometricsUBB/Biometrics-Studio?tab=readme-ov-file#development[#Development] section below to install the application on your system.
+
+3. (if you plan to debug or develop the app later) Clone or download the repository and run the installer script via the command line (make sure you are in the root directory of the project):
+....
+powershell -ExecutionPolicy Bypass -File .\install.ps1
+....
+NOTE: The above command would install dependencies onto your system. Then you can run the application by opening the `.\start.bat` file.
+
 == Development
 
 === Pre-requisites
