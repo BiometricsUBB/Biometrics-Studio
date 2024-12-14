@@ -82,6 +82,12 @@ if (-not (winget install -e --id OpenJS.NodeJS --accept-source-agreements --acce
     exit 1
 }
 
+# Install Microsoft Visual C++ 2015-2022 Redistributable (x64) using Winget
+if (-not (winget install -e --id Microsoft.VCRedist.2015+.x64 --accept-source-agreements --accept-package-agreements)) {
+    Write-Host "Failed to install Microsoft Visual C++ 2015-2022 Redistributable (x64)."
+    exit 1
+}
+
 # Install Rust (MSVC version) using Winget
 if (-not (winget install -e --id Rustlang.Rust.MSVC --accept-source-agreements --accept-package-agreements)) {
     Write-Host "Failed to install Rust."
