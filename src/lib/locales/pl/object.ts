@@ -5,12 +5,11 @@ const d: Dictionary = {
         Name: "Adnotacja",
         Keys: {
             id: "ID",
-            hidden: "Ukryty",
             label: "Znacznik",
             angleRad: "Kąt",
             backgroundColor: "Kolor tła",
             boundMarkingId: "ID powiązanej adnotacji",
-            position: "Pozycja",
+            origin: "Źródło",
             size: "Rozmiar",
             textColor: "Kolor tekstu",
             type: {

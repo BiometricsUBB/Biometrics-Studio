@@ -4,19 +4,19 @@ import {
     DashboardToolbarStore,
 } from "@/lib/stores/DashboardToolbar";
 import { CUSTOM_GLOBAL_EVENTS, MOUSE_BUTTONS } from "@/lib/utils/const";
-import { Marking, MARKING_TYPES } from "@/lib/stores/Markings";
 import { getAngle } from "@/lib/utils/math/getAngle";
-import { isInternalMarking } from "@/components/information-tabs/markings-info/columns";
+import { MARKING_TYPE } from "@/lib/markings/MarkingBase";
+import { PointMarking } from "@/lib/markings/PointMarking";
+import { RayMarking } from "@/lib/markings/RayMarking";
 import {
     ViewportHandlerParams,
-    addOrEditMarking,
-    createMarking,
     getNormalizedMousePosition,
+    addMarkingToStore,
 } from "./utils";
 
 type HandlerParams = {
     e: FederatedPointerEvent;
-    markingType: MARKING_TYPES;
+    markingType: MARKING_TYPE;
     interrupt: () => void;
     params: ViewportHandlerParams;
 };
@@ -25,57 +25,24 @@ let onMouseMove: (e: FederatedPointerEvent) => void = () => {};
 let onMouseUp: (e: FederatedPointerEvent) => void = () => {};
 let onMouseDown: (e: FederatedPointerEvent) => void = () => {};
 
-function setTemporaryMarkingToEitherNewOrExisting(
-    newMarking: Marking | null,
-    params: ViewportHandlerParams
-) {
-    const { markingsStore } = params;
-    const { selectedMarking } = markingsStore.state;
-    const { editOneById: editMarkingById } = markingsStore.actions.markings;
-    const { setTemporaryMarking } = markingsStore.actions.temporaryMarking;
+function handlePointMarking({ e, interrupt, params }: HandlerParams) {
+    const { viewport, markingsStore } = params;
+    const { size, backgroundColor, textColor } =
+        DashboardToolbarStore.state.settings.marking;
 
-    const isInternal = selectedMarking && isInternalMarking(selectedMarking);
-
-    if (isInternal) {
-        const { size, backgroundColor, textColor } =
-            DashboardToolbarStore.state.settings.marking;
-
-        editMarkingById(selectedMarking.id, {
-            size,
+    markingsStore.actions.temporaryMarking.setTemporaryMarking(
+        new PointMarking(
+            markingsStore.actions.labelGenerator.getLabel(),
+            getNormalizedMousePosition(e, viewport),
             backgroundColor,
             textColor,
-            hidden: true,
-        });
-    }
-
-    setTemporaryMarking(
-        newMarking,
-        isInternal ? selectedMarking.label : undefined,
-        isInternal ? selectedMarking.id : undefined
-    );
-}
-
-function handlePointMarking({
-    e,
-    markingType,
-    interrupt,
-    params,
-}: HandlerParams) {
-    const { viewport, markingsStore } = params;
-    const { updateTemporaryMarking } = markingsStore.actions.temporaryMarking;
-
-    setTemporaryMarkingToEitherNewOrExisting(
-        createMarking(
-            markingType,
-            null,
-            getNormalizedMousePosition(e, viewport)
-        ),
-        params
+            size
+        )
     );
 
     onMouseMove = (e: FederatedPointerEvent) => {
-        updateTemporaryMarking({
-            position: getNormalizedMousePosition(e, viewport),
+        markingsStore.actions.temporaryMarking.updateTemporaryMarking({
+            origin: getNormalizedMousePosition(e, viewport),
         });
     };
 
@@ -84,7 +51,7 @@ function handlePointMarking({
 
         const { temporaryMarking } = markingsStore.state;
         if (temporaryMarking) {
-            addOrEditMarking(temporaryMarking, params);
+            addMarkingToStore(temporaryMarking, params);
 
             document.dispatchEvent(
                 new Event(CUSTOM_GLOBAL_EVENTS.INTERRUPT_MARKING)
@@ -100,38 +67,40 @@ function handlePointMarking({
     viewport.addEventListener("mouseup", onMouseUp, { once: true });
 }
 
-function handleRayMarking({
-    e,
-    markingType,
-    interrupt,
-    params,
-}: HandlerParams) {
+function handleRayMarking({ e, interrupt, params }: HandlerParams) {
     const { viewport, markingsStore, cachedViewportStore } = params;
-    const { updateTemporaryMarking } = markingsStore.actions.temporaryMarking;
+    const { size, backgroundColor, textColor } =
+        DashboardToolbarStore.state.settings.marking;
 
-    setTemporaryMarkingToEitherNewOrExisting(
-        createMarking(markingType, 0, getNormalizedMousePosition(e, viewport)),
-        params
+    markingsStore.actions.temporaryMarking.setTemporaryMarking(
+        new RayMarking(
+            markingsStore.actions.labelGenerator.getLabel(),
+            getNormalizedMousePosition(e, viewport),
+            backgroundColor,
+            textColor,
+            size,
+            0
+        )
     );
 
     onMouseMove = (e: FederatedPointerEvent) => {
-        updateTemporaryMarking({
-            position: getNormalizedMousePosition(e, viewport),
+        markingsStore.actions.temporaryMarking.updateTemporaryMarking({
+            origin: getNormalizedMousePosition(e, viewport),
         });
     };
 
     onMouseUp = () => {
         viewport.removeEventListener("mousemove", onMouseMove);
-
-        const { setRayPosition } = cachedViewportStore.actions.viewport;
-        const mousePos = getNormalizedMousePosition(e, viewport);
-        setRayPosition(mousePos);
+        cachedViewportStore.actions.viewport.setRayPosition(
+            getNormalizedMousePosition(e, viewport)
+        );
 
         onMouseMove = (e: FederatedPointerEvent) => {
-            const mousePos = getNormalizedMousePosition(e, viewport);
-            const { rayPosition } = cachedViewportStore.state;
-            updateTemporaryMarking({
-                angleRad: getAngle(mousePos, rayPosition),
+            markingsStore.actions.temporaryMarking.updateTemporaryMarking({
+                angleRad: getAngle(
+                    getNormalizedMousePosition(e, viewport),
+                    cachedViewportStore.state.rayPosition
+                ),
             });
         };
 
@@ -140,7 +109,7 @@ function handleRayMarking({
 
             const { temporaryMarking } = markingsStore.state;
             if (temporaryMarking) {
-                addOrEditMarking(temporaryMarking, params);
+                addMarkingToStore(temporaryMarking, params);
 
                 document.dispatchEvent(
                     new Event(CUSTOM_GLOBAL_EVENTS.INTERRUPT_MARKING)
@@ -172,25 +141,10 @@ export const handleMouseDown = (
 
     const { mode: cursorMode } = DashboardToolbarStore.state.settings.cursor;
 
-    const { setTemporaryMarking } = markingsStore.actions.temporaryMarking;
-
-    const { temporaryMarking } = markingsStore.state;
-    if (temporaryMarking !== null) return;
+    if (markingsStore.state.temporaryMarking !== null) return;
 
     const interrupt = () => {
-        const { temporaryMarking } = markingsStore.state;
-        if (temporaryMarking && temporaryMarking.label !== -1) {
-            const marking = markingsStore.state.markings.find(
-                m => m.label === temporaryMarking.label
-            );
-            if (marking) {
-                markingsStore.actions.markings.editOneById(marking.id, {
-                    hidden: false,
-                });
-            }
-        }
-
-        setTemporaryMarking(null);
+        markingsStore.actions.temporaryMarking.setTemporaryMarking(null);
         viewport.removeEventListener("mousemove", onMouseMove);
         viewport.removeEventListener("mouseup", onMouseUp);
         viewport.removeEventListener("mousedown", onMouseDown);
@@ -209,12 +163,12 @@ export const handleMouseDown = (
         const args = { e, params, markingType, interrupt };
 
         switch (markingType) {
-            case MARKING_TYPES.POINT: {
+            case MARKING_TYPE.POINT: {
                 handlePointMarking(args);
                 break;
             }
 
-            case MARKING_TYPES.RAY: {
+            case MARKING_TYPE.RAY: {
                 handleRayMarking(args);
                 break;
             }

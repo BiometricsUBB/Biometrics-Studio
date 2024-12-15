@@ -5,12 +5,11 @@ const d: Dictionary = {
         Name: "Marking",
         Keys: {
             id: "ID",
-            hidden: "Hidden",
             label: "Label",
             angleRad: "Angle",
             backgroundColor: "Background color",
             boundMarkingId: "Bound marking ID",
-            position: "Position",
+            origin: "Origin",
             size: "Size",
             textColor: "Text color",
             type: {

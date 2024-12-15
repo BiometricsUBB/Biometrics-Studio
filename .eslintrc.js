@@ -77,6 +77,7 @@ module.exports = {
         "no-nested-ternary": "off",
         "import/prefer-default-export": "off",
         "react/require-default-props": "off",
+        "react/prop-types": "off",
         "class-methods-use-this": "off",
         "no-shadow": ["off"],
     },

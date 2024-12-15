@@ -1,0 +1,116 @@
+import { ColorSource, Rectangle } from "pixi.js";
+import { Viewport } from "pixi-viewport";
+import { immerable, produce } from "immer";
+import {
+    GlobalSettingsStore,
+    PRERENDER_RADIUS_OPTIONS,
+} from "@/lib/stores/GlobalSettings";
+// eslint-disable-next-line import/no-cycle
+import { MarkingsStore } from "@/lib/stores/Markings";
+import { CANVAS_ID } from "@/components/pixi/canvas/hooks/useCanvasContext";
+
+/* eslint-disable no-param-reassign */
+
+export const enum MARKING_TYPE {
+    POINT = "point",
+    RAY = "ray",
+}
+
+export interface Point {
+    x: number;
+    y: number;
+}
+
+export abstract class MarkingBase {
+    [immerable] = true;
+
+    public abstract readonly type: MARKING_TYPE;
+
+    public readonly id: string = crypto.randomUUID();
+
+    protected constructor(
+        public label: number,
+        public origin: Point,
+        public backgroundColor: ColorSource,
+        public textColor: ColorSource,
+        public size: number,
+        public boundMarkingId: string | undefined
+    ) {
+        this.label = label;
+        this.origin = origin;
+        this.backgroundColor = backgroundColor;
+        this.textColor = textColor;
+        this.size = size;
+        this.boundMarkingId = boundMarkingId;
+    }
+
+    protected PRERENDER_MARGIN = (() => {
+        enum PRERENDER_RADIUS_VALUES {
+            NONE = 0,
+            LOW = 200,
+            MEDIUM = 500,
+            HIGH = 900,
+            VERY_HIGH = 1200,
+        }
+
+        const markingsLength =
+            MarkingsStore(CANVAS_ID.LEFT).state.markings.length +
+            MarkingsStore(CANVAS_ID.RIGHT).state.markings.length;
+
+        switch (
+            GlobalSettingsStore.state.settings.video.rendering.prerenderRadius
+        ) {
+            case PRERENDER_RADIUS_OPTIONS.AUTO:
+                if (markingsLength < 100)
+                    return 2 * PRERENDER_RADIUS_VALUES.VERY_HIGH;
+                if (markingsLength < 200)
+                    return PRERENDER_RADIUS_VALUES.VERY_HIGH;
+                if (markingsLength < 500) return PRERENDER_RADIUS_VALUES.HIGH;
+                if (markingsLength < 1000)
+                    return PRERENDER_RADIUS_VALUES.MEDIUM;
+                return PRERENDER_RADIUS_VALUES.LOW;
+            case PRERENDER_RADIUS_OPTIONS.NONE:
+                return PRERENDER_RADIUS_VALUES.NONE;
+            case PRERENDER_RADIUS_OPTIONS.LOW:
+                return PRERENDER_RADIUS_VALUES.LOW;
+            case PRERENDER_RADIUS_OPTIONS.MEDIUM:
+                return PRERENDER_RADIUS_VALUES.MEDIUM;
+            case PRERENDER_RADIUS_OPTIONS.HIGH:
+                return PRERENDER_RADIUS_VALUES.HIGH;
+            case PRERENDER_RADIUS_OPTIONS.VERY_HIGH:
+                return PRERENDER_RADIUS_VALUES.VERY_HIGH;
+            default:
+                return PRERENDER_RADIUS_VALUES.HIGH;
+        }
+    })();
+
+    public isVisible(
+        screen: Rectangle,
+        viewport: Viewport,
+        viewportWidthRatio: number,
+        viewportHeightRatio: number
+    ): boolean {
+        const { x, y } = this.getRelativeOrigin(
+            viewportWidthRatio,
+            viewportHeightRatio
+        );
+        if (x + viewport.x < screen.left - this.PRERENDER_MARGIN) return false;
+        if (y + viewport.y < screen.top - this.PRERENDER_MARGIN) return false;
+        if (x + viewport.x > screen.right + this.PRERENDER_MARGIN) return false;
+        return !(y + viewport.y > screen.bottom + this.PRERENDER_MARGIN);
+    }
+
+    public getRelativeOrigin = (
+        viewportWidthRatio: number,
+        viewportHeightRatio: number
+    ): Point => ({
+        x: this.origin.x * viewportWidthRatio,
+        y: this.origin.y * viewportHeightRatio,
+    });
+
+    public bind = (markingId: string | undefined): this => {
+        return produce(this, draft => {
+            draft.boundMarkingId = markingId;
+        });
+    };
+}

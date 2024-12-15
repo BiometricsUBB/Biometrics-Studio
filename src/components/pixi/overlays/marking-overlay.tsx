@@ -1,8 +1,5 @@
 import { Container } from "@pixi/react";
-import { useCallback, useMemo } from "react";
-import { InternalMarking, MarkingsStore } from "@/lib/stores/Markings";
-import { ShallowViewportStore } from "@/lib/stores/ShallowViewport";
-import { CanvasToolbarStore } from "@/lib/stores/CanvasToolbar";
+import { MarkingsStore } from "@/lib/stores/Markings";
 import { CanvasMetadata } from "../canvas/hooks/useCanvasContext";
 import { useGlobalViewport } from "../viewport/hooks/useGlobalViewport";
 import { useGlobalApp } from "../app/hooks/useGlobalApp";
@@ -14,10 +11,10 @@ export type MarkingOverlayProps = {
 };
 
 export function MarkingOverlay({ canvasMetadata }: MarkingOverlayProps) {
-    const { id } = canvasMetadata;
-    const viewport = useGlobalViewport(id, { autoUpdate: true });
-    const app = useGlobalApp(id);
-    const { markings } = MarkingsStore(id).use(
+    const { id: canvasId } = canvasMetadata;
+    const viewport = useGlobalViewport(canvasId, { autoUpdate: true });
+    const app = useGlobalApp(canvasId);
+    const { markings } = MarkingsStore(canvasId).use(
         state => ({
             markings: state.markings,
             hash: state.markingsHash,
@@ -28,60 +25,9 @@ export function MarkingOverlay({ canvasMetadata }: MarkingOverlayProps) {
         }
     );
 
-    const showMarkingLabels = CanvasToolbarStore(id).use(
-        state => state.settings.markings.showLabels
-    );
-
-    const temporaryMarking = MarkingsStore(id).use(
+    const temporaryMarking = MarkingsStore(canvasId).use(
         state => state.temporaryMarking
     );
-
-    // oblicz proporcje viewportu do świata tylko na evencie zoomed, dla lepszej wydajności (nie ma sensu liczyć tego na każdym renderze
-    // bo przy samym ruchu nie zmieniają się proporcje viewportu do świata, tylko przy zoomie)
-    const { viewportWidthRatio, viewportHeightRatio } = ShallowViewportStore(
-        id
-    ).use(
-        ({
-            size: {
-                screenWorldWidth,
-                screenWorldHeight,
-                worldWidth,
-                worldHeight,
-            },
-        }) => ({
-            viewportWidthRatio: screenWorldWidth / worldWidth,
-            viewportHeightRatio: screenWorldHeight / worldHeight,
-        })
-    );
-
-    const getMarkingRelativePosition = useCallback(
-        (marking: InternalMarking): InternalMarking["position"] => {
-            return {
-                x: marking.position.x * viewportWidthRatio,
-                y: marking.position.y * viewportHeightRatio,
-            };
-        },
-        [viewportHeightRatio, viewportWidthRatio]
-    );
-
-    const relativeMarkings: InternalMarking[] = useMemo(
-        () =>
-            viewport === null
-                ? markings
-                : markings.map(marking => ({
-                      ...marking,
-                      position: getMarkingRelativePosition(marking),
-                  })),
-        [getMarkingRelativePosition, markings, viewport]
-    );
-
-    const relativeTemporaryMarking: InternalMarking | null =
-        temporaryMarking === null
-            ? null
-            : {
-                  ...temporaryMarking,
-                  position: getMarkingRelativePosition(temporaryMarking),
-              };
 
     if (viewport === null || app == null) {
         return null;
@@ -90,16 +36,15 @@ export function MarkingOverlay({ canvasMetadata }: MarkingOverlayProps) {
     return (
         <Container position={getViewportPosition(viewport)}>
             <Markings
-                canvasMetadata={canvasMetadata}
-                markings={relativeMarkings}
-                showMarkingLabels={showMarkingLabels}
+                canvasId={canvasId}
+                // Remove the marking that is being replaced from the list of markings
+                markings={markings.filter(
+                    x => x.label !== temporaryMarking?.label
+                )}
             />
-            {relativeTemporaryMarking !== null && (
-                <Markings
-                    canvasMetadata={canvasMetadata}
-                    markings={[relativeTemporaryMarking]}
-                    showMarkingLabels={showMarkingLabels}
-                />
+            {/* If a marking is being created, display it on top of the other markings */}
+            {temporaryMarking && (
+                <Markings canvasId={canvasId} markings={[temporaryMarking]} />
             )}
         </Container>
     );

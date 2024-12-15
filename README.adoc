@@ -16,5 +16,3 @@ Then just run the following commands to start the app:
 pnpm i
 pnpm tauri dev
 ....
-
-NOTE: Sometimes you may need to run `pnpm tauri dev` a few times to start the app. If you get an error, just run the command again.

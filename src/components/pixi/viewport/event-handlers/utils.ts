@@ -6,14 +6,11 @@ import {
 } from "@/lib/stores/CachedViewport";
 import { Viewport as PixiViewport } from "pixi-viewport";
 import { FederatedPointerEvent } from "pixi.js";
-import {
-    InternalMarking,
-    MARKING_TYPES,
-    Marking,
-    MarkingsStoreClass,
-} from "@/lib/stores/Markings";
+import { MarkingsStoreClass } from "@/lib/stores/Markings";
 import { DashboardToolbarStore } from "@/lib/stores/DashboardToolbar";
-import { isInternalMarking } from "@/components/information-tabs/markings-info/columns";
+import { MARKING_TYPE, MarkingBase } from "@/lib/markings/MarkingBase";
+import { PointMarking } from "@/lib/markings/PointMarking";
+import { RayMarking } from "@/lib/markings/RayMarking";
 import { getNormalizedPosition } from "../../overlays/utils/get-viewport-local-position";
 import { CanvasMetadata } from "../../canvas/hooks/useCanvasContext";
 
@@ -46,96 +43,38 @@ export function getNormalizedMousePosition(
     });
 }
 
-export function createMarking(
-    type: Marking["type"],
-    angleRad: Marking["angleRad"],
-    position: Marking["position"],
-    label?: InternalMarking["label"]
-): Marking {
+export function addMarkingToStore(
+    newMarking: MarkingBase,
+    params: ViewportHandlerParams
+) {
+    const { markingsStore } = params;
     const { size, backgroundColor, textColor } =
         DashboardToolbarStore.state.settings.marking;
 
-    return {
-        ...(label !== undefined && { label }),
-        hidden: false,
-        size,
-        position,
-        backgroundColor,
-        textColor,
-        type,
-        angleRad,
-    };
-}
-
-export function addMarkingToStore(
-    newMarking: Marking & Partial<InternalMarking>,
-    params: ViewportHandlerParams
-) {
-    const { markingsStore } = params;
-
-    const {
-        type: markingType,
-        position: markingPos,
-        angleRad,
-        label,
-    } = newMarking;
-    const { addOne: addMarking } = markingsStore.actions.markings;
-
-    switch (markingType) {
-        case MARKING_TYPES.POINT: {
-            const marking = createMarking(markingType, null, markingPos, label);
-            return addMarking(marking);
-        }
-        case MARKING_TYPES.RAY: {
-            const marking = createMarking(
-                markingType,
-                angleRad,
-                markingPos,
-                label
-            );
-            return addMarking(marking);
-        }
-        default:
-            markingType satisfies never;
-            throw new Error(`Unknown marking type: ${markingType}`);
+    if (newMarking.type === MARKING_TYPE.POINT) {
+        markingsStore.actions.markings.addOne(
+            new PointMarking(
+                newMarking.label,
+                newMarking.origin,
+                backgroundColor,
+                textColor,
+                size,
+                newMarking.boundMarkingId
+            )
+        );
+    } else if (newMarking.type === MARKING_TYPE.RAY) {
+        markingsStore.actions.markings.addOne(
+            new RayMarking(
+                newMarking.label,
+                newMarking.origin,
+                backgroundColor,
+                textColor,
+                size,
+                (newMarking as RayMarking).angleRad ?? 0,
+                newMarking.boundMarkingId
+            )
+        );
+    } else {
+        throw new Error("Unknown marking type");
     }
-}
-
-export function addOrEditMarking(
-    marking: InternalMarking,
-    params: ViewportHandlerParams
-) {
-    const { markingsStore } = params;
-    const { selectedMarking } = markingsStore.state;
-
-    if (selectedMarking === null) {
-        addMarkingToStore(marking, params);
-        return;
-    }
-
-    if (isInternalMarking(selectedMarking)) {
-        const { size, backgroundColor, textColor } =
-            DashboardToolbarStore.state.settings.marking;
-
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        const { id, label, ...newProps } = marking;
-
-        markingsStore.actions.markings.editOneById(selectedMarking.id, {
-            ...newProps,
-            size,
-            backgroundColor,
-            textColor,
-        });
-        return;
-    }
-
-    const newMarking = addMarkingToStore(
-        {
-            ...marking,
-            boundMarkingId: selectedMarking.boundMarkingId,
-            label: selectedMarking.label,
-        },
-        params
-    );
-    markingsStore.actions.selectedMarking.setSelectedMarking(newMarking);
 }
