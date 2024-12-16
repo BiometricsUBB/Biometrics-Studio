@@ -30,7 +30,7 @@ export type i18nObject = {
         Name: string;
         Keys: Omit<
             Recordify<keyof RayMarking | keyof PointMarking>,
-            "type" | "isVisible" | "calculateViewportPosition" | "bind"
+            "type" | "isVisible" | "calculateViewportPosition"
         > & {
             type: {
                 Name: string;

@@ -8,7 +8,6 @@ const d: Dictionary = {
             label: "Znacznik",
             angleRad: "Kąt",
             backgroundColor: "Kolor tła",
-            boundMarkingId: "ID powiązanej adnotacji",
             origin: "Źródło",
             size: "Rozmiar",
             textColor: "Kolor tekstu",

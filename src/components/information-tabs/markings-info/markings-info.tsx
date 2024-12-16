@@ -24,7 +24,7 @@ const fillMissingLabels = (
     return Array.from({ length: maxLabel }, (_, i) =>
         usedLabels.has(i + 1)
             ? markings.find(m => m.label === i + 1)!
-            : { boundMarkingId: undefined, label: i + 1 }
+            : { label: i + 1 }
     );
 };
 
@@ -82,9 +82,7 @@ export function MarkingsInfo({ tableHeight }: { tableHeight: number }) {
         ]
             .sort((a, b) => a.label - b.label)
             .map(m =>
-                thisIds.includes(m.id)
-                    ? m
-                    : { boundMarkingId: m.boundMarkingId, label: m.label }
+                thisIds.includes(m.id) ? m : { label: m.label }
             ) as EmptyableMarking[];
 
         return fillMissingLabels(id, combinedMarkings);

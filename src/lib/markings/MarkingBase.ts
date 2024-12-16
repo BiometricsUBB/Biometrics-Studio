@@ -1,5 +1,5 @@
 import { ColorSource, Rectangle } from "pixi.js";
-import { immerable, produce } from "immer";
+import { immerable } from "immer";
 import {
     GlobalSettingsStore,
     PRERENDER_RADIUS_OPTIONS,
@@ -32,15 +32,13 @@ export abstract class MarkingBase {
         public origin: Point,
         public backgroundColor: ColorSource,
         public textColor: ColorSource,
-        public size: number,
-        public boundMarkingId: string | undefined
+        public size: number
     ) {
         this.label = label;
         this.origin = origin;
         this.backgroundColor = backgroundColor;
         this.textColor = textColor;
         this.size = size;
-        this.boundMarkingId = boundMarkingId;
     }
 
     protected getPrerenderMargin() {
@@ -113,11 +111,5 @@ export abstract class MarkingBase {
             x: this.origin.x * viewportWidthRatio,
             y: this.origin.y * viewportHeightRatio,
         };
-    }
-
-    public bind(markingId: string | undefined): this {
-        return produce<this>(this, draft => {
-            draft.boundMarkingId = markingId;
-        });
     }
 }

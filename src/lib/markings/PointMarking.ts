@@ -5,14 +5,14 @@ import { ColorSource } from "pixi.js";
 export class PointMarking extends MarkingBase {
     readonly type = MARKING_TYPE.POINT;
 
+    // eslint-disable-next-line no-useless-constructor
     constructor(
         label: number,
         origin: Point,
         backgroundColor: ColorSource,
         textColor: ColorSource,
-        size: number,
-        boundMarkingId: string | undefined = undefined
+        size: number
     ) {
-        super(label, origin, backgroundColor, textColor, size, boundMarkingId);
+        super(label, origin, backgroundColor, textColor, size);
     }
 }

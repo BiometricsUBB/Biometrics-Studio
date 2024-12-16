@@ -8,7 +8,6 @@ const d: Dictionary = {
             label: "Label",
             angleRad: "Angle",
             backgroundColor: "Background color",
-            boundMarkingId: "Bound marking ID",
             origin: "Origin",
             size: "Size",
             textColor: "Text color",

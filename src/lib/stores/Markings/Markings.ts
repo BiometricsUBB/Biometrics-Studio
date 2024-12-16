@@ -132,11 +132,6 @@ class StoreClass {
         },
         markings: {
             reset: () => {
-                this.state.markings.forEach(marking => {
-                    Store(
-                        getOppositeCanvasId(this.id)
-                    ).actions.markings.unbindAllWithBoundMarkingId(marking.id);
-                });
                 this.setMarkingsAndUpdateHash(() => []);
             },
             addOne: (marking: MarkingBase) => {
@@ -146,22 +141,9 @@ class StoreClass {
                     });
                 }
 
-                const oppositeCanvasId = getOppositeCanvasId(this.id);
-                const oppositeCanvasMarkings =
-                    Store(oppositeCanvasId).state.markings;
-                const oppositeMarking = oppositeCanvasMarkings.find(
-                    m => m.label === marking.label
-                );
-                if (oppositeMarking) {
-                    Store(oppositeCanvasId).actions.markings.bindOneById(
-                        oppositeMarking.id,
-                        marking.id
-                    );
-                }
-
                 this.setMarkingsAndUpdateHash(
                     produce(state => {
-                        state.push(marking.bind(oppositeMarking?.id));
+                        state.push(marking);
                     })
                 );
                 this.setSelectedMarkingLabel(() => null);
@@ -178,13 +160,6 @@ class StoreClass {
                     this.setSelectedMarkingLabel(() => null);
                 }
 
-                this.actions.markings.unbindOneByLabel(label);
-
-                const oppositeCanvasId = getOppositeCanvasId(this.id);
-                Store(oppositeCanvasId).actions.markings.unbindOneByLabel(
-                    label
-                );
-
                 this.setMarkingsAndUpdateHash(markings =>
                     markings.filter(marking => marking.label !== label)
                 );
@@ -193,30 +168,6 @@ class StoreClass {
                     null
                 );
             },
-            removeManyById: (ids: string[]) =>
-                this.setMarkingsAndUpdateHash(markings =>
-                    markings.filter(marking => !ids.includes(marking.id))
-                ),
-            bindOneById: (id: string, boundMarkingId: string) =>
-                this.setMarkingsAndUpdateHash(markings =>
-                    markings.map(m =>
-                        m.id === id ? m.bind(boundMarkingId) : m
-                    )
-                ),
-            unbindOneByLabel: (label: MarkingBase["label"]) =>
-                this.setMarkingsAndUpdateHash(markings =>
-                    markings.map(m =>
-                        m.label === label ? m.bind(undefined) : m
-                    )
-                ),
-            unbindAllWithBoundMarkingId: (boundMarkingId: string) =>
-                this.setMarkingsAndUpdateHash(markings =>
-                    markings.map(m =>
-                        m.boundMarkingId === boundMarkingId
-                            ? m.bind(undefined)
-                            : m
-                    )
-                ),
         },
         temporaryMarking: {
             setTemporaryMarking: (marking: MarkingBase | null) =>

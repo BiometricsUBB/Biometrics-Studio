@@ -2,7 +2,7 @@ import { CellContext, ColumnDef } from "@tanstack/react-table";
 import { t } from "i18next";
 import { ICON, IS_DEV_ENVIRONMENT } from "@/lib/utils/const";
 import { GlobalStateStore } from "@/lib/stores/GlobalState";
-import { Link, Trash2 } from "lucide-react";
+import { Trash2 } from "lucide-react";
 import { Toggle } from "@/components/ui/toggle";
 import { CanvasMetadata } from "@/components/pixi/canvas/hooks/useCanvasContext";
 // eslint-disable-next-line import/no-cycle
@@ -10,7 +10,6 @@ import { MarkingsStore } from "@/lib/stores/Markings";
 import { MarkingBase } from "@/lib/markings/MarkingBase";
 
 export type EmptyMarking = {
-    boundMarkingId: MarkingBase["boundMarkingId"];
     label: MarkingBase["label"];
 };
 export type EmptyableMarking = MarkingBase | EmptyMarking;
@@ -32,8 +31,6 @@ const formatCell = <T,>(
         return callback(context as DataCellContext);
     }
 
-    if (context.column.id === "boundMarkingId")
-        return row.boundMarkingId?.slice(0, 8) ?? "";
     if (context.column.id === "label") return row.label;
 
     if (lastRowEmptyValue === "") return lastRowEmptyValue;
@@ -116,33 +113,9 @@ export const getColumns = (
                 formatCell(cell, ({ row: { original: marking } }) => (
                     <div className="flex flex-row gap-1">
                         <div>{marking.label}</div>
-                        <div className="size-5 inline-flex items-center justify-center">
-                            {isMarkingBase(marking) &&
-                                marking.boundMarkingId && (
-                                    <Link
-                                        size={ICON.SIZE}
-                                        strokeWidth={ICON.STROKE_WIDTH}
-                                    />
-                                )}
-                        </div>
                     </div>
                 )),
         },
-        // Powiązane ID będzie pokazane tylko podczas developmentu
-        ...(IS_DEV_ENVIRONMENT
-            ? ([
-                  {
-                      accessorKey: "boundMarkingId",
-                      header: t("Marking.Keys.boundMarkingId", {
-                          ns: "object",
-                      }),
-                      cell: cell =>
-                          formatCell(cell, ({ row }) =>
-                              row.original.boundMarkingId?.slice(0, 8)
-                          ),
-                  },
-              ] as Array<ColumnDef<EmptyableMarking>>)
-            : []),
         {
             accessorKey: "type",
             header: t("Marking.Keys.type.Name", { ns: "object" }),

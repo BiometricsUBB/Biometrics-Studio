@@ -13,10 +13,9 @@ export class RayMarking extends MarkingBase {
         backgroundColor: ColorSource,
         textColor: ColorSource,
         size: number,
-        angleRad: number,
-        boundMarkingId: string | undefined = undefined
+        angleRad: number
     ) {
-        super(label, origin, backgroundColor, textColor, size, boundMarkingId);
+        super(label, origin, backgroundColor, textColor, size);
         this.angleRad = angleRad;
     }
 }
