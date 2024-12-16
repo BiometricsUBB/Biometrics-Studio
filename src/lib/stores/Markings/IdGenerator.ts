@@ -1,8 +1,10 @@
 export class IDGenerator {
+    public static initialValue = 1;
+
     private currentId: number;
 
     constructor() {
-        this.currentId = 0;
+        this.currentId = IDGenerator.initialValue;
     }
 
     generateId() {
@@ -12,5 +14,9 @@ export class IDGenerator {
 
     setId(value: number) {
         this.currentId = value;
+    }
+
+    getCurrentId() {
+        return this.currentId;
     }
 }

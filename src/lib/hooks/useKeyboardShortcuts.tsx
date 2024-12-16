@@ -2,7 +2,7 @@ import {
     CURSOR_MODES,
     DashboardToolbarStore,
 } from "../stores/DashboardToolbar";
-import { MARKING_TYPES } from "../stores/Markings";
+import { MARKING_TYPE } from "../markings/MarkingBase";
 import { CUSTOM_GLOBAL_EVENTS } from "../utils/const";
 import { useKeyDown } from "./useKeyDown";
 
@@ -33,12 +33,16 @@ export const useKeyboardShortcuts = () => {
     }, ["F2"]);
 
     useKeyDown(() => {
-        setMarkingType(MARKING_TYPES.POINT);
+        setMarkingType(MARKING_TYPE.POINT);
     }, ["1"]);
 
     useKeyDown(() => {
-        setMarkingType(MARKING_TYPES.RAY);
+        setMarkingType(MARKING_TYPE.RAY);
     }, ["2"]);
+
+    useKeyDown(() => {
+        setMarkingType(MARKING_TYPE.LINE_SEGMENT);
+    }, ["3"]);
 
     useKeyDown(() => {
         toggleLockedViewport();

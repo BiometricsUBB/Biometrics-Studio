@@ -15,9 +15,10 @@ import {
     LockKeyholeOpen,
     MousePointer,
     SendToBack,
+    Spline,
 } from "lucide-react";
 import { ICON } from "@/lib/utils/const";
-import { MARKING_TYPES } from "@/lib/stores/Markings";
+import { MARKING_TYPE } from "@/lib/markings/MarkingBase";
 import { useTranslation } from "react-i18next";
 import { ToolbarGroup } from "./group";
 import { ToggleGroup, ToggleGroupItem } from "../ui/toggle-group";
@@ -103,22 +104,34 @@ export function GlobalToolbar({ className, ...props }: GlobalToolbarProps) {
                     size="icon"
                 >
                     <ToggleGroupItem
-                        value={MARKING_TYPES.POINT}
+                        value={MARKING_TYPE.POINT}
                         title={`${t("Marking.Keys.type.Keys.point", { ns: "object" })} (1)`}
                         onClick={() => {
-                            setMarkingType(MARKING_TYPES.POINT);
+                            setMarkingType(MARKING_TYPE.POINT);
                         }}
                     >
                         <Dot size={ICON.SIZE} strokeWidth={ICON.STROKE_WIDTH} />
                     </ToggleGroupItem>
                     <ToggleGroupItem
-                        value={MARKING_TYPES.RAY}
+                        value={MARKING_TYPE.RAY}
                         title={`${t("Marking.Keys.type.Keys.ray", { ns: "object" })} (2)`}
                         onClick={() => {
-                            setMarkingType(MARKING_TYPES.RAY);
+                            setMarkingType(MARKING_TYPE.RAY);
                         }}
                     >
                         <DraftingCompass
+                            size={ICON.SIZE}
+                            strokeWidth={ICON.STROKE_WIDTH}
+                        />
+                    </ToggleGroupItem>
+                    <ToggleGroupItem
+                        value={MARKING_TYPE.LINE_SEGMENT}
+                        title={`${t("Marking.Keys.type.Keys.line_segment", { ns: "object" })} (3)`}
+                        onClick={() => {
+                            setMarkingType(MARKING_TYPE.LINE_SEGMENT);
+                        }}
+                    >
+                        <Spline
                             size={ICON.SIZE}
                             strokeWidth={ICON.STROKE_WIDTH}
                         />
