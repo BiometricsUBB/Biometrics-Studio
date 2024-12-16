@@ -10,8 +10,9 @@ import { getOppositeCanvasId } from "@/components/pixi/canvas/utils/get-opposite
 import { arrayMax } from "@/lib/utils/array/minmax";
 // eslint-disable-next-line import/no-cycle
 import { MarkingBase } from "@/lib/markings/MarkingBase";
-import { PointMarking } from "@/lib/markings/PointMarking";
+import { LineSegmentMarking } from "@/lib/markings/LineSegmentMarking";
 import { RayMarking } from "@/lib/markings/RayMarking";
+import { PointMarking } from "@/lib/markings/PointMarking";
 import { ActionProduceCallback } from "../immer.helpers";
 import {
     _createMarkingsStore as createStore,
@@ -173,7 +174,7 @@ class StoreClass {
             setTemporaryMarking: (marking: MarkingBase | null) =>
                 this.setTemporaryMarking(produce(() => marking)),
             updateTemporaryMarking: (
-                props: Partial<PointMarking | RayMarking>
+                props: Partial<PointMarking | RayMarking | LineSegmentMarking>
             ) =>
                 this.setTemporaryMarking(
                     produce(marking => {

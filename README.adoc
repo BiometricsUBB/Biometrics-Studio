@@ -1,4 +1,4 @@
-= biometrics-studio
+= Biometrics Studio
 
 Application for forensic trace comparison
 
@@ -8,7 +8,7 @@ image::./docs/biometrics-studio.png[]
 
 === Pre-requisites
 
-First, you need to have https://beta.tauri.app/guides/prerequisites/[Tauri] installed (v2 at the time of writing)
+First, you need to have https://tauri.app/start/prerequisites/[Tauri] installed (v2 at the time of writing)
 
 Then just run the following commands to start the app:
 
@@ -16,3 +16,36 @@ Then just run the following commands to start the app:
 pnpm i
 pnpm tauri dev
 ....
+
+=== Adding New Marking Types (Current as of: 2024-12-16)
+Example of adding https://github.com/BiometricsUBB/Biometrics-Studio/pull/13/commits/a3fcc39ca85326d0b83e4f7265f80f759e98e359[Line Segment Marking Type]
+
+. Create a New Type
+.. Add the new marking type to the `MarkingType` enum in `MarkingBase`.
+.. Add a new class extending `MarkingBase`:
+... Assign the `type` variable.
+... Override the necessary methods, especially `isVisible`.
+.. Add the new type to the parameter properties of the `updateTemporaryMarking` method in `Markings.ts` for proper updating.
+
+. Add Translations
+.. Add the new type to the list of keys in `translation.ts`.
+.. Exclude functions from translation by adding an exclusion for their names.
+.. Add translations in `locales/lang/object.ts`.
+
+. Create Drawing Logic
+.. In `marking.utils.tsx`, add a case for the new type and implement the drawing logic.
+... If the logic uses absolute positioning, calculate its `viewportPosition` to ensure it works properly with zoom (based on `MarkingBase.calculateOriginViewportPosition`).
+
+. Create a Handler for Mouse Events
+.. In `mousedown.event.ts`, add a case for the new type and implement the logic.
+
+. Add a Cursor Mode Button to the Toolbar
+.. In `toolbar.tsx`, add a `ToggleGroupItem` for the new type.
+... Browse icons at https://lucide.dev/icons/[LucideIcons].
+
+. Adjust Save Markings to File Logic in `saveMarkingsDataWithDialog.ts`
+.. Add properties to `ExportObject.Data.Markings`. Marking type-specific properties should be nullable.
+.. Add the new properties to the `getReducedMarkings` function.
+
+. Adjust Load Markings from File Logic in `loadMarkingsDataWithDialog.ts`
+.. Add a case and properties to the `inferMarking` function.

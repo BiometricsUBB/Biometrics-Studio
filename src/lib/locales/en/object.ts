@@ -9,6 +9,7 @@ const d: Dictionary = {
             angleRad: "Angle",
             backgroundColor: "Background color",
             origin: "Origin",
+            endpoint: "Endpoint",
             size: "Size",
             textColor: "Text color",
             type: {
@@ -16,6 +17,7 @@ const d: Dictionary = {
                 Keys: {
                     point: "Point",
                     ray: "Ray",
+                    line_segment: "Line segment",
                 },
             },
         },
