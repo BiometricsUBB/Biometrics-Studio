@@ -1,5 +1,7 @@
 = Biometrics Studio
 
+https://github.com/BiometricsUBB/Biometrics-Studio?tab=readme-ov-file#biometrics-studio[ENGLISH] / https://github.com/BiometricsUBB/Biometrics-Studio/blob/master/README_PL.adoc#biometrics-studio[POLSKI]
+
 Application for forensic trace comparison
 
 image::./docs/biometrics-studio.png[]
