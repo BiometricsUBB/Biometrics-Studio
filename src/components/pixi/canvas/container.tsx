@@ -8,6 +8,7 @@ import { useTranslation } from "react-i18next";
 import { CanvasToolbarStore } from "@/lib/stores/CanvasToolbar";
 import { listen } from "@tauri-apps/api/event";
 import { showErrorDialog } from "@/lib/errors/showErrorDialog";
+import { Point } from "@/lib/markings/MarkingBase";
 import { useCanvasContext } from "./hooks/useCanvasContext";
 import { CanvasToolbar } from "./canvas-toolbar";
 import { Canvas } from "./canvas";
@@ -45,7 +46,7 @@ export function CanvasContainer({ ...props }: CanvasContainerProps) {
                 "tauri://drag-drop",
                 async (event: {
                     payload: {
-                        position: { x: number; y: number };
+                        position: Point;
                         paths: string[];
                     };
                 }) => {
@@ -76,7 +77,7 @@ export function CanvasContainer({ ...props }: CanvasContainerProps) {
         };
 
         setupTauriFileDropListener();
-    }, [viewport]);
+    }, [viewport, id]);
 
     return (
         <div

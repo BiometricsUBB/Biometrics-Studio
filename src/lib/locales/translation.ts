@@ -1,7 +1,9 @@
+import { MARKING_TYPE } from "@/lib/markings/MarkingBase";
+import { RayMarking } from "@/lib/markings/RayMarking";
+import { PointMarking } from "@/lib/markings/PointMarking";
 import { PRERENDER_RADIUS_OPTIONS, THEMES } from "../stores/GlobalSettings";
-import { InternalMarking, Marking } from "../stores/Markings";
 
-type Recordify<T extends string> = { [K in T as `${K}`]: string };
+type Recordify<T> = { [K in Extract<T, string> as `${K}`]: string };
 
 export type i18nKeywords = Recordify<
     | "Homepage"
@@ -26,10 +28,13 @@ export type i18nCursor = {
 export type i18nObject = {
     Marking: {
         Name: string;
-        Keys: Omit<Recordify<keyof InternalMarking>, "type"> & {
+        Keys: Omit<
+            Recordify<keyof RayMarking | keyof PointMarking>,
+            "type" | "isVisible" | "calculateViewportPosition"
+        > & {
             type: {
                 Name: string;
-                Keys: Recordify<Marking["type"]>;
+                Keys: Recordify<MARKING_TYPE>;
             };
         };
     };

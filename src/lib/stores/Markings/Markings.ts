@@ -1,8 +1,7 @@
-/* eslint-disable security/detect-object-injection */
 /* eslint-disable no-use-before-define */
 /* eslint-disable no-param-reassign */
 
-import { Draft, produce } from "immer";
+import { produce } from "immer";
 import {
     CANVAS_ID,
     CanvasMetadata,
@@ -10,24 +9,19 @@ import {
 import { getOppositeCanvasId } from "@/components/pixi/canvas/utils/get-opposite-canvas-id";
 import { arrayMax } from "@/lib/utils/array/minmax";
 // eslint-disable-next-line import/no-cycle
-import {
-    EmptyableMarking,
-    isInternalMarking,
-} from "@/components/information-tabs/markings-info/columns";
+import { MarkingBase } from "@/lib/markings/MarkingBase";
+import { PointMarking } from "@/lib/markings/PointMarking";
+import { RayMarking } from "@/lib/markings/RayMarking";
 import { ActionProduceCallback } from "../immer.helpers";
 import {
-    InternalMarking,
-    Marking,
-    MarkingsState as State,
     _createMarkingsStore as createStore,
+    MarkingsState as State,
 } from "./Markings.store";
 import { GlobalStateStore } from "../GlobalState";
 import { IDGenerator } from "./IdGenerator";
 
 const useLeftStore = createStore(CANVAS_ID.LEFT);
 const useRightStore = createStore(CANVAS_ID.RIGHT);
-
-const { setLastAddedMarking } = GlobalStateStore.actions.lastAddedMarking;
 
 class StoreClass {
     readonly id: CANVAS_ID;
@@ -45,101 +39,26 @@ class StoreClass {
         return this.use.getState();
     }
 
-    private getInferredMarking(
-        canvasId: CANVAS_ID,
-        marking: Marking
-    ): InternalMarking {
-        return produce(marking, (draft: Draft<InternalMarking>) => {
-            draft.id = crypto.randomUUID();
-
-            if (draft.label !== undefined && draft.label !== -1) {
-                // Przypadek gdy ostatnio dodany marking ma już przypisany label
-                // (Najczęściej jest to sytuacja gdy wgrywamy plik z danymi markingu)
-                // Znajdź czy istnieje znacznik z takim samym labelem w przeciwnym canvasie
-                // Jeśli tak to przypisz go do tego markingu i powiąż je
-                const oppositeCanvasId = getOppositeCanvasId(canvasId);
-                const boundMarking = Store(
-                    oppositeCanvasId
-                ).state.markings.find(e => e.label === draft.label);
-
-                if (boundMarking === undefined) {
-                    return;
-                }
-                Store(oppositeCanvasId).actions.markings.bindOneById(
-                    boundMarking.id,
-                    draft.id
-                );
-                draft.boundMarkingId = boundMarking.id;
-                draft.label = boundMarking.label;
-                return;
-            }
-
-            const { lastAddedMarking } = GlobalStateStore.state;
-            const isLastAddedMarkingInOppositeCanvas =
-                lastAddedMarking !== null &&
-                lastAddedMarking.canvasId !== canvasId;
-
-            if (isLastAddedMarkingInOppositeCanvas) {
-                // Przypadek gdy ostatnio dodany marking jest z przeciwnego canvasa
-                // Weź znacznik z ostatnio dodanego markingu i powiąż go z tym markingiem
-
-                const isLabelAlreadyUsed =
-                    Store(canvasId).state.markings.findLastIndex(
-                        m => m.label === lastAddedMarking.label
-                    ) !== -1;
-
-                if (isLabelAlreadyUsed) {
-                    draft.label = this.labelGenerator.generateId();
-                } else {
-                    draft.label = lastAddedMarking.label;
-                    this.labelGenerator.setId(lastAddedMarking.label);
-                }
-
-                if (lastAddedMarking.label === draft.label) {
-                    draft.boundMarkingId = lastAddedMarking.id;
-                    Store(
-                        lastAddedMarking.canvasId
-                    ).actions.markings.bindOneById(
-                        lastAddedMarking.id,
-                        draft.id
-                    );
-                }
-
-                return;
-            }
-
-            // Przypadek gdy ostatnio dodany marking jest z tego samego canvasa
-            // Po prostu wygeneruj nowy znacznik
-            draft.label = this.labelGenerator.generateId();
-        }) as InternalMarking;
-    }
-
-    private setMarkingsHash(
-        callback: ActionProduceCallback<State["markingsHash"], State>
-    ) {
-        this.state.set(draft => {
-            draft.markingsHash = callback(draft.markingsHash, draft);
-        });
-    }
-
-    private setMarkings(
+    private setMarkingsAndUpdateHash(
         callback: ActionProduceCallback<State["markings"], State>
     ) {
+        // Set markings
         this.state.set(draft => {
             const newMarkings = callback(draft.markings, draft);
             draft.markings = newMarkings;
 
             const lastMarking = newMarkings.at(-1);
             if (lastMarking !== undefined)
-                setLastAddedMarking({ ...lastMarking, canvasId: this.id });
+                GlobalStateStore.actions.lastAddedMarking.setLastAddedMarking({
+                    marking: lastMarking,
+                    canvasId: this.id,
+                });
         });
-    }
 
-    private setMarkingsAndUpdateHash(
-        callback: ActionProduceCallback<State["markings"], State>
-    ) {
-        this.setMarkingsHash(() => crypto.randomUUID());
-        this.setMarkings(callback);
+        // Set new state hash
+        this.state.set(draft => {
+            draft.markingsHash = crypto.randomUUID();
+        });
     }
 
     private setTemporaryMarking(
@@ -150,16 +69,51 @@ class StoreClass {
         });
     }
 
-    private setSelectedMarking(
-        callback: ActionProduceCallback<State["selectedMarking"], State>
+    private setSelectedMarkingLabel(
+        callback: ActionProduceCallback<State["selectedMarkingLabel"], State>
     ) {
         this.state.set(draft => {
-            draft.selectedMarking = callback(draft.selectedMarking, draft);
+            draft.selectedMarkingLabel = callback(
+                draft.selectedMarkingLabel,
+                draft
+            );
         });
     }
 
     readonly actions = {
         labelGenerator: {
+            getLabel: () => {
+                if (this.state.selectedMarkingLabel) {
+                    return this.state.selectedMarkingLabel;
+                }
+
+                // Last added marking was added to the opposite canvas and doesnt exist in this canvas yet
+                const { lastAddedMarking } = GlobalStateStore.state;
+                if (
+                    lastAddedMarking &&
+                    lastAddedMarking.canvasId !== this.id &&
+                    !this.state.markings.some(
+                        x => x.label === lastAddedMarking.marking.label
+                    )
+                ) {
+                    this.actions.labelGenerator.reset();
+                    return lastAddedMarking.marking.label;
+                }
+
+                // Markings collection for this view already contains a marking with the highest generated id
+                if (
+                    this.state.markings.some(
+                        x => x.label === this.labelGenerator.getCurrentId()
+                    )
+                ) {
+                    // Generate id for the marking
+                    return this.labelGenerator.generateId();
+                }
+
+                // Default safety case
+                return this.labelGenerator.getCurrentId();
+            },
+            getMaxLabel: () => this.labelGenerator.getCurrentId(),
             reset: () => {
                 this.labelGenerator = new IDGenerator();
 
@@ -171,128 +125,67 @@ class StoreClass {
 
                 const maxLabel =
                     arrayMax([...oppositeCanvasLabels, ...thisCanvasLabels]) ??
-                    0;
+                    IDGenerator.initialValue;
 
                 this.labelGenerator.setId(maxLabel);
             },
         },
         markings: {
             reset: () => {
-                this.state.markings.forEach(marking => {
-                    Store(
-                        getOppositeCanvasId(this.id)
-                    ).actions.markings.unbindAllWithBoundMarkingId(marking.id);
-                });
                 this.setMarkingsAndUpdateHash(() => []);
             },
-            addOne: (marking: Marking) => {
-                const inferredMarking = this.getInferredMarking(
-                    this.id,
-                    marking
-                );
-                this.setMarkingsAndUpdateHash(
-                    produce(state => {
-                        state.push(inferredMarking);
-                    })
-                );
-                return inferredMarking;
-            },
-            addMany: (markings: Marking[]) => {
-                this.setMarkingsAndUpdateHash(
-                    produce(state => {
-                        state.push(
-                            ...markings.map(m =>
-                                this.getInferredMarking(this.id, m)
-                            )
-                        );
-                    })
-                );
-            },
-            removeOneById: (id: string) => {
-                this.setMarkingsAndUpdateHash(markings => {
-                    return markings.filter(marking => marking.id !== id);
-                });
-                if (
-                    this.state.selectedMarking !== null &&
-                    isInternalMarking(this.state.selectedMarking) &&
-                    this.state.selectedMarking.id === id
-                ) {
-                    this.setSelectedMarking(() => null);
-                }
-            },
-            removeManyById: (ids: string[]) => {
-                this.setMarkingsAndUpdateHash(markings =>
-                    markings.filter(marking => !ids.includes(marking.id))
-                );
-            },
-            editOneById: (id: string, newMarking: Partial<Marking>) => {
-                this.setMarkingsAndUpdateHash(markings => {
-                    return markings.map(marking => {
-                        if (marking.id === id) {
-                            return { ...marking, ...newMarking };
-                        }
-                        return marking;
+            addOne: (marking: MarkingBase) => {
+                if (this.state.markings.find(m => m.label === marking.label)) {
+                    this.setMarkingsAndUpdateHash(markings => {
+                        return markings.filter(m => m.label !== marking.label);
                     });
-                });
-            },
-            bindOneById: (id: string, boundMarkingId: string) => {
-                this.setMarkingsAndUpdateHash(markings =>
-                    markings.map(m =>
-                        m.id === id ? { ...m, boundMarkingId } : m
-                    )
+                }
+
+                this.setMarkingsAndUpdateHash(
+                    produce(state => {
+                        state.push(marking);
+                    })
                 );
+                this.setSelectedMarkingLabel(() => null);
+                return marking;
             },
-            unbindOneById: (id: string) => {
+            addMany: (markings: MarkingBase[]) =>
+                this.setMarkingsAndUpdateHash(
+                    produce(state => {
+                        state.push(...markings);
+                    })
+                ),
+            removeOneByLabel: (label: MarkingBase["label"]) => {
+                if (this.state.selectedMarkingLabel === label) {
+                    this.setSelectedMarkingLabel(() => null);
+                }
+
                 this.setMarkingsAndUpdateHash(markings =>
-                    markings.map(m =>
-                        m.id === id ? { ...m, boundMarkingId: undefined } : m
-                    )
+                    markings.filter(marking => marking.label !== label)
                 );
-            },
-            unbindAllWithBoundMarkingId: (boundMarkingId: string) => {
-                this.setMarkingsAndUpdateHash(markings =>
-                    markings.map(m =>
-                        m.boundMarkingId === boundMarkingId
-                            ? { ...m, boundMarkingId: undefined }
-                            : m
-                    )
+
+                GlobalStateStore.actions.lastAddedMarking.setLastAddedMarking(
+                    null
                 );
             },
         },
         temporaryMarking: {
-            setTemporaryMarking: (
-                marking: Marking | null,
-                label?: InternalMarking["label"],
-                id?: InternalMarking["id"]
-            ) => {
-                if (marking === null) {
-                    this.setTemporaryMarking(() => null);
-                    return;
-                }
-                this.setTemporaryMarking(() => ({
-                    id: id ?? "\0",
-                    label: label ?? -1,
-                    ...marking,
-                }));
-            },
-            updateTemporaryMarking: (props: Partial<Marking>) => {
+            setTemporaryMarking: (marking: MarkingBase | null) =>
+                this.setTemporaryMarking(produce(() => marking)),
+            updateTemporaryMarking: (
+                props: Partial<PointMarking | RayMarking>
+            ) =>
                 this.setTemporaryMarking(
-                    produce(state => {
-                        if (state !== null) {
-                            Object.assign(state, props);
+                    produce(marking => {
+                        if (marking !== null) {
+                            Object.assign(marking, props);
                         }
                     })
-                );
-            },
+                ),
         },
-        selectedMarking: {
-            setSelectedMarking: (marking: EmptyableMarking | null) => {
-                if (marking === null) {
-                    this.setSelectedMarking(() => null);
-                    return;
-                }
-                this.setSelectedMarking(() => marking);
-            },
+        selectedMarkingLabel: {
+            setSelectedMarkingLabel: (label: MarkingBase["label"] | null) =>
+                this.setSelectedMarkingLabel(() => label),
         },
     };
 }
@@ -310,8 +203,6 @@ export const Store = (id: CanvasMetadata["id"]) => {
             throw new Error(id satisfies never);
     }
 };
-
-// funkcja która nadaje id, label oraz id powiązanego markinga dla nowego markingu
 
 export { Store as MarkingsStore };
 export { StoreClass as MarkingsStoreClass };
