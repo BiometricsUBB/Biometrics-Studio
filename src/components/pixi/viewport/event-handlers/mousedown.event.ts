@@ -8,11 +8,7 @@ import { getAngle } from "@/lib/utils/math/getAngle";
 import { MARKING_TYPE } from "@/lib/markings/MarkingBase";
 import { PointMarking } from "@/lib/markings/PointMarking";
 import { RayMarking } from "@/lib/markings/RayMarking";
-import {
-    ViewportHandlerParams,
-    getNormalizedMousePosition,
-    addMarkingToStore,
-} from "./utils";
+import { ViewportHandlerParams, getNormalizedMousePosition } from "./utils";
 
 type HandlerParams = {
     e: FederatedPointerEvent;
@@ -49,18 +45,17 @@ function handlePointMarking({ e, interrupt, params }: HandlerParams) {
     onMouseUp = () => {
         viewport.removeEventListener("mousemove", onMouseMove);
 
-        const { temporaryMarking } = markingsStore.state;
-        if (temporaryMarking) {
-            addMarkingToStore(temporaryMarking, params);
+        markingsStore.actions.markings.addOne(
+            markingsStore.state.temporaryMarking as PointMarking
+        );
 
-            document.dispatchEvent(
-                new Event(CUSTOM_GLOBAL_EVENTS.INTERRUPT_MARKING)
-            );
-            document.removeEventListener(
-                CUSTOM_GLOBAL_EVENTS.INTERRUPT_MARKING,
-                interrupt
-            );
-        }
+        document.dispatchEvent(
+            new Event(CUSTOM_GLOBAL_EVENTS.INTERRUPT_MARKING)
+        );
+        document.removeEventListener(
+            CUSTOM_GLOBAL_EVENTS.INTERRUPT_MARKING,
+            interrupt
+        );
     };
 
     viewport.addEventListener("mousemove", onMouseMove);
@@ -107,18 +102,17 @@ function handleRayMarking({ e, interrupt, params }: HandlerParams) {
         onMouseDown = () => {
             viewport.removeEventListener("mousemove", onMouseMove);
 
-            const { temporaryMarking } = markingsStore.state;
-            if (temporaryMarking) {
-                addMarkingToStore(temporaryMarking, params);
+            markingsStore.actions.markings.addOne(
+                markingsStore.state.temporaryMarking as RayMarking
+            );
 
-                document.dispatchEvent(
-                    new Event(CUSTOM_GLOBAL_EVENTS.INTERRUPT_MARKING)
-                );
-                document.removeEventListener(
-                    CUSTOM_GLOBAL_EVENTS.INTERRUPT_MARKING,
-                    interrupt
-                );
-            }
+            document.dispatchEvent(
+                new Event(CUSTOM_GLOBAL_EVENTS.INTERRUPT_MARKING)
+            );
+            document.removeEventListener(
+                CUSTOM_GLOBAL_EVENTS.INTERRUPT_MARKING,
+                interrupt
+            );
         };
 
         viewport.addEventListener("mousemove", onMouseMove);

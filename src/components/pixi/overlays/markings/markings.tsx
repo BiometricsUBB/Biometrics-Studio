@@ -56,7 +56,7 @@ export const Markings = memo(({ canvasId, markings }: MarkingsProps) => {
                 .filter(x =>
                     x.isVisible(
                         app.screen,
-                        viewport,
+                        { x: viewport.x, y: viewport.y },
                         viewportWidthRatio,
                         viewportHeightRatio
                     )
@@ -73,13 +73,14 @@ export const Markings = memo(({ canvasId, markings }: MarkingsProps) => {
                 });
         },
         [
+            app.screen,
+            viewport.x,
+            viewport.y,
+            viewportHeightRatio,
+            viewportWidthRatio,
             markings,
             selectedMarkingLabel,
             showMarkingLabels,
-            app.screen,
-            viewport,
-            viewportHeightRatio,
-            viewportWidthRatio,
         ]
     );
 

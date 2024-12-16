@@ -39,17 +39,10 @@ class StoreClass {
         return this.use.getState();
     }
 
-    private setMarkingsHash(
-        callback: ActionProduceCallback<State["markingsHash"], State>
-    ) {
-        this.state.set(draft => {
-            draft.markingsHash = callback(draft.markingsHash, draft);
-        });
-    }
-
-    private setMarkings(
+    private setMarkingsAndUpdateHash(
         callback: ActionProduceCallback<State["markings"], State>
     ) {
+        // Set markings
         this.state.set(draft => {
             const newMarkings = callback(draft.markings, draft);
             draft.markings = newMarkings;
@@ -61,13 +54,11 @@ class StoreClass {
                     canvasId: this.id,
                 });
         });
-    }
 
-    private setMarkingsAndUpdateHash(
-        callback: ActionProduceCallback<State["markings"], State>
-    ) {
-        this.setMarkingsHash(() => crypto.randomUUID());
-        this.setMarkings(callback);
+        // Set new state hash
+        this.state.set(draft => {
+            draft.markingsHash = crypto.randomUUID();
+        });
     }
 
     private setTemporaryMarking(
@@ -92,8 +83,7 @@ class StoreClass {
     readonly actions = {
         labelGenerator: {
             getLabel: () => {
-                // Selected an existing marking, the new marking replaces it with the same label
-                if (this.state.selectedMarkingLabel !== null) {
+                if (this.state.selectedMarkingLabel) {
                     return this.state.selectedMarkingLabel;
                 }
 
@@ -102,7 +92,7 @@ class StoreClass {
                 if (
                     lastAddedMarking &&
                     lastAddedMarking.canvasId !== this.id &&
-                    !this.state.markings.find(
+                    !this.state.markings.some(
                         x => x.label === lastAddedMarking.marking.label
                     )
                 ) {
@@ -112,9 +102,9 @@ class StoreClass {
 
                 // Markings collection for this view already contains a marking with the highest generated id
                 if (
-                    this.state.markings
-                        .map(x => x.label)
-                        .includes(this.labelGenerator.getCurrentId())
+                    this.state.markings.some(
+                        x => x.label === this.labelGenerator.getCurrentId()
+                    )
                 ) {
                     // Generate id for the marking
                     return this.labelGenerator.generateId();
@@ -177,13 +167,12 @@ class StoreClass {
                 this.setSelectedMarkingLabel(() => null);
                 return marking;
             },
-            addMany: (markings: MarkingBase[]) => {
+            addMany: (markings: MarkingBase[]) =>
                 this.setMarkingsAndUpdateHash(
                     produce(state => {
                         state.push(...markings);
                     })
-                );
-            },
+                ),
             removeOneByLabel: (label: MarkingBase["label"]) => {
                 if (this.state.selectedMarkingLabel === label) {
                     this.setSelectedMarkingLabel(() => null);
@@ -196,62 +185,56 @@ class StoreClass {
                     label
                 );
 
-                this.setMarkingsAndUpdateHash(markings => {
-                    return markings.filter(marking => marking.label !== label);
-                });
+                this.setMarkingsAndUpdateHash(markings =>
+                    markings.filter(marking => marking.label !== label)
+                );
 
                 GlobalStateStore.actions.lastAddedMarking.setLastAddedMarking(
                     null
                 );
             },
-            removeManyById: (ids: string[]) => {
+            removeManyById: (ids: string[]) =>
                 this.setMarkingsAndUpdateHash(markings =>
                     markings.filter(marking => !ids.includes(marking.id))
-                );
-            },
-            bindOneById: (id: string, boundMarkingId: string) => {
+                ),
+            bindOneById: (id: string, boundMarkingId: string) =>
                 this.setMarkingsAndUpdateHash(markings =>
                     markings.map(m =>
                         m.id === id ? m.bind(boundMarkingId) : m
                     )
-                );
-            },
-            unbindOneByLabel: (label: MarkingBase["label"]) => {
+                ),
+            unbindOneByLabel: (label: MarkingBase["label"]) =>
                 this.setMarkingsAndUpdateHash(markings =>
                     markings.map(m =>
                         m.label === label ? m.bind(undefined) : m
                     )
-                );
-            },
-            unbindAllWithBoundMarkingId: (boundMarkingId: string) => {
+                ),
+            unbindAllWithBoundMarkingId: (boundMarkingId: string) =>
                 this.setMarkingsAndUpdateHash(markings =>
                     markings.map(m =>
                         m.boundMarkingId === boundMarkingId
                             ? m.bind(undefined)
                             : m
                     )
-                );
-            },
+                ),
         },
         temporaryMarking: {
             setTemporaryMarking: (marking: MarkingBase | null) =>
-                this.setTemporaryMarking(() => marking),
+                this.setTemporaryMarking(produce(() => marking)),
             updateTemporaryMarking: (
                 props: Partial<PointMarking | RayMarking>
-            ) => {
+            ) =>
                 this.setTemporaryMarking(
-                    produce(state => {
-                        if (state !== null) {
-                            Object.assign(state, props);
+                    produce(marking => {
+                        if (marking !== null) {
+                            Object.assign(marking, props);
                         }
                     })
-                );
-            },
+                ),
         },
         selectedMarkingLabel: {
-            setSelectedMarkingLabel: (label: MarkingBase["label"] | null) => {
-                this.setSelectedMarkingLabel(() => label);
-            },
+            setSelectedMarkingLabel: (label: MarkingBase["label"] | null) =>
+                this.setSelectedMarkingLabel(() => label),
         },
     };
 }

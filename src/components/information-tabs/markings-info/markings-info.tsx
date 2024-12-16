@@ -12,29 +12,21 @@ import { hasDuplicates } from "@/lib/utils/array/hasDuplicates";
 import { EmptyableMarking, getColumns } from "./columns";
 import { DataTable } from "./data-table";
 
-function fillMissingLabels(
+const fillMissingLabels = (
     canvasId: CANVAS_ID,
     markings: EmptyableMarking[]
-): EmptyableMarking[] {
+): EmptyableMarking[] => {
     const maxLabel =
         MarkingsStore(canvasId).actions.labelGenerator.getMaxLabel();
-    if (maxLabel === undefined || maxLabel <= 1) return markings;
+    if (!maxLabel || maxLabel <= 1) return markings;
 
-    const fullLabels = Array.from({ length: maxLabel }, (_, i) => i + 1);
-
-    const labelSet = new Set(markings.map(marking => marking.label));
-    const missingLabels = fullLabels.filter(label => !labelSet.has(label));
-
-    const placeholders = missingLabels.map(
-        label =>
-            ({
-                boundMarkingId: undefined,
-                label,
-            }) as EmptyableMarking
+    const usedLabels = new Set(markings.map(m => m.label));
+    return Array.from({ length: maxLabel }, (_, i) =>
+        usedLabels.has(i + 1)
+            ? markings.find(m => m.label === i + 1)!
+            : { boundMarkingId: undefined, label: i + 1 }
     );
-
-    return [...markings, ...placeholders].sort((a, b) => a.label - b.label);
-}
+};
 
 export function MarkingsInfo({ tableHeight }: { tableHeight: number }) {
     const { id } = useCanvasContext();

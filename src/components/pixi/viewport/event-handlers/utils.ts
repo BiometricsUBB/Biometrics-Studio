@@ -7,10 +7,6 @@ import {
 import { Viewport as PixiViewport } from "pixi-viewport";
 import { FederatedPointerEvent } from "pixi.js";
 import { MarkingsStoreClass } from "@/lib/stores/Markings";
-import { DashboardToolbarStore } from "@/lib/stores/DashboardToolbar";
-import { MARKING_TYPE, MarkingBase } from "@/lib/markings/MarkingBase";
-import { PointMarking } from "@/lib/markings/PointMarking";
-import { RayMarking } from "@/lib/markings/RayMarking";
 import { getNormalizedPosition } from "../../overlays/utils/get-viewport-local-position";
 import { CanvasMetadata } from "../../canvas/hooks/useCanvasContext";
 
@@ -41,40 +37,4 @@ export function getNormalizedMousePosition(
         x: event.screenX,
         y: event.screenY,
     });
-}
-
-export function addMarkingToStore(
-    newMarking: MarkingBase,
-    params: ViewportHandlerParams
-) {
-    const { markingsStore } = params;
-    const { size, backgroundColor, textColor } =
-        DashboardToolbarStore.state.settings.marking;
-
-    if (newMarking.type === MARKING_TYPE.POINT) {
-        markingsStore.actions.markings.addOne(
-            new PointMarking(
-                newMarking.label,
-                newMarking.origin,
-                backgroundColor,
-                textColor,
-                size,
-                newMarking.boundMarkingId
-            )
-        );
-    } else if (newMarking.type === MARKING_TYPE.RAY) {
-        markingsStore.actions.markings.addOne(
-            new RayMarking(
-                newMarking.label,
-                newMarking.origin,
-                backgroundColor,
-                textColor,
-                size,
-                (newMarking as RayMarking).angleRad ?? 0,
-                newMarking.boundMarkingId
-            )
-        );
-    } else {
-        throw new Error("Unknown marking type");
-    }
 }

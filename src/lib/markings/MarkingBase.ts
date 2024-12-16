@@ -1,5 +1,4 @@
 import { ColorSource, Rectangle } from "pixi.js";
-import { Viewport } from "pixi-viewport";
 import { immerable, produce } from "immer";
 import {
     GlobalSettingsStore,
@@ -44,7 +43,7 @@ export abstract class MarkingBase {
         this.boundMarkingId = boundMarkingId;
     }
 
-    protected PRERENDER_MARGIN = (() => {
+    protected getPrerenderMargin() {
         enum PRERENDER_RADIUS_VALUES {
             NONE = 0,
             LOW = 200,
@@ -82,35 +81,43 @@ export abstract class MarkingBase {
             default:
                 return PRERENDER_RADIUS_VALUES.HIGH;
         }
-    })();
+    }
 
     public isVisible(
         screen: Rectangle,
-        viewport: Viewport,
+        viewportPosition: Point,
         viewportWidthRatio: number,
         viewportHeightRatio: number
     ): boolean {
-        const { x, y } = this.getRelativeOrigin(
+        const { x, y } = this.calculateViewportPosition(
             viewportWidthRatio,
             viewportHeightRatio
         );
-        if (x + viewport.x < screen.left - this.PRERENDER_MARGIN) return false;
-        if (y + viewport.y < screen.top - this.PRERENDER_MARGIN) return false;
-        if (x + viewport.x > screen.right + this.PRERENDER_MARGIN) return false;
-        return !(y + viewport.y > screen.bottom + this.PRERENDER_MARGIN);
+        if (x + viewportPosition.x < screen.left - this.getPrerenderMargin())
+            return false;
+        if (y + viewportPosition.y < screen.top - this.getPrerenderMargin())
+            return false;
+        if (x + viewportPosition.x > screen.right + this.getPrerenderMargin())
+            return false;
+        return !(
+            y + viewportPosition.y >
+            screen.bottom + this.getPrerenderMargin()
+        );
     }
 
-    public getRelativeOrigin = (
+    public calculateViewportPosition(
         viewportWidthRatio: number,
         viewportHeightRatio: number
-    ): Point => ({
-        x: this.origin.x * viewportWidthRatio,
-        y: this.origin.y * viewportHeightRatio,
-    });
+    ): Point {
+        return {
+            x: this.origin.x * viewportWidthRatio,
+            y: this.origin.y * viewportHeightRatio,
+        };
+    }
 
-    public bind = (markingId: string | undefined): this => {
-        return produce(this, draft => {
+    public bind(markingId: string | undefined): this {
+        return produce<this>(this, draft => {
             draft.boundMarkingId = markingId;
         });
-    };
+    }
 }

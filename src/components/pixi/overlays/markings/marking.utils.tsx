@@ -1,7 +1,7 @@
 import { ColorSource, Graphics as PixiGraphics } from "pixi.js";
 import { RayMarking } from "@/lib/markings/RayMarking";
 import { PointMarking } from "@/lib/markings/PointMarking";
-import { MARKING_TYPE, MarkingBase, Point } from "@/lib/markings/MarkingBase";
+import { MarkingBase, Point } from "@/lib/markings/MarkingBase";
 import { BitmapText } from "@pixi/text-bitmap";
 
 export const getFontName = (fontSize: number) => {
@@ -131,24 +131,25 @@ export const drawMarking = (
     viewportHeightRatio: number,
     showMarkingLabels?: boolean
 ) => {
-    const relativeOrigin = marking.getRelativeOrigin(
+    // Calculate the viewport position of the marking, based on zoom level
+    const markingViewportPosition = marking.calculateViewportPosition(
         viewportWidthRatio,
         viewportHeightRatio
     );
-    if (marking.type === MARKING_TYPE.POINT) {
+    if (marking instanceof PointMarking) {
         drawPointMarking(
             g,
             isSelected,
-            marking as PointMarking,
-            relativeOrigin,
+            marking,
+            markingViewportPosition,
             showMarkingLabels
         );
-    } else if (marking.type === MARKING_TYPE.RAY) {
+    } else if (marking instanceof RayMarking) {
         drawRayMarking(
             g,
             isSelected,
-            marking as RayMarking,
-            relativeOrigin,
+            marking,
+            markingViewportPosition,
             showMarkingLabels
         );
     } else {
