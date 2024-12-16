@@ -41,6 +41,10 @@ export const useKeyboardShortcuts = () => {
     }, ["2"]);
 
     useKeyDown(() => {
+        setMarkingType(MARKING_TYPE.LINE_SEGMENT);
+    }, ["3"]);
+
+    useKeyDown(() => {
         toggleLockedViewport();
     }, ["l"]);
 

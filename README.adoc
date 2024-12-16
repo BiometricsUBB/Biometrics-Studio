@@ -49,3 +49,4 @@ Example of adding https://github.com/BiometricsUBB/Biometrics-Studio/pull/13/com
 
 . Adjust Load Markings from File Logic in `loadMarkingsDataWithDialog.ts`
 .. Add a case and properties to the `inferMarking` function.
+. Add shortcut to `useKeyboardShortcuts.tsx`. (optional)
