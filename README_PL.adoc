@@ -1,0 +1,68 @@
+# Studio Biometryczne
+
+https://github.com/BiometricsUBB/Biometrics-Studio/blob/master-install-scripts/README.adoc[ENGLISH] / https://github.com/BiometricsUBB/Biometrics-Studio/blob/master-install-scripts/README_PL.adoc[POLSKI]
+
+Aplikacja do porównywania śladów kryminalistycznych
+
+image::./docs/biometrics-studio.png[]
+
+## Instalacja w systemie Windows
+
+Masz trzy opcje instalacji aplikacji w systemie Windows:
+
+1. (najprostsze) Pobierz instalator ze strony wydań i uruchom go w swoim systemie. Instalator pobierze wszystkie niezbędne zależności i zainstaluje aplikację na Twoim komputerze. Następnie możesz uruchomić aplikację, otwierając skrót `biometrics-studio` na pulpicie.
+
+2. (średnia trudność) Postępuj zgodnie z sekcją https://github.com/BiometricsUBB/Biometrics-Studio/blob/master-install-scripts/README_PL.adoc#rozw%C3%B3j[#Rozwój] poniżej, aby zainstalować aplikację na swoim systemie.
+
+3. (jeśli planujesz debugowanie lub późniejszy rozwój aplikacji) Sklonuj lub pobierz repozytorium i uruchom skrypt instalacyjny z poziomu wiersza poleceń (upewnij się, że jesteś w głównym katalogu projektu):
+```
+powershell -ExecutionPolicy Bypass -File .\install.ps1
+```
+UWAGA: Powyższe polecenie zainstaluje zależności w Twoim systemie. Następnie możesz uruchomić aplikację, otwierając plik `.\start.bat`.
+
+## Rozwój
+
+### Wymagania wstępne
+
+Najpierw musisz mieć zainstalowanego https://tauri.app/start/prerequisites/[Tauri] (wersja 2 w momencie pisania)
+
+Następnie uruchom poniższe polecenia, aby uruchomić aplikację:
+
+```
+pnpm i
+pnpm tauri dev
+```
+
+### Dodawanie Nowych Typów Oznaczeń (Aktualne na: 2024-12-16)
+Przykład dodania https://github.com/BiometricsUBB/Biometrics-Studio/pull/13/commits/a3fcc39ca85326d0b83e4f7265f80f759e98e359[Typu Oznaczenia Odcinka Liniowego]
+
+1. Stwórz Nowy Typ
+- Dodaj nowy typ oznaczenia do wyliczenia `MarkingType` w `MarkingBase`.
+- Dodaj nową klasę rozszerzającą `MarkingBase`:
+- Przypisz zmienną `type`.
+- Nadpisz niezbędne metody, szczególnie `isVisible`.
+- Dodaj nowy typ do właściwości parametrów metody `updateTemporaryMarking` w `Markings.ts` dla odpowiedniego aktualizowania.
+
+2. Dodaj Tłumaczenia
+- Dodaj nowy typ do listy kluczy w `translation.ts`.
+- Wyłącz funkcje z tłumaczenia, dodając wyłączenie dla ich nazw.
+- Dodaj tłumaczenia w `locales/lang/object.ts`.
+
+3. Stwórz Logikę Rysowania
+- W `marking.utils.tsx` dodaj przypadek dla nowego typu i zaimplementuj logikę rysowania.
+- Jeśli logika używa pozycjonowania absolutnego, oblicz jego `viewportPosition`, aby zapewnić poprawne działanie przy zoomowaniu (na podstawie `MarkingBase.calculateOriginViewportPosition`).
+
+4. Stwórz Obsługę Zdarzeń Myszy
+- W `mousedown.event.ts` dodaj przypadek dla nowego typu i zaimplementuj logikę.
+
+5. Dodaj Przycisk Trybu Kursora na Pasku Narzędzi
+- W `toolbar.tsx` dodaj `ToggleGroupItem` dla nowego typu.
+- Przeglądaj ikony na https://lucide.dev/icons/[LucideIcons].
+
+6. Dostosuj Logikę Zapisywania Oznaczeń do Pliku w `saveMarkingsDataWithDialog.ts`
+- Dodaj właściwości do `ExportObject.Data.Markings`. Właściwości specyficzne dla typu oznaczenia powinny być nullable.
+- Dodaj nowe właściwości do funkcji `getReducedMarkings`.
+
+7. Dostosuj Logikę Ładowania Oznaczeń z Pliku w `loadMarkingsDataWithDialog.ts`
+- Dodaj przypadek i właściwości do funkcji `inferMarking`.
+8. Dodaj skrót w `useKeyboardShortcuts.tsx`. (opcjonalne)
