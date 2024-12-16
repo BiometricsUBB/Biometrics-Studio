@@ -3,16 +3,20 @@ import {
     CanvasMetadata,
 } from "@/components/pixi/canvas/hooks/useCanvasContext";
 import { showErrorDialog } from "@/lib/errors/showErrorDialog";
-import { Marking, MarkingsStore } from "@/lib/stores/Markings";
+import { MarkingsStore } from "@/lib/stores/Markings";
 import { getVersion } from "@tauri-apps/api/app";
 import {
-    open as openFileSelectionDialog,
     confirm as confirmFileSelectionDialog,
+    open as openFileSelectionDialog,
 } from "@tauri-apps/plugin-dialog";
 import { t } from "i18next";
 import { Viewport } from "pixi-viewport";
 import { getOppositeCanvasId } from "@/components/pixi/canvas/utils/get-opposite-canvas-id";
 import { readTextFile } from "@tauri-apps/plugin-fs";
+import { MARKING_TYPE, MarkingBase } from "@/lib/markings/MarkingBase";
+import { RayMarking } from "@/lib/markings/RayMarking";
+import { PointMarking } from "@/lib/markings/PointMarking";
+import { LineSegmentMarking } from "@/lib/markings/LineSegmentMarking";
 import { ExportObject } from "./saveMarkingsDataWithDialog";
 
 function validateFileData(_data: unknown): _data is ExportObject {
@@ -28,30 +32,53 @@ function validateFileData(_data: unknown): _data is ExportObject {
 }
 
 function inferMarking(
-    marking: ExportObject["data"]["markings"][0],
+    {
+        typeId,
+        label,
+        origin,
+        angleRad,
+        endpoint,
+    }: ExportObject["data"]["markings"][0],
     markingStyleTypes: ExportObject["data"]["marking_types"]
-): Marking {
+): MarkingBase {
     const {
         background_color: backgroundColor,
         size,
         text_color: textColor,
         type,
-    } = markingStyleTypes.find(t => t.typeId === marking.typeId)!;
+    } = markingStyleTypes.find(t => t.typeId === typeId)!;
 
-    const { typeId, angleRad, ...props } = marking;
+    if (type === MARKING_TYPE.RAY) {
+        return new RayMarking(
+            label,
+            origin,
+            backgroundColor,
+            textColor,
+            size,
+            angleRad!
+        );
+    }
+    if (type === MARKING_TYPE.POINT) {
+        return new PointMarking(
+            label,
+            origin,
+            backgroundColor,
+            textColor,
+            size
+        );
+    }
+    if (type === MARKING_TYPE.LINE_SEGMENT) {
+        return new LineSegmentMarking(
+            label,
+            origin,
+            backgroundColor,
+            textColor,
+            size,
+            endpoint!
+        );
+    }
 
-    // eslint-disable-next-line no-void
-    void { typeId };
-
-    return {
-        backgroundColor,
-        textColor,
-        size,
-        type,
-        hidden: false,
-        angleRad: angleRad ?? null,
-        ...props,
-    };
+    throw new Error(`Unknown marking type: ${type}`);
 }
 
 export async function loadMarkingsData(filePath: string, canvasId: CANVAS_ID) {
@@ -89,7 +116,7 @@ export async function loadMarkingsData(filePath: string, canvasId: CANVAS_ID) {
         if (!confirmed) return;
     }
 
-    const markings: Marking[] = fileContentJson.data.markings.map(marking =>
+    const markings: MarkingBase[] = fileContentJson.data.markings.map(marking =>
         inferMarking(marking, fileContentJson.data.marking_types)
     );
 
@@ -108,7 +135,6 @@ export async function loadMarkingsDataWithDialog(viewport: Viewport) {
             filters: [
                 {
                     name: "Markings data file",
-                    // TODO: add .xyt
                     extensions: ["json"],
                 },
             ],

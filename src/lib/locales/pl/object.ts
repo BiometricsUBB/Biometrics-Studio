@@ -5,12 +5,11 @@ const d: Dictionary = {
         Name: "Adnotacja",
         Keys: {
             id: "ID",
-            hidden: "Ukryty",
             label: "Znacznik",
             angleRad: "Kąt",
             backgroundColor: "Kolor tła",
-            boundMarkingId: "ID powiązanej adnotacji",
-            position: "Pozycja",
+            origin: "Źródło",
+            endpoint: "Koniec",
             size: "Rozmiar",
             textColor: "Kolor tekstu",
             type: {
@@ -18,6 +17,7 @@ const d: Dictionary = {
                 Keys: {
                     point: "Punkt",
                     ray: "Linia skierowana",
+                    line_segment: "Odcinek",
                 },
             },
         },

@@ -2,36 +2,22 @@ import { CellContext, ColumnDef } from "@tanstack/react-table";
 import { t } from "i18next";
 import { ICON, IS_DEV_ENVIRONMENT } from "@/lib/utils/const";
 import { GlobalStateStore } from "@/lib/stores/GlobalState";
-import { Link, Trash2 } from "lucide-react";
+import { Trash2 } from "lucide-react";
 import { Toggle } from "@/components/ui/toggle";
 import { CanvasMetadata } from "@/components/pixi/canvas/hooks/useCanvasContext";
-import { getOppositeCanvasId } from "@/components/pixi/canvas/utils/get-opposite-canvas-id";
 // eslint-disable-next-line import/no-cycle
-import { InternalMarking, MarkingsStore } from "@/lib/stores/Markings";
+import { MarkingsStore } from "@/lib/stores/Markings";
+import { MarkingBase } from "@/lib/markings/MarkingBase";
 
-export type ExtendedMarking = InternalMarking & {
-    x: number;
-    y: number;
+export type EmptyMarking = {
+    label: MarkingBase["label"];
 };
-
-export type EmptyBoundMarking = {
-    boundMarkingId: NonNullable<InternalMarking["boundMarkingId"]>;
-    label: InternalMarking["label"];
-};
-export type EmptyableMarking = InternalMarking | EmptyBoundMarking;
+export type EmptyableMarking = MarkingBase | EmptyMarking;
 type EmptyableCellContext = CellContext<EmptyableMarking, unknown>;
-type DataCellContext = CellContext<InternalMarking, unknown>;
+type DataCellContext = CellContext<MarkingBase, unknown>;
 
-export function isInternalMarking(
-    cell: EmptyableMarking
-): cell is InternalMarking {
+export function isMarkingBase(cell: EmptyableMarking): cell is MarkingBase {
     return "id" in cell;
-}
-
-export function isEmptyBoundMarking(
-    cell: EmptyableMarking
-): cell is EmptyBoundMarking {
-    return !isInternalMarking(cell) && "boundMarkingId" in cell;
 }
 
 const formatCell = <T,>(
@@ -41,15 +27,11 @@ const formatCell = <T,>(
 ) => {
     const row = context.row.original;
 
-    if (isInternalMarking(row)) {
+    if (isMarkingBase(row)) {
         return callback(context as DataCellContext);
     }
 
-    if (isEmptyBoundMarking(row)) {
-        if (context.column.id === "boundMarkingId")
-            return row.boundMarkingId.slice(0, 8);
-        if (context.column.id === "label") return row.label;
-    }
+    if (context.column.id === "label") return row.label;
 
     if (lastRowEmptyValue === "") return lastRowEmptyValue;
 
@@ -60,7 +42,6 @@ const formatCell = <T,>(
 export const getColumns = (
     id: CanvasMetadata["id"]
 ): Array<ColumnDef<EmptyableMarking>> => {
-    const oppositeId = getOppositeCanvasId(id);
     return [
         {
             id: "actions",
@@ -72,22 +53,17 @@ export const getColumns = (
                         e.stopPropagation();
                     }}
                 >
-                    {isInternalMarking(marking) && marking.id && (
+                    {isMarkingBase(marking) && marking.id && (
                         <Toggle
                             size="sm-icon"
                             variant="outline"
                             pressed={false}
                             onClickCapture={() => {
-                                if (marking.boundMarkingId) {
-                                    MarkingsStore(
-                                        oppositeId
-                                    ).actions.markings.unbindOneById(
-                                        marking.boundMarkingId
-                                    );
-                                }
                                 MarkingsStore(
                                     id
-                                ).actions.markings.removeOneById(marking.id);
+                                ).actions.markings.removeOneByLabel(
+                                    marking.label
+                                );
                             }}
                         >
                             <Trash2
@@ -110,9 +86,9 @@ export const getColumns = (
                               cell,
                               ({ row }) =>
                                   row.original.id.slice(0, 8) +
-                                  (isInternalMarking(row.original) &&
+                                  (isMarkingBase(row.original) &&
                                   GlobalStateStore.state.lastAddedMarking
-                                      ?.id === row.original.id
+                                      ?.marking.id === row.original.id
                                       ? " (last) "
                                       : "")
                           ),
@@ -137,33 +113,9 @@ export const getColumns = (
                 formatCell(cell, ({ row: { original: marking } }) => (
                     <div className="flex flex-row gap-1">
                         <div>{marking.label}</div>
-                        <div className="size-5 inline-flex items-center justify-center">
-                            {isInternalMarking(marking) &&
-                                marking.boundMarkingId && (
-                                    <Link
-                                        size={ICON.SIZE}
-                                        strokeWidth={ICON.STROKE_WIDTH}
-                                    />
-                                )}
-                        </div>
                     </div>
                 )),
         },
-        // Powiązane ID będzie pokazane tylko podczas developmentu
-        ...(IS_DEV_ENVIRONMENT
-            ? ([
-                  {
-                      accessorKey: "boundMarkingId",
-                      header: t("Marking.Keys.boundMarkingId", {
-                          ns: "object",
-                      }),
-                      cell: cell =>
-                          formatCell(cell, ({ row }) =>
-                              row.original.boundMarkingId?.slice(0, 8)
-                          ),
-                  },
-              ] as Array<ColumnDef<EmptyableMarking>>)
-            : []),
         {
             accessorKey: "type",
             header: t("Marking.Keys.type.Name", { ns: "object" }),
