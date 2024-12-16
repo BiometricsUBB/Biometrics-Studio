@@ -8,6 +8,7 @@ import { getAngle } from "@/lib/utils/math/getAngle";
 import { MARKING_TYPE } from "@/lib/markings/MarkingBase";
 import { PointMarking } from "@/lib/markings/PointMarking";
 import { RayMarking } from "@/lib/markings/RayMarking";
+import { LineSegmentMarking } from "@/lib/markings/LineSegmentMarking";
 import { ViewportHandlerParams, getNormalizedMousePosition } from "./utils";
 
 type HandlerParams = {
@@ -125,6 +126,66 @@ function handleRayMarking({ e, interrupt, params }: HandlerParams) {
     viewport.addEventListener("mouseup", onMouseUp, { once: true });
 }
 
+function handleLineSegmentMarking({ e, interrupt, params }: HandlerParams) {
+    const { viewport, markingsStore, cachedViewportStore } = params;
+    const { size, backgroundColor, textColor } =
+        DashboardToolbarStore.state.settings.marking;
+
+    markingsStore.actions.temporaryMarking.setTemporaryMarking(
+        new LineSegmentMarking(
+            markingsStore.actions.labelGenerator.getLabel(),
+            getNormalizedMousePosition(e, viewport),
+            backgroundColor,
+            textColor,
+            size,
+            getNormalizedMousePosition(e, viewport)
+        )
+    );
+
+    onMouseMove = (e: FederatedPointerEvent) => {
+        markingsStore.actions.temporaryMarking.updateTemporaryMarking({
+            origin: getNormalizedMousePosition(e, viewport),
+        });
+    };
+
+    onMouseUp = () => {
+        viewport.removeEventListener("mousemove", onMouseMove);
+        cachedViewportStore.actions.viewport.setRayPosition(
+            getNormalizedMousePosition(e, viewport)
+        );
+
+        onMouseMove = (e: FederatedPointerEvent) => {
+            markingsStore.actions.temporaryMarking.updateTemporaryMarking({
+                endpoint: getNormalizedMousePosition(e, viewport),
+            });
+        };
+
+        onMouseDown = () => {
+            viewport.removeEventListener("mousemove", onMouseMove);
+
+            markingsStore.actions.markings.addOne(
+                markingsStore.state.temporaryMarking as LineSegmentMarking
+            );
+
+            document.dispatchEvent(
+                new Event(CUSTOM_GLOBAL_EVENTS.INTERRUPT_MARKING)
+            );
+            document.removeEventListener(
+                CUSTOM_GLOBAL_EVENTS.INTERRUPT_MARKING,
+                interrupt
+            );
+        };
+
+        viewport.addEventListener("mousemove", onMouseMove);
+        viewport.addEventListener("mousedown", onMouseDown, {
+            once: true,
+        });
+    };
+
+    viewport.addEventListener("mousemove", onMouseMove);
+    viewport.addEventListener("mouseup", onMouseUp, { once: true });
+}
+
 export const handleMouseDown = (
     e: FederatedPointerEvent,
     params: ViewportHandlerParams
@@ -166,6 +227,12 @@ export const handleMouseDown = (
                 handleRayMarking(args);
                 break;
             }
+
+            case MARKING_TYPE.LINE_SEGMENT: {
+                handleLineSegmentMarking(args);
+                break;
+            }
+
             default:
                 throw new Error(markingType satisfies never);
         }

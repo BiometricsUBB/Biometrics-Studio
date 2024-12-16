@@ -13,6 +13,7 @@ import { CANVAS_ID } from "@/components/pixi/canvas/hooks/useCanvasContext";
 export const enum MARKING_TYPE {
     POINT = "point",
     RAY = "ray",
+    LINE_SEGMENT = "line_segment",
 }
 
 export interface Point {
@@ -87,7 +88,7 @@ export abstract class MarkingBase {
         viewportWidthRatio: number,
         viewportHeightRatio: number
     ): boolean {
-        const { x, y } = this.calculateViewportPosition(
+        const { x, y } = this.calculateOriginViewportPosition(
             viewportWidthRatio,
             viewportHeightRatio
         );
@@ -103,7 +104,7 @@ export abstract class MarkingBase {
         );
     }
 
-    public calculateViewportPosition(
+    public calculateOriginViewportPosition(
         viewportWidthRatio: number,
         viewportHeightRatio: number
     ): Point {

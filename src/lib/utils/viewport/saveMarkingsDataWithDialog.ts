@@ -12,9 +12,10 @@ import { BaseTexture, Sprite } from "pixi.js";
 import { getOppositeCanvasId } from "@/components/pixi/canvas/utils/get-opposite-canvas-id";
 import { getCanvas } from "@/components/pixi/canvas/hooks/useCanvas";
 import { basename } from "@tauri-apps/api/path";
-import { MARKING_TYPE, MarkingBase, Point } from "@/lib/markings/MarkingBase";
+import { MARKING_TYPE, MarkingBase } from "@/lib/markings/MarkingBase";
 import { RayMarking } from "@/lib/markings/RayMarking";
 import { round } from "@/lib/utils/math/round";
+import { LineSegmentMarking } from "@/lib/markings/LineSegmentMarking";
 
 type ImageInfo = {
     name: string | null;
@@ -50,10 +51,11 @@ export type ExportObject = {
         markings: ({
             typeId: MarkingStyleType["typeId"];
         } & {
-            angleRad?: number;
             typeId: number;
-            label: number;
-            origin: Point;
+            angleRad?: RayMarking["angleRad"];
+            endpoint?: LineSegmentMarking["endpoint"];
+            label: MarkingBase["label"];
+            origin: MarkingBase["origin"];
         })[];
     };
 };
@@ -116,10 +118,11 @@ function getReducedMarkings(
     markings: MarkingBase[],
     styleTypes: MarkingStyleType[]
 ): {
-    angleRad?: number;
-    typeId: number;
-    label: number;
-    origin: Point;
+    typeId: MarkingStyleType["typeId"];
+    label: MarkingBase["label"];
+    origin: MarkingBase["origin"];
+    endpoint?: LineSegmentMarking["endpoint"];
+    angleRad?: RayMarking["angleRad"];
 }[] {
     return markings.map(marking => {
         const { backgroundColor, textColor, size, type } = marking;
@@ -148,6 +151,9 @@ function getReducedMarkings(
             },
             ...(marking.type === MARKING_TYPE.RAY && {
                 angleRad: (marking as RayMarking).angleRad,
+            }),
+            ...(marking.type === MARKING_TYPE.LINE_SEGMENT && {
+                endpoint: (marking as LineSegmentMarking).endpoint,
             }),
         };
     });

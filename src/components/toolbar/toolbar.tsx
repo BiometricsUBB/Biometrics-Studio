@@ -15,6 +15,7 @@ import {
     LockKeyholeOpen,
     MousePointer,
     SendToBack,
+    Spline,
 } from "lucide-react";
 import { ICON } from "@/lib/utils/const";
 import { MARKING_TYPE } from "@/lib/markings/MarkingBase";
@@ -119,6 +120,18 @@ export function GlobalToolbar({ className, ...props }: GlobalToolbarProps) {
                         }}
                     >
                         <DraftingCompass
+                            size={ICON.SIZE}
+                            strokeWidth={ICON.STROKE_WIDTH}
+                        />
+                    </ToggleGroupItem>
+                    <ToggleGroupItem
+                        value={MARKING_TYPE.LINE_SEGMENT}
+                        title={`${t("Marking.Keys.type.Keys.line_segment", { ns: "object" })} (3)`}
+                        onClick={() => {
+                            setMarkingType(MARKING_TYPE.LINE_SEGMENT);
+                        }}
+                    >
+                        <Spline
                             size={ICON.SIZE}
                             strokeWidth={ICON.STROKE_WIDTH}
                         />

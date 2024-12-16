@@ -16,6 +16,7 @@ import { readTextFile } from "@tauri-apps/plugin-fs";
 import { MARKING_TYPE, MarkingBase } from "@/lib/markings/MarkingBase";
 import { RayMarking } from "@/lib/markings/RayMarking";
 import { PointMarking } from "@/lib/markings/PointMarking";
+import { LineSegmentMarking } from "@/lib/markings/LineSegmentMarking";
 import { ExportObject } from "./saveMarkingsDataWithDialog";
 
 function validateFileData(_data: unknown): _data is ExportObject {
@@ -31,7 +32,13 @@ function validateFileData(_data: unknown): _data is ExportObject {
 }
 
 function inferMarking(
-    { typeId, label, origin, angleRad }: ExportObject["data"]["markings"][0],
+    {
+        typeId,
+        label,
+        origin,
+        angleRad,
+        endpoint,
+    }: ExportObject["data"]["markings"][0],
     markingStyleTypes: ExportObject["data"]["marking_types"]
 ): MarkingBase {
     const {
@@ -58,6 +65,16 @@ function inferMarking(
             backgroundColor,
             textColor,
             size
+        );
+    }
+    if (type === MARKING_TYPE.LINE_SEGMENT) {
+        return new LineSegmentMarking(
+            label,
+            origin,
+            backgroundColor,
+            textColor,
+            size,
+            endpoint!
         );
     }
 
