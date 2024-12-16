@@ -7,6 +7,9 @@ import { PRERENDER_RADIUS_OPTIONS, THEMES } from "../stores/GlobalSettings";
 type Recordify<T> = { [K in Extract<T, string> as `${K}`]: string };
 
 export type i18nKeywords = Recordify<
+    | "Biometrics Studio"
+    | "Please select your working mode"
+    | "Working mode"
     | "Homepage"
     | "Settings"
     | "Interface"
