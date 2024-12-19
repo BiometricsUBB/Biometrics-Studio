@@ -1,11 +1,13 @@
-import React, { useState, Suspense } from "react";
+import React, { useState, Suspense, lazy, useEffect } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Settings } from "@/components/tabs/settings/settings";
 import { GlobalToolbar } from "@/components/toolbar/toolbar";
 import { useTranslation } from "react-i18next";
 import { cn } from "@/lib/utils/shadcn";
+import SelectMode from "@/views/selectMode";
+import { useLocalStorage } from "@/lib/hooks/useLocalStorage";
 
-const Homepage = React.lazy(() =>
+const Homepage = lazy(() =>
     import("@/components/tabs/homepage/homepage").then(module => ({
         default: module.Homepage,
     }))
@@ -14,11 +16,19 @@ const Homepage = React.lazy(() =>
 const enum TABS {
     HOMEPAGE = "homepage",
     SETTINGS = "settings",
+    SELECT_MODE = "select_mode",
 }
 
 export default function App() {
     const { t } = useTranslation();
     const [currentTab, setCurrentTab] = useState<TABS>(TABS.HOMEPAGE);
+    const [currentWorkingMode] = useLocalStorage("working_mode", "");
+
+    useEffect(() => {
+        setCurrentTab(
+            currentWorkingMode === "" ? TABS.SELECT_MODE : TABS.HOMEPAGE
+        );
+    }, [currentWorkingMode]);
 
     return (
         <main
@@ -26,18 +36,44 @@ export default function App() {
             className="flex w-full min-h-dvh h-full flex-col items-center justify-between"
         >
             <Tabs
+                value={currentTab}
                 onValueChange={tab => setCurrentTab(tab as TABS)}
                 defaultValue={TABS.HOMEPAGE}
                 className="w-full flex flex-col items-center flex-grow"
             >
                 <TabsList className="w-fit">
-                    <TabsTrigger value={TABS.HOMEPAGE}>
+                    <TabsTrigger value={TABS.SELECT_MODE}>
+                        {t("Working mode")}
+                    </TabsTrigger>
+                    <TabsTrigger
+                        disabled={
+                            currentWorkingMode === "" ||
+                            currentTab === TABS.SELECT_MODE
+                        }
+                        value={TABS.HOMEPAGE}
+                    >
                         {t("Homepage")}
                     </TabsTrigger>
-                    <TabsTrigger value={TABS.SETTINGS}>
+                    <TabsTrigger
+                        disabled={
+                            currentWorkingMode === "" ||
+                            currentTab === TABS.SELECT_MODE
+                        }
+                        value={TABS.SETTINGS}
+                    >
                         {t("Settings")}
                     </TabsTrigger>
                 </TabsList>
+
+                <TabsContent
+                    forceMount
+                    value={TABS.SELECT_MODE}
+                    className={cn("w-full h-full relative flex flex-grow", {
+                        hidden: currentTab !== TABS.SELECT_MODE,
+                    })}
+                >
+                    <SelectMode />
+                </TabsContent>
 
                 <TabsContent
                     forceMount
