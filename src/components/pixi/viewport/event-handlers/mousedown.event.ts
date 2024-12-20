@@ -3,7 +3,7 @@ import {
     CURSOR_MODES,
     DashboardToolbarStore,
 } from "@/lib/stores/DashboardToolbar";
-import { CUSTOM_GLOBAL_EVENTS, MOUSE_BUTTONS } from "@/lib/utils/const";
+import { CUSTOM_GLOBAL_EVENTS } from "@/lib/utils/const";
 import { getAngle } from "@/lib/utils/math/getAngle";
 import { MARKING_TYPE } from "@/lib/markings/MarkingBase";
 import { PointMarking } from "@/lib/markings/PointMarking";
@@ -19,8 +19,10 @@ type HandlerParams = {
 };
 
 let onMouseMove: (e: FederatedPointerEvent) => void = () => {};
-let onMouseUp: (e: FederatedPointerEvent) => void = () => {};
-let onMouseDown: (e: FederatedPointerEvent) => void = () => {};
+// Right Mouse Button Up
+let onRMBUp: (e: FederatedPointerEvent) => void = () => {};
+// Right Mouse Button Down
+let onRMBDown: (e: FederatedPointerEvent) => void = () => {};
 
 function handlePointMarking({ e, interrupt, params }: HandlerParams) {
     const { viewport, markingsStore } = params;
@@ -43,7 +45,7 @@ function handlePointMarking({ e, interrupt, params }: HandlerParams) {
         });
     };
 
-    onMouseUp = () => {
+    onRMBUp = () => {
         viewport.removeEventListener("mousemove", onMouseMove);
 
         markingsStore.actions.markings.addOne(
@@ -60,7 +62,7 @@ function handlePointMarking({ e, interrupt, params }: HandlerParams) {
     };
 
     viewport.addEventListener("mousemove", onMouseMove);
-    viewport.addEventListener("mouseup", onMouseUp, { once: true });
+    viewport.addEventListener("rightup", onRMBUp, { once: true });
 }
 
 function handleRayMarking({ e, interrupt, params }: HandlerParams) {
@@ -85,7 +87,7 @@ function handleRayMarking({ e, interrupt, params }: HandlerParams) {
         });
     };
 
-    onMouseUp = () => {
+    onRMBUp = () => {
         viewport.removeEventListener("mousemove", onMouseMove);
         cachedViewportStore.actions.viewport.setRayPosition(
             getNormalizedMousePosition(e, viewport)
@@ -100,7 +102,7 @@ function handleRayMarking({ e, interrupt, params }: HandlerParams) {
             });
         };
 
-        onMouseDown = () => {
+        onRMBDown = () => {
             viewport.removeEventListener("mousemove", onMouseMove);
 
             markingsStore.actions.markings.addOne(
@@ -117,13 +119,13 @@ function handleRayMarking({ e, interrupt, params }: HandlerParams) {
         };
 
         viewport.addEventListener("mousemove", onMouseMove);
-        viewport.addEventListener("mousedown", onMouseDown, {
+        viewport.addEventListener("rightdown", onRMBDown, {
             once: true,
         });
     };
 
     viewport.addEventListener("mousemove", onMouseMove);
-    viewport.addEventListener("mouseup", onMouseUp, { once: true });
+    viewport.addEventListener("rightup", onRMBUp, { once: true });
 }
 
 function handleLineSegmentMarking({ e, interrupt, params }: HandlerParams) {
@@ -148,7 +150,7 @@ function handleLineSegmentMarking({ e, interrupt, params }: HandlerParams) {
         });
     };
 
-    onMouseUp = () => {
+    onRMBUp = () => {
         viewport.removeEventListener("mousemove", onMouseMove);
         cachedViewportStore.actions.viewport.setRayPosition(
             getNormalizedMousePosition(e, viewport)
@@ -160,7 +162,7 @@ function handleLineSegmentMarking({ e, interrupt, params }: HandlerParams) {
             });
         };
 
-        onMouseDown = () => {
+        onRMBDown = () => {
             viewport.removeEventListener("mousemove", onMouseMove);
 
             markingsStore.actions.markings.addOne(
@@ -177,16 +179,16 @@ function handleLineSegmentMarking({ e, interrupt, params }: HandlerParams) {
         };
 
         viewport.addEventListener("mousemove", onMouseMove);
-        viewport.addEventListener("mousedown", onMouseDown, {
+        viewport.addEventListener("rightdown", onRMBDown, {
             once: true,
         });
     };
 
     viewport.addEventListener("mousemove", onMouseMove);
-    viewport.addEventListener("mouseup", onMouseUp, { once: true });
+    viewport.addEventListener("rightup", onRMBUp, { once: true });
 }
 
-export const handleMouseDown = (
+export const handleRMBDown = (
     e: FederatedPointerEvent,
     params: ViewportHandlerParams
 ) => {
@@ -201,8 +203,8 @@ export const handleMouseDown = (
     const interrupt = () => {
         markingsStore.actions.temporaryMarking.setTemporaryMarking(null);
         viewport.removeEventListener("mousemove", onMouseMove);
-        viewport.removeEventListener("mouseup", onMouseUp);
-        viewport.removeEventListener("mousedown", onMouseDown);
+        viewport.removeEventListener("rightup", onRMBUp);
+        viewport.removeEventListener("rightdown", onRMBDown);
     };
     document.addEventListener(
         CUSTOM_GLOBAL_EVENTS.INTERRUPT_MARKING,
@@ -210,8 +212,6 @@ export const handleMouseDown = (
     );
 
     if (cursorMode === CURSOR_MODES.MARKING) {
-        if ((e.buttons as MOUSE_BUTTONS) !== MOUSE_BUTTONS.PRIMARY) return;
-
         const { type: markingType } =
             DashboardToolbarStore.state.settings.marking;
 

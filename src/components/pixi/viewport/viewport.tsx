@@ -10,7 +10,7 @@ import { ReactPixiViewport } from "./react-pixi-viewport";
 import { CanvasMetadata } from "../canvas/hooks/useCanvasContext";
 import { ViewportHandlerParams } from "./event-handlers/utils";
 import {
-    handleMouseDown,
+    handleRMBDown,
     handleMove,
     handleOppositeMove,
     handleZoom,
@@ -43,7 +43,7 @@ export const Viewport = forwardRef<PixiViewport, ViewportProps>(
                     viewport
                         .drag({
                             wheel: true,
-                            mouseButtons: "middle",
+                            mouseButtons: "left",
                         })
                         .wheel({
                             percent: 0,
@@ -96,8 +96,8 @@ export const Viewport = forwardRef<PixiViewport, ViewportProps>(
                         handleZoom(e, handlerParams);
                     });
 
-                    viewport.on("mousedown", e => {
-                        handleMouseDown(e, handlerParams);
+                    viewport.on("rightdown", e => {
+                        handleRMBDown(e, handlerParams);
                     });
 
                     // eslint-disable-next-line no-param-reassign
