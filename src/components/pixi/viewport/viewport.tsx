@@ -72,6 +72,18 @@ export const Viewport = forwardRef<PixiViewport, ViewportProps>(
                         markingsStore: MarkingsStore(id),
                     };
 
+                    viewport.on("drag-start", () =>
+                        CachedViewportStore(id).actions.viewport.setIsDragging(
+                            true
+                        )
+                    );
+
+                    viewport.on("drag-end", () =>
+                        CachedViewportStore(id).actions.viewport.setIsDragging(
+                            false
+                        )
+                    );
+
                     viewport.on("moved", e => {
                         handleMove(e, handlerParams);
                     });
