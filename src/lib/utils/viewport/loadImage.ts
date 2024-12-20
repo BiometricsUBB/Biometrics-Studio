@@ -56,7 +56,7 @@ export async function loadImage(filePath: string, viewport: Viewport) {
     CanvasToolbarStore(canvasId).state.reset();
     CachedViewportStore(canvasId).state.reset();
     fitWorld(viewport);
-    emitFitEvents(viewport);
+    emitFitEvents(viewport, "fit-world");
 
     const defaultMarkingsFilePath = `${filePath}.json`;
     if (await exists(defaultMarkingsFilePath)) {

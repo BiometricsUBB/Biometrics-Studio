@@ -7,9 +7,12 @@ function drawGrid(
     color: ColorSource,
     gridCount: number,
     width: number,
-    height: number
+    height: number,
+    lineWidth: number
 ) {
-    g.lineStyle(2, color).drawRect(0, 0, width, height).lineStyle(1, color);
+    g.lineStyle(lineWidth, color)
+        .drawRect(0, 0, width, height)
+        .lineStyle(lineWidth, color);
     for (let i = 1; i < gridCount; i += 1) {
         g.moveTo((i * width) / gridCount, 0)
             .lineTo((i * width) / gridCount, height)
@@ -23,15 +26,21 @@ export type GridProps = {
     height: number;
     color: string;
     gridLinesCount: number;
+    gridLinesWidth?: number;
 };
-export function Grid({ color, width, height, gridLinesCount }: GridProps) {
+export function Grid({
+    color,
+    width,
+    height,
+    gridLinesCount,
+    gridLinesWidth = 2,
+}: GridProps) {
     const draw = useCallback(
         (g: PixiGraphics) => {
             g.clear();
-            drawGrid(g, color, gridLinesCount, width, height);
+            drawGrid(g, color, gridLinesCount, width, height, gridLinesWidth);
         },
-        // eslint-disable-next-line no-underscore-dangle
-        [color, gridLinesCount, height, width]
+        [color, gridLinesCount, gridLinesWidth, height, width]
     );
 
     return <Graphics draw={draw} />;

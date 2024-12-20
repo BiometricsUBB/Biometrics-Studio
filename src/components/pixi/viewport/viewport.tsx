@@ -49,10 +49,11 @@ export const Viewport = forwardRef<PixiViewport, ViewportProps>(
                             percent: 0,
                             interrupt: true,
                             wheelZoom: true,
-                            keyToPress: ["ControlLeft", "ControlRight"],
+                            center: viewport.center,
                         })
                         .clampZoom({
                             minScale: 1 / 4,
+                            maxScale: 100,
                         });
 
                     viewport.on("childAdded", updateViewport);
@@ -70,6 +71,18 @@ export const Viewport = forwardRef<PixiViewport, ViewportProps>(
                         cachedViewportStore: CachedViewportStore(id),
                         markingsStore: MarkingsStore(id),
                     };
+
+                    viewport.on("drag-start", () =>
+                        CachedViewportStore(id).actions.viewport.setIsDragging(
+                            true
+                        )
+                    );
+
+                    viewport.on("drag-end", () =>
+                        CachedViewportStore(id).actions.viewport.setIsDragging(
+                            false
+                        )
+                    );
 
                     viewport.on("moved", e => {
                         handleMove(e, handlerParams);

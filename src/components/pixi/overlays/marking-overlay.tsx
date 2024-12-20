@@ -37,14 +37,18 @@ export function MarkingOverlay({ canvasMetadata }: MarkingOverlayProps) {
         <Container position={getViewportPosition(viewport)}>
             <Markings
                 canvasId={canvasId}
-                // Remove the marking that is being replaced from the list of markings
+                // Don't draw the marking that is being replaced
                 markings={markings.filter(
                     x => x.label !== temporaryMarking?.label
                 )}
             />
             {/* If a marking is being created, display it on top of the other markings */}
             {temporaryMarking && (
-                <Markings canvasId={canvasId} markings={[temporaryMarking]} />
+                <Markings
+                    canvasId={canvasId}
+                    markings={[temporaryMarking]}
+                    alpha={1}
+                />
             )}
         </Container>
     );

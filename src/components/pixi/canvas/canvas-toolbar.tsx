@@ -2,8 +2,8 @@ import { cn } from "@/lib/utils/shadcn";
 import { HTMLAttributes } from "react";
 import { CanvasToolbarStore } from "@/lib/stores/CanvasToolbar";
 import {
-    Flag,
-    FlagOff,
+    Eye,
+    EyeOff,
     MoveDiagonal,
     MoveHorizontal,
     MoveVertical,
@@ -108,7 +108,7 @@ export function CanvasToolbar({ className, ...props }: CanvasToolbarProps) {
                     pressed={false}
                     onClick={() => {
                         fitWorld(viewport);
-                        emitFitEvents(viewport);
+                        emitFitEvents(viewport, "fit-world");
                     }}
                 >
                     <MoveDiagonal
@@ -123,7 +123,7 @@ export function CanvasToolbar({ className, ...props }: CanvasToolbarProps) {
                     pressed={false}
                     onClick={() => {
                         fitHeight(viewport);
-                        emitFitEvents(viewport);
+                        emitFitEvents(viewport, "fit-height");
                     }}
                 >
                     <MoveVertical
@@ -138,7 +138,7 @@ export function CanvasToolbar({ className, ...props }: CanvasToolbarProps) {
                     pressed={false}
                     onClick={() => {
                         fitWidth(viewport);
-                        emitFitEvents(viewport);
+                        emitFitEvents(viewport, "fit-width");
                     }}
                 >
                     <MoveHorizontal
@@ -161,12 +161,9 @@ export function CanvasToolbar({ className, ...props }: CanvasToolbarProps) {
                     }}
                 >
                     {markingsSettings.showLabels ? (
-                        <Flag
-                            size={ICON.SIZE}
-                            strokeWidth={ICON.STROKE_WIDTH}
-                        />
+                        <Eye size={ICON.SIZE} strokeWidth={ICON.STROKE_WIDTH} />
                     ) : (
-                        <FlagOff
+                        <EyeOff
                             size={ICON.SIZE}
                             strokeWidth={ICON.STROKE_WIDTH}
                         />
