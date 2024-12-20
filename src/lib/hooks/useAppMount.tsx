@@ -1,8 +1,8 @@
 import { useTheme } from "@/lib/hooks/useTheme";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { GlobalSettingsStore, LANGUAGES } from "../stores/GlobalSettings";
 import { invoke } from "@tauri-apps/api/core";
+import { GlobalSettingsStore, LANGUAGES } from "../stores/GlobalSettings";
 
 export const useAppMount = () => {
     const [hasMounted, setHasMounted] = useState(false);

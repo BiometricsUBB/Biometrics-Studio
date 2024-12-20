@@ -1,11 +1,22 @@
 import { Viewport } from "pixi-viewport";
+import { Point } from "@/lib/markings/MarkingBase";
 
-export const emitFitEvents = (viewport: Viewport | null) => {
+export type FitEvent = {
+    viewport: Viewport;
+    type: "fit-height" | "fit-width" | "fit-world";
+    original?: Point;
+};
+
+export const emitFitEvents = (
+    viewport: Viewport | null,
+    type: FitEvent["type"]
+) => {
     viewport?.emit("moved", {
         // @ts-expect-error - fitWorld is not in the type
-        type: "fit-height",
+        type,
         viewport,
     });
+
     viewport?.emit("zoomed", {
         type: "wheel",
         viewport,

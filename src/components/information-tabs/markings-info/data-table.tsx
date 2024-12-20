@@ -30,11 +30,7 @@ import { CUSTOM_GLOBAL_EVENTS } from "@/lib/utils/const";
 import { triggerPostMoveFlash } from "@atlaskit/pragmatic-drag-and-drop-flourish/trigger-post-move-flash";
 import { sleep } from "@/lib/utils/misc/sleep";
 import { GlobalStateStore } from "@/lib/stores/GlobalState";
-import {
-    EmptyableMarking,
-    isEmptyBoundMarking,
-    isInternalMarking,
-} from "./columns";
+import { EmptyableMarking } from "./columns";
 
 // Original Table is wrapped with a <div> (see https://ui.shadcn.com/docs/components/table#radix-:r24:-content-manual),
 // but here we don't want it, so let's use a new component with only <table> tag
@@ -73,25 +69,16 @@ const TableRowComponent = <TData,>(rows: Row<TData>[], canvasId: CANVAS_ID) => {
         if (!row) return null;
 
         const marking = row.original as EmptyableMarking;
-        const { selectedMarking } = MarkingsStore(canvasId).state;
-        const selected = isInternalMarking(marking)
-            ? selectedMarking === marking
-            : false;
+        const { selectedMarkingLabel } = MarkingsStore(canvasId).state;
         const cells = row.getVisibleCells();
 
-        const isSelected =
-            selectedMarking &&
-            selectedMarking.label === marking.label &&
-            selectedMarking.boundMarkingId === marking.boundMarkingId &&
-            (isInternalMarking(selectedMarking) && isInternalMarking(marking)
-                ? selectedMarking.id === marking.id
-                : true);
+        const isSelected = selectedMarkingLabel === marking.label;
 
         const { lastAddedMarking } = GlobalStateStore.state;
         const isLastAdded =
             lastAddedMarking &&
             lastAddedMarking.canvasId === canvasId &&
-            lastAddedMarking.label === marking.label;
+            lastAddedMarking.marking.label === marking.label;
 
         if (isLastAdded && !hasFlashed) {
             runAnimation();
@@ -103,15 +90,16 @@ const TableRowComponent = <TData,>(rows: Row<TData>[], canvasId: CANVAS_ID) => {
                 key={row.id}
                 className={cn("last:border-b-0 cursor-pointer", {
                     "hover:bg-accent/45 bg-accent/75": isSelected,
-                    "text-foreground/60": isEmptyBoundMarking(marking),
                 })}
-                data-state={selected && "selected"}
+                data-state={isSelected && "selected"}
                 onClickCapture={() => {
-                    if (selectedMarking?.label === marking.label) {
+                    if (selectedMarkingLabel === marking.label) {
                         // odznacz
                         MarkingsStore(
                             canvasId
-                        ).actions.selectedMarking.setSelectedMarking(null);
+                        ).actions.selectedMarkingLabel.setSelectedMarkingLabel(
+                            null
+                        );
                         document.dispatchEvent(
                             new Event(CUSTOM_GLOBAL_EVENTS.CLEANUP)
                         );
@@ -119,7 +107,9 @@ const TableRowComponent = <TData,>(rows: Row<TData>[], canvasId: CANVAS_ID) => {
                         // zaznacz
                         MarkingsStore(
                             canvasId
-                        ).actions.selectedMarking.setSelectedMarking(marking);
+                        ).actions.selectedMarkingLabel.setSelectedMarkingLabel(
+                            marking.label
+                        );
                     }
                 }}
                 {...props}
@@ -153,7 +143,7 @@ function SortingIndicator({ isSorted }: { isSorted: SortDirection | false }) {
 
 interface DataTableProps<TData, TValue> {
     columns: ColumnDef<TData, TValue>[];
-    selectedMarking: MarkingsState["selectedMarking"];
+    selectedMarking: MarkingsState["selectedMarkingLabel"];
     data: TData[];
     height: string;
     canvasId: CANVAS_ID;
