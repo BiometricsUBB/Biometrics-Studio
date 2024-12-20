@@ -73,5 +73,7 @@ export const handleMove = (e: MovedEvent, params: ViewportHandlerParams) => {
 
     const delta = calculateDelta(e, params, oppositeViewport);
     updateCachedViewportStore(params);
-    oppositeViewport.emit("opposite-moved", e, delta);
+    requestAnimationFrame(() => {
+        oppositeViewport.emit("opposite-moved", e, delta);
+    });
 };

@@ -47,5 +47,11 @@ export function PixiApp({ width, height, canvasMetadata }: PixiAppProps) {
         updateViewport();
     }, [canvasMetadata.id, scaleMode, updateCanvas, viewport]);
 
+    useEffect(() => {
+        if (viewport && viewport.plugins.get("wheel")) {
+            viewport.plugins.get("wheel")!.options.center = viewport.center;
+        }
+    }, [viewport, viewport?.center]);
+
     return <Viewport canvasMetadata={canvasMetadata} ref={viewportRef} />;
 }

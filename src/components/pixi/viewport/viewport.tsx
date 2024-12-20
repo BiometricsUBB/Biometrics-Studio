@@ -49,10 +49,11 @@ export const Viewport = forwardRef<PixiViewport, ViewportProps>(
                             percent: 0,
                             interrupt: true,
                             wheelZoom: true,
-                            keyToPress: ["ControlLeft", "ControlRight"],
+                            center: viewport.center,
                         })
                         .clampZoom({
                             minScale: 1 / 4,
+                            maxScale: 100,
                         });
 
                     viewport.on("childAdded", updateViewport);
