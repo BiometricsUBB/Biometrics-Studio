@@ -7,7 +7,7 @@ import { tauriStorage } from "../tauri-storage-adapter.helpers";
 const STORE_NAME = "global-settings";
 const STORE_FILE = await createStore(`${STORE_NAME}.dat`);
 
-export const enum THEMES {
+export enum THEMES {
     SYSTEM = "system",
     LIGHT = "light",
     DARK = "dark",

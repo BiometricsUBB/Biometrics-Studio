@@ -1,9 +1,9 @@
 import React, { useState, Suspense } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Settings } from "@/components/tabs/settings/settings";
 import { GlobalToolbar } from "@/components/toolbar/toolbar";
 import { useTranslation } from "react-i18next";
 import { cn } from "@/lib/utils/shadcn";
+import { Menu } from "@/components/menu/menu";
 
 const Homepage = React.lazy(() =>
     import("@/components/tabs/homepage/homepage").then(module => ({
@@ -25,6 +25,7 @@ export default function App() {
             data-testid="page-container"
             className="flex w-full min-h-dvh h-full flex-col items-center justify-between"
         >
+            <Menu />
             <Tabs
                 onValueChange={tab => setCurrentTab(tab as TABS)}
                 defaultValue={TABS.HOMEPAGE}
@@ -33,9 +34,6 @@ export default function App() {
                 <TabsList className="w-fit">
                     <TabsTrigger value={TABS.HOMEPAGE}>
                         {t("Homepage")}
-                    </TabsTrigger>
-                    <TabsTrigger value={TABS.SETTINGS}>
-                        {t("Settings")}
                     </TabsTrigger>
                 </TabsList>
 
@@ -53,16 +51,6 @@ export default function App() {
                     <Suspense fallback={<div>Loading...</div>}>
                         <Homepage />
                     </Suspense>
-                </TabsContent>
-
-                <TabsContent
-                    forceMount
-                    value={TABS.SETTINGS}
-                    className={cn("w-full h-full", {
-                        hidden: currentTab !== TABS.SETTINGS,
-                    })}
-                >
-                    <Settings />
                 </TabsContent>
             </Tabs>
         </main>

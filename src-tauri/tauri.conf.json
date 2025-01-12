@@ -55,10 +55,15 @@
                 "minHeight": 360,
                 "resizable": true,
                 "fullscreen": false,
-                "visible": false,
-                "alwaysOnTop": false
+                "alwaysOnTop": false,
+                "decorations": false,
+                "transparent": true,
+                "visible": false
             },
             {
+                "title": "Biometrics Studio",
+                "label": "splashscreen",
+                "url": "splashscreen.html",
                 "width": 384,
                 "height": 216,
                 "resizable": false,
@@ -66,10 +71,9 @@
                 "minimizable": false,
                 "closable": false,
                 "center": true,
+                "alwaysOnTop": false,
                 "decorations": false,
                 "transparent": true,
-                "url": "splashscreen.html",
-                "label": "splashscreen",
                 "visible": true
             }
         ],
