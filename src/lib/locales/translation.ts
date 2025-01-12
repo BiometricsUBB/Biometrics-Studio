@@ -9,17 +9,11 @@ type Recordify<T> = { [K in Extract<T, string> as `${K}`]: string };
 export type i18nKeywords = Recordify<
     | "Homepage"
     | "Settings"
-    | "Interface"
-    | "Video"
     | "Language"
     | "Markings"
     | "Debug"
     | "Theme"
     | "Rendering"
-    | "Prerendering radius"
-    | "Dark mode"
-    | "On"
-    | "Off"
 >;
 
 export type i18nCursor = {

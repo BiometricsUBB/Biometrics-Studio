@@ -44,7 +44,7 @@ fn main() {
         .plugin(tauri_plugin_store::Builder::default().build())
         .plugin(
             tauri_plugin_window_state::Builder::default()
-                .with_state_flags(StateFlags::all() & !StateFlags::VISIBLE)
+                .with_state_flags(StateFlags::all() & !StateFlags::VISIBLE & !StateFlags::DECORATIONS)
                 .build(),
         )
         .invoke_handler(tauri::generate_handler![

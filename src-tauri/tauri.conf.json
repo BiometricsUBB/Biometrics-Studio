@@ -56,7 +56,9 @@
                 "resizable": true,
                 "fullscreen": false,
                 "visible": false,
-                "alwaysOnTop": false
+                "alwaysOnTop": false,
+                "decorations": false,
+                "transparent": true
             },
             {
                 "width": 384,

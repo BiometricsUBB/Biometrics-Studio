@@ -1,5 +1,4 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Settings } from "@/components/tabs/settings/settings";
 import React, { Suspense, useEffect, useState } from "react";
 import { cn } from "@/lib/utils/shadcn";
 import { GlobalToolbar } from "@/components/toolbar/toolbar";
@@ -11,7 +10,6 @@ import { GlobalStateStore } from "@/lib/stores/GlobalState";
 
 const enum TABS {
     HOMEPAGE = "homepage",
-    SETTINGS = "settings",
 }
 
 const Homepage = React.lazy(() =>
@@ -60,9 +58,6 @@ export default function Home() {
                     <TabsTrigger value={TABS.HOMEPAGE}>
                         {t("Homepage")}
                     </TabsTrigger>
-                    <TabsTrigger value={TABS.SETTINGS}>
-                        {t("Settings")}
-                    </TabsTrigger>
                 </TabsList>
                 <TabsContent
                     forceMount
@@ -78,9 +73,6 @@ export default function Home() {
                     <Suspense fallback={<div>Loading...</div>}>
                         <Homepage />
                     </Suspense>
-                </TabsContent>
-                <TabsContent value={TABS.SETTINGS} className="w-full h-full">
-                    <Settings />
                 </TabsContent>
             </Tabs>
         </main>
