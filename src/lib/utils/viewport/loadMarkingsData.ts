@@ -48,34 +48,15 @@ function inferMarking(
         type,
     } = markingStyleTypes.find(t => t.typeId === typeId)!;
 
-    if (type === MARKING_TYPE.RAY) {
-        return new RayMarking(
-            label,
-            origin,
-            backgroundColor,
-            textColor,
-            size,
-            angleRad!
-        );
-    }
+    // TODO ładowanie cech z pliku
     if (type === MARKING_TYPE.POINT) {
-        return new PointMarking(
-            label,
-            origin,
-            backgroundColor,
-            textColor,
-            size
-        );
+        return new PointMarking(label, origin, "guid1");
+    }
+    if (type === MARKING_TYPE.RAY) {
+        return new RayMarking(label, origin, "guid2", angleRad!);
     }
     if (type === MARKING_TYPE.LINE_SEGMENT) {
-        return new LineSegmentMarking(
-            label,
-            origin,
-            backgroundColor,
-            textColor,
-            size,
-            endpoint!
-        );
+        return new LineSegmentMarking(label, origin, "guid3", endpoint!);
     }
 
     throw new Error(`Unknown marking type: ${type}`);

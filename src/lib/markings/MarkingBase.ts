@@ -1,4 +1,4 @@
-import { ColorSource, Rectangle } from "pixi.js";
+import { Rectangle } from "pixi.js";
 import { immerable } from "immer";
 import {
     GlobalSettingsStore,
@@ -31,15 +31,11 @@ export abstract class MarkingBase {
     protected constructor(
         public label: number,
         public origin: Point,
-        public backgroundColor: ColorSource,
-        public textColor: ColorSource,
-        public size: number
+        public characteristicId: string
     ) {
         this.label = label;
         this.origin = origin;
-        this.backgroundColor = backgroundColor;
-        this.textColor = textColor;
-        this.size = size;
+        this.characteristicId = characteristicId;
     }
 
     protected getPrerenderMargin() {

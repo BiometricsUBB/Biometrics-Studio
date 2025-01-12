@@ -4,6 +4,7 @@ import { PointMarking } from "@/lib/markings/PointMarking";
 import { MarkingBase, Point } from "@/lib/markings/MarkingBase";
 import { BitmapText } from "@pixi/text-bitmap";
 import { LineSegmentMarking } from "@/lib/markings/LineSegmentMarking";
+import { MarkingCharacteristic } from "@/lib/markings/MarkingCharacteristic";
 
 export const getFontName = (fontSize: number) => {
     const FONT_FAMILY_NAME = "Cousine";
@@ -48,12 +49,12 @@ const shadowWidth = 0.5;
 const drawPointMarking = (
     g: PixiGraphics,
     selected: boolean,
-    { backgroundColor, textColor, size, label }: PointMarking,
+    { label }: PointMarking,
+    { backgroundColor, textColor, size }: MarkingCharacteristic["style"],
     relativeOrigin: Point,
     showMarkingLabels?: boolean
 ) => {
     const { x, y } = relativeOrigin;
-
     if (selected) {
         g.lineStyle(1, textColor);
         g.beginFill(0x0000ff, 0.5);
@@ -79,7 +80,8 @@ const drawPointMarking = (
 const drawRayMarking = (
     g: PixiGraphics,
     selected: boolean,
-    { backgroundColor, textColor, size, angleRad, label }: RayMarking,
+    { angleRad, label }: RayMarking,
+    { backgroundColor, textColor, size }: MarkingCharacteristic["style"],
     relativeOrigin: Point,
     showMarkingLabels?: boolean
 ) => {
@@ -127,7 +129,8 @@ const drawRayMarking = (
 const drawLineSegmentMarking = (
     g: PixiGraphics,
     selected: boolean,
-    { backgroundColor, textColor, size, label }: LineSegmentMarking,
+    { label }: LineSegmentMarking,
+    { backgroundColor, textColor, size }: MarkingCharacteristic["style"],
     relativeOrigin: Point,
     relativeEndpoint: Point,
     showMarkingLabels?: boolean
@@ -193,6 +196,7 @@ export const drawMarking = (
     g: PixiGraphics,
     isSelected: boolean,
     marking: MarkingBase,
+    style: MarkingCharacteristic["style"],
     viewportWidthRatio: number,
     viewportHeightRatio: number,
     showMarkingLabels?: boolean
@@ -202,11 +206,13 @@ export const drawMarking = (
         viewportWidthRatio,
         viewportHeightRatio
     );
+    // TODO to refactor
     if (marking instanceof PointMarking) {
         drawPointMarking(
             g,
             isSelected,
             marking,
+            style,
             markingViewportPosition,
             showMarkingLabels
         );
@@ -215,6 +221,7 @@ export const drawMarking = (
             g,
             isSelected,
             marking,
+            style,
             markingViewportPosition,
             showMarkingLabels
         );
@@ -223,6 +230,7 @@ export const drawMarking = (
             g,
             isSelected,
             marking,
+            style,
             markingViewportPosition,
             marking.calculateEndpointViewportPosition(
                 viewportWidthRatio,

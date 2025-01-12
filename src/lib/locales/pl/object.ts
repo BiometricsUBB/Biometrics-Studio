@@ -7,11 +7,8 @@ const d: Dictionary = {
             id: "ID",
             label: "Znacznik",
             angleRad: "Kąt",
-            backgroundColor: "Kolor tła",
             origin: "Źródło",
             endpoint: "Koniec",
-            size: "Rozmiar",
-            textColor: "Kolor tekstu",
             type: {
                 Name: "Typ",
                 Keys: {
@@ -19,6 +16,29 @@ const d: Dictionary = {
                     ray: "Linia skierowana",
                     line_segment: "Odcinek",
                 },
+            },
+            characteristicId: "ID charakterystyki",
+        },
+    },
+    MarkingCharacteristic: {
+        Name: "Cecha adnotacji",
+        Keys: {
+            id: "ID",
+            name: "Nazwa",
+            type: "Typ cechy",
+        },
+        Style: {
+            Name: "Styl",
+            Keys: {
+                backgroundColor: "Kolor tła",
+                textColor: "Kolor tekstu",
+                size: "Rozmiar",
+            },
+        },
+        Metadata: {
+            Name: "Metadane",
+            Keys: {
+                category: "Kategoria",
             },
         },
     },

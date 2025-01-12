@@ -2,6 +2,7 @@ import { MARKING_TYPE } from "@/lib/markings/MarkingBase";
 import { RayMarking } from "@/lib/markings/RayMarking";
 import { PointMarking } from "@/lib/markings/PointMarking";
 import { LineSegmentMarking } from "@/lib/markings/LineSegmentMarking";
+import { MarkingCharacteristic } from "@/lib/markings/MarkingCharacteristic";
 import { PRERENDER_RADIUS_OPTIONS, THEMES } from "../stores/GlobalSettings";
 
 type Recordify<T> = { [K in Extract<T, string> as `${K}`]: string };
@@ -36,6 +37,21 @@ export type i18nObject = {
                 Name: string;
                 Keys: Recordify<MARKING_TYPE>;
             };
+        };
+    };
+    MarkingCharacteristic: {
+        Name: string;
+        Keys: Omit<
+            Recordify<keyof MarkingCharacteristic>,
+            "style" | "metadata"
+        >;
+        Style: {
+            Name: string;
+            Keys: Recordify<keyof MarkingCharacteristic["style"]>;
+        };
+        Metadata: {
+            Name: string;
+            Keys: Recordify<keyof MarkingCharacteristic["metadata"]>;
         };
     };
     PrerenderingRadius: {

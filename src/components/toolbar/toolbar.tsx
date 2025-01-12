@@ -2,7 +2,6 @@
 import { Toggle } from "@/components/ui/toggle";
 import { cn } from "@/lib/utils/shadcn";
 import { HTMLAttributes } from "react";
-import { useDebouncedCallback } from "use-debounce";
 import {
     CURSOR_MODES,
     DashboardToolbarStore,
@@ -20,6 +19,8 @@ import {
 import { ICON } from "@/lib/utils/const";
 import { MARKING_TYPE } from "@/lib/markings/MarkingBase";
 import { useTranslation } from "react-i18next";
+import { MarkingCharacteristicsStore } from "@/lib/stores/MarkingCharacteristics/MarkingCharacteristics";
+import { useDebouncedCallback } from "use-debounce";
 import { ToolbarGroup } from "./group";
 import { ToggleGroup, ToggleGroupItem } from "../ui/toggle-group";
 import { Input } from "../ui/input";
@@ -28,32 +29,53 @@ export type GlobalToolbarProps = HTMLAttributes<HTMLDivElement>;
 export function GlobalToolbar({ className, ...props }: GlobalToolbarProps) {
     const { t } = useTranslation();
 
-    const { cursor, marking, viewport } = DashboardToolbarStore.use(
-        state => state.settings
+    const { mode: cursorMode } = DashboardToolbarStore.use(
+        state => state.settings.cursor
+    );
+    const { locked: viewportLocked, scaleSync: viewportScaleSync } =
+        DashboardToolbarStore.use(state => state.settings.viewport);
+
+    const { toggleLockedViewport, toggleLockScaleSync } =
+        DashboardToolbarStore.actions.settings.viewport;
+    const { setCursorMode } = DashboardToolbarStore.actions.settings.cursor;
+
+    const { type: selectedMarkingType } = DashboardToolbarStore.use(
+        state => state.settings.marking
     );
 
+    let selectedCharacteristic = MarkingCharacteristicsStore.use(
+        state =>
+            state.characteristics.find(x => x.type === selectedMarkingType)!
+    );
+
+    const { setSelectedMarkingType: _setSelectedMarkingType } =
+        DashboardToolbarStore.actions.settings.marking;
+
+    const setSelectedMarkingType = (type: MARKING_TYPE) => {
+        _setSelectedMarkingType(type);
+        selectedCharacteristic =
+            MarkingCharacteristicsStore.actions.selectedCharacteristics.getSelectedCharacteristicByType(
+                type
+            );
+    };
+
     const {
-        cursor: cursorActions,
-        viewport: viewportActions,
-        marking: markingActions,
-    } = DashboardToolbarStore.actions.settings;
+        setCharacteristicTextColor: _setCharacteristicTextColor,
+        setCharacteristicSize: _setCharacteristicSize,
+        setCharacteristicBackgroundColor: _setCharacteristicBackgroundColor,
+    } = MarkingCharacteristicsStore.actions.characteristics;
 
-    const { toggleLockedViewport, toggleLockScaleSync } = viewportActions;
-    const { setCursorMode } = cursorActions;
-    const {
-        setMarkingSize,
-        setMarkingType,
-        setMarkingBackgroundColor: _setMarkingBackgroundColor,
-        setMarkingTextColor: _setMarkingTextColor,
-    } = markingActions;
+    const setCharacteristicTextColor = useDebouncedCallback<
+        typeof _setCharacteristicTextColor
+    >((id, value) => _setCharacteristicTextColor(id, value), 10);
 
-    const setMarkingBackgroundColor = useDebouncedCallback<
-        typeof _setMarkingBackgroundColor
-    >(value => _setMarkingBackgroundColor(value), 10);
+    const setCharacteristicSize = useDebouncedCallback<
+        typeof _setCharacteristicSize
+    >((id, value) => _setCharacteristicSize(id, value), 10);
 
-    const setMarkingTextColor = useDebouncedCallback<
-        typeof _setMarkingTextColor
-    >(value => _setMarkingTextColor(value), 10);
+    const setCharacteristicBackgroundColor = useDebouncedCallback<
+        typeof _setCharacteristicBackgroundColor
+    >((id, value) => _setCharacteristicBackgroundColor(id, value), 10);
 
     return (
         <div
@@ -63,10 +85,11 @@ export function GlobalToolbar({ className, ...props }: GlobalToolbarProps) {
             )}
             {...props}
         >
+            {/* Selected cursor mode e.g. selection/marking */}
             <ToolbarGroup>
                 <ToggleGroup
                     type="single"
-                    value={cursor.mode}
+                    value={cursorMode}
                     variant="outline"
                     size="icon"
                 >
@@ -96,10 +119,16 @@ export function GlobalToolbar({ className, ...props }: GlobalToolbarProps) {
                     </ToggleGroupItem>
                 </ToggleGroup>
             </ToolbarGroup>
+            {/* TODO Dropdown with add/delete/rename/import features + styling */}
+            <div style={{ width: 200, textAlign: "right" }}>
+                <span>{selectedCharacteristic.name}</span>
+            </div>
+
+            {/* Selected marking type e,g. point */}
             <ToolbarGroup>
                 <ToggleGroup
                     type="single"
-                    value={marking.type}
+                    value={selectedCharacteristic.type}
                     variant="outline"
                     size="icon"
                 >
@@ -107,7 +136,7 @@ export function GlobalToolbar({ className, ...props }: GlobalToolbarProps) {
                         value={MARKING_TYPE.POINT}
                         title={`${t("Marking.Keys.type.Keys.point", { ns: "object" })} (1)`}
                         onClick={() => {
-                            setMarkingType(MARKING_TYPE.POINT);
+                            setSelectedMarkingType(MARKING_TYPE.POINT);
                         }}
                     >
                         <Dot size={ICON.SIZE} strokeWidth={ICON.STROKE_WIDTH} />
@@ -116,7 +145,7 @@ export function GlobalToolbar({ className, ...props }: GlobalToolbarProps) {
                         value={MARKING_TYPE.RAY}
                         title={`${t("Marking.Keys.type.Keys.ray", { ns: "object" })} (2)`}
                         onClick={() => {
-                            setMarkingType(MARKING_TYPE.RAY);
+                            setSelectedMarkingType(MARKING_TYPE.RAY);
                         }}
                     >
                         <DraftingCompass
@@ -128,7 +157,7 @@ export function GlobalToolbar({ className, ...props }: GlobalToolbarProps) {
                         value={MARKING_TYPE.LINE_SEGMENT}
                         title={`${t("Marking.Keys.type.Keys.line_segment", { ns: "object" })} (3)`}
                         onClick={() => {
-                            setMarkingType(MARKING_TYPE.LINE_SEGMENT);
+                            setSelectedMarkingType(MARKING_TYPE.LINE_SEGMENT);
                         }}
                     >
                         <Spline
@@ -138,46 +167,59 @@ export function GlobalToolbar({ className, ...props }: GlobalToolbarProps) {
                     </ToggleGroupItem>
                 </ToggleGroup>
             </ToolbarGroup>
+
+            {/* Characteristics style e.g. color */}
             <ToolbarGroup>
                 <Input
                     className="size-6 cursor-pointer"
-                    title={`${t("Marking.Keys.backgroundColor", { ns: "object" })}`}
+                    title={`${t("MarkingCharacteristic.Style.Keys.backgroundColor", { ns: "object" })}`}
                     type="color"
-                    value={marking.backgroundColor}
+                    value={String(selectedCharacteristic.style.backgroundColor)}
                     onChange={e => {
-                        setMarkingBackgroundColor(e.target.value);
+                        setCharacteristicBackgroundColor(
+                            selectedCharacteristic.id,
+                            e.target.value
+                        );
                     }}
                 />
                 <Input
                     className="size-6 cursor-pointer"
-                    title={`${t("Marking.Keys.textColor", { ns: "object" })}`}
+                    title={`${t("MarkingCharacteristic.Style.Keys.textColor", { ns: "object" })}`}
                     type="color"
-                    value={marking.textColor}
+                    value={String(selectedCharacteristic.style.textColor)}
                     onChange={e => {
-                        setMarkingTextColor(e.target.value);
+                        setCharacteristicTextColor(
+                            selectedCharacteristic.id,
+                            e.target.value
+                        );
                     }}
                 />
                 <Input
                     className="w-12 h-6 !p-0"
                     min={6}
                     max={32}
-                    title={`${t("Marking.Keys.size", { ns: "object" })}`}
+                    title={`${t("MarkingCharacteristic.Style.Keys.size", { ns: "object" })}`}
                     type="number"
-                    value={marking.size}
+                    value={selectedCharacteristic.style.size}
                     onChange={e => {
-                        setMarkingSize(e.target.valueAsNumber);
+                        setCharacteristicSize(
+                            selectedCharacteristic.id,
+                            e.target.valueAsNumber
+                        );
                     }}
                 />
             </ToolbarGroup>
+
+            {/* Additional tools */}
             <ToolbarGroup>
                 <Toggle
                     variant="outline"
                     title={`${t("Lock viewports", { ns: "tooltip" })} (L)`}
                     size="icon"
-                    pressed={viewport.locked}
+                    pressed={viewportLocked}
                     onClick={toggleLockedViewport}
                 >
-                    {viewport.locked ? (
+                    {viewportLocked ? (
                         <LockKeyhole
                             size={ICON.SIZE}
                             strokeWidth={ICON.STROKE_WIDTH}
@@ -194,7 +236,7 @@ export function GlobalToolbar({ className, ...props }: GlobalToolbarProps) {
                     variant="outline"
                     title={`${t("Synchronize viewports with scale", { ns: "tooltip" })} (M)`}
                     size="icon"
-                    pressed={viewport.scaleSync}
+                    pressed={viewportScaleSync}
                     onClick={toggleLockScaleSync}
                 >
                     <SendToBack

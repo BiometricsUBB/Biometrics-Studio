@@ -7,11 +7,8 @@ const d: Dictionary = {
             id: "ID",
             label: "Label",
             angleRad: "Angle",
-            backgroundColor: "Background color",
             origin: "Origin",
             endpoint: "Endpoint",
-            size: "Size",
-            textColor: "Text color",
             type: {
                 Name: "Type",
                 Keys: {
@@ -19,6 +16,29 @@ const d: Dictionary = {
                     ray: "Ray",
                     line_segment: "Line segment",
                 },
+            },
+            characteristicId: "Characteristic ID",
+        },
+    },
+    MarkingCharacteristic: {
+        Name: "Marking characteristic",
+        Keys: {
+            id: "ID",
+            name: "Name",
+            type: "Characteristic type",
+        },
+        Style: {
+            Name: "Style",
+            Keys: {
+                backgroundColor: "Background color",
+                textColor: "Text color",
+                size: "Size",
+            },
+        },
+        Metadata: {
+            Name: "Metadata",
+            Keys: {
+                category: "Category",
             },
         },
     },

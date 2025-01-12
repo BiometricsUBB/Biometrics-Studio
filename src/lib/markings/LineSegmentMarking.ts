@@ -1,6 +1,6 @@
 // eslint-disable-next-line import/no-cycle
 import { MarkingBase, MARKING_TYPE, Point } from "@/lib/markings/MarkingBase";
-import { ColorSource, Rectangle } from "pixi.js";
+import { Rectangle } from "pixi.js";
 
 export class LineSegmentMarking extends MarkingBase {
     readonly type = MARKING_TYPE.LINE_SEGMENT;
@@ -8,12 +8,10 @@ export class LineSegmentMarking extends MarkingBase {
     constructor(
         label: number,
         origin: Point,
-        backgroundColor: ColorSource,
-        textColor: ColorSource,
-        size: number,
+        characteristicId: string,
         public endpoint: Point
     ) {
-        super(label, origin, backgroundColor, textColor, size);
+        super(label, origin, characteristicId);
         this.endpoint = endpoint;
     }
 

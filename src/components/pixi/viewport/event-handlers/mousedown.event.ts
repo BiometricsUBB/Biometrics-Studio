@@ -9,14 +9,8 @@ import { MARKING_TYPE } from "@/lib/markings/MarkingBase";
 import { PointMarking } from "@/lib/markings/PointMarking";
 import { RayMarking } from "@/lib/markings/RayMarking";
 import { LineSegmentMarking } from "@/lib/markings/LineSegmentMarking";
+import { MarkingCharacteristicsStore } from "@/lib/stores/MarkingCharacteristics/MarkingCharacteristics";
 import { ViewportHandlerParams, getNormalizedMousePosition } from "./utils";
-
-type HandlerParams = {
-    e: FederatedPointerEvent;
-    markingType: MARKING_TYPE;
-    interrupt: () => void;
-    params: ViewportHandlerParams;
-};
 
 let onMouseMove: (e: FederatedPointerEvent) => void = () => {};
 // Right Mouse Button Up
@@ -24,18 +18,18 @@ let onRMBUp: (e: FederatedPointerEvent) => void = () => {};
 // Right Mouse Button Down
 let onRMBDown: (e: FederatedPointerEvent) => void = () => {};
 
-function handlePointMarking({ e, interrupt, params }: HandlerParams) {
+function handlePointMarking(
+    e: FederatedPointerEvent,
+    interrupt: () => void,
+    characteristicId: string,
+    params: ViewportHandlerParams
+) {
     const { viewport, markingsStore } = params;
-    const { size, backgroundColor, textColor } =
-        DashboardToolbarStore.state.settings.marking;
-
     markingsStore.actions.temporaryMarking.setTemporaryMarking(
         new PointMarking(
             markingsStore.actions.labelGenerator.getLabel(),
             getNormalizedMousePosition(e, viewport),
-            backgroundColor,
-            textColor,
-            size
+            characteristicId
         )
     );
 
@@ -65,18 +59,19 @@ function handlePointMarking({ e, interrupt, params }: HandlerParams) {
     viewport.addEventListener("rightup", onRMBUp, { once: true });
 }
 
-function handleRayMarking({ e, interrupt, params }: HandlerParams) {
+function handleRayMarking(
+    e: FederatedPointerEvent,
+    interrupt: () => void,
+    characteristicId: string,
+    params: ViewportHandlerParams
+) {
     const { viewport, markingsStore, cachedViewportStore } = params;
-    const { size, backgroundColor, textColor } =
-        DashboardToolbarStore.state.settings.marking;
 
     markingsStore.actions.temporaryMarking.setTemporaryMarking(
         new RayMarking(
             markingsStore.actions.labelGenerator.getLabel(),
             getNormalizedMousePosition(e, viewport),
-            backgroundColor,
-            textColor,
-            size,
+            characteristicId,
             0
         )
     );
@@ -128,18 +123,19 @@ function handleRayMarking({ e, interrupt, params }: HandlerParams) {
     viewport.addEventListener("rightup", onRMBUp, { once: true });
 }
 
-function handleLineSegmentMarking({ e, interrupt, params }: HandlerParams) {
+function handleLineSegmentMarking(
+    e: FederatedPointerEvent,
+    interrupt: () => void,
+    characteristicId: string,
+    params: ViewportHandlerParams
+) {
     const { viewport, markingsStore, cachedViewportStore } = params;
-    const { size, backgroundColor, textColor } =
-        DashboardToolbarStore.state.settings.marking;
 
     markingsStore.actions.temporaryMarking.setTemporaryMarking(
         new LineSegmentMarking(
             markingsStore.actions.labelGenerator.getLabel(),
             getNormalizedMousePosition(e, viewport),
-            backgroundColor,
-            textColor,
-            size,
+            characteristicId,
             getNormalizedMousePosition(e, viewport)
         )
     );
@@ -212,24 +208,31 @@ export const handleRMBDown = (
     );
 
     if (cursorMode === CURSOR_MODES.MARKING) {
-        const { type: markingType } =
-            DashboardToolbarStore.state.settings.marking;
+        const markingType = DashboardToolbarStore.state.settings.marking.type;
 
-        const args = { e, params, markingType, interrupt };
+        const { id: characteristicId } =
+            MarkingCharacteristicsStore.actions.selectedCharacteristics.getSelectedCharacteristicByType(
+                markingType
+            );
 
         switch (markingType) {
             case MARKING_TYPE.POINT: {
-                handlePointMarking(args);
+                handlePointMarking(e, interrupt, characteristicId, params);
                 break;
             }
 
             case MARKING_TYPE.RAY: {
-                handleRayMarking(args);
+                handleRayMarking(e, interrupt, characteristicId, params);
                 break;
             }
 
             case MARKING_TYPE.LINE_SEGMENT: {
-                handleLineSegmentMarking(args);
+                handleLineSegmentMarking(
+                    e,
+                    interrupt,
+                    characteristicId,
+                    params
+                );
                 break;
             }
 
