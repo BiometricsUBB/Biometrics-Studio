@@ -28,11 +28,17 @@ export function Menu() {
                     />
                 </div>
                 <SettingsMenu />
-                {workingMode !== "" && <ModeMenu />}
-                <Dialog>
-                    <DialogTrigger>{t("Characteristics")}</DialogTrigger>
-                    <MarkingCharacteristicsDialogPortal />
-                </Dialog>
+                {workingMode !== "" && (
+                    <>
+                        <ModeMenu />
+                        <Dialog>
+                            <DialogTrigger>
+                                {t("Characteristics")}
+                            </DialogTrigger>
+                            <MarkingCharacteristicsDialogPortal />
+                        </Dialog>
+                    </>
+                )}
             </div>
             <WindowControls />
         </Menubar>
