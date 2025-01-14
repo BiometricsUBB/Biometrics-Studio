@@ -5,7 +5,7 @@ import { GlobalToolbar } from "@/components/toolbar/toolbar";
 import { useTranslation } from "react-i18next";
 import { cn } from "@/lib/utils/shadcn";
 import SelectMode from "@/views/selectMode";
-import { useWorkingMode } from "@/providers/WorkingModeProvider";
+import { useWorkingMode } from "@/lib/providers/WorkingModeProvider";
 
 const Homepage = lazy(() =>
     import("@/components/tabs/homepage/homepage").then(module => ({
