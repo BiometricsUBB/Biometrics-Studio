@@ -33,7 +33,7 @@ pnpm i
 pnpm tauri dev
 ```
 
-### Dodawanie Nowych Typów Oznaczeń (Aktualne na: 2024-12-16)
+### Dodawanie Nowych Typów adnotacji (Aktualne na: 2024-12-16)
 Przykład dodania https://github.com/BiometricsUBB/Biometrics-Studio/pull/13/commits/a3fcc39ca85326d0b83e4f7265f80f759e98e359[Typu Oznaczenia Odcinka Liniowego]
 
 1. Stwórz Nowy Typ
@@ -59,10 +59,10 @@ Przykład dodania https://github.com/BiometricsUBB/Biometrics-Studio/pull/13/com
 - W `toolbar.tsx` dodaj `ToggleGroupItem` dla nowego typu.
 - Przeglądaj ikony na https://lucide.dev/icons/[LucideIcons].
 
-6. Dostosuj Logikę Zapisywania Oznaczeń do Pliku w `saveMarkingsDataWithDialog.ts`
+6. Dostosuj Logikę Zapisywania adnotacji do Pliku w `saveMarkingsDataWithDialog.ts`
 - Dodaj właściwości do `ExportObject.Data.Markings`. Właściwości specyficzne dla typu oznaczenia powinny być nullable.
 - Dodaj nowe właściwości do funkcji `getReducedMarkings`.
 
-7. Dostosuj Logikę Ładowania Oznaczeń z Pliku w `loadMarkingsDataWithDialog.ts`
+7. Dostosuj Logikę Ładowania adnotacji z Pliku w `loadMarkingsDataWithDialog.ts`
 - Dodaj przypadek i właściwości do funkcji `inferMarking`.
 8. Dodaj skrót w `useKeyboardShortcuts.tsx`. (opcjonalne)

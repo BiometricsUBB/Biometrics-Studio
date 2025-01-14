@@ -1,8 +1,7 @@
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Tabs, TabsContent } from "@/components/ui/tabs";
 import React, { Suspense, useEffect, useState } from "react";
 import { cn } from "@/lib/utils/shadcn";
 import { GlobalToolbar } from "@/components/toolbar/toolbar";
-import { useTranslation } from "react-i18next";
 import { CUSTOM_GLOBAL_EVENTS } from "@/lib/utils/const";
 import { MarkingsStore } from "@/lib/stores/Markings";
 import { CANVAS_ID } from "@/components/pixi/canvas/hooks/useCanvasContext";
@@ -19,8 +18,6 @@ const Homepage = React.lazy(() =>
 );
 
 export default function Home() {
-    const { t } = useTranslation();
-
     const initialTab = TABS.HOMEPAGE;
     const [currentTab, setCurrentTab] = useState<TABS>(initialTab);
 
@@ -54,11 +51,6 @@ export default function Home() {
                 defaultValue={initialTab}
                 className="w-full flex flex-col items-center flex-grow"
             >
-                <TabsList className="w-fit">
-                    <TabsTrigger value={TABS.HOMEPAGE}>
-                        {t("Homepage")}
-                    </TabsTrigger>
-                </TabsList>
                 <TabsContent
                     forceMount
                     value={TABS.HOMEPAGE}

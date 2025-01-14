@@ -3,14 +3,13 @@ import {
     CANVAS_ID,
     useCanvasContext,
 } from "@/components/pixi/canvas/hooks/useCanvasContext";
-import { useEffect, useMemo, useState } from "react";
-import { GlobalSettingsStore } from "@/lib/stores/GlobalSettings";
+import { useEffect, useMemo } from "react";
 import { getOppositeCanvasId } from "@/components/pixi/canvas/utils/get-opposite-canvas-id";
 import { IS_DEV_ENVIRONMENT } from "@/lib/utils/const";
 import invariant from "tiny-invariant";
 import { hasDuplicates } from "@/lib/utils/array/hasDuplicates";
-import { EmptyableMarking, getColumns } from "./columns";
-import { DataTable } from "./data-table";
+import { EmptyableMarking, useColumns } from "./markings-info-table-columns";
+import { MarkingsInfoTable } from "./markings-info-table";
 
 const fillMissingLabels = (
     canvasId: CANVAS_ID,
@@ -30,7 +29,6 @@ const fillMissingLabels = (
 
 export function MarkingsInfo({ tableHeight }: { tableHeight: number }) {
     const { id } = useCanvasContext();
-    const language = GlobalSettingsStore.use(state => state.settings.language);
     const selectedMarking = MarkingsStore(id).use(
         state => state.selectedMarkingLabel
     );
@@ -71,7 +69,7 @@ export function MarkingsInfo({ tableHeight }: { tableHeight: number }) {
         }
     }, [storeMarkings]);
 
-    const [columns, setColumns] = useState(getColumns(id));
+    const columns = useColumns(id);
 
     const markings = useMemo(() => {
         const thisIds = storeMarkings.map(m => m.id);
@@ -88,13 +86,9 @@ export function MarkingsInfo({ tableHeight }: { tableHeight: number }) {
         return fillMissingLabels(id, combinedMarkings);
     }, [storeMarkings, storeOppositeMarkings, id]);
 
-    useEffect(() => {
-        setColumns(getColumns(id));
-    }, [id, language, selectedMarking]);
-
     return (
         <div className="w-full h-fit py-0.5">
-            <DataTable
+            <MarkingsInfoTable
                 canvasId={id}
                 selectedMarking={selectedMarking}
                 height={`${tableHeight}px`}

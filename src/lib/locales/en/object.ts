@@ -7,11 +7,8 @@ const d: Dictionary = {
             id: "ID",
             label: "Label",
             angleRad: "Angle",
-            backgroundColor: "Background color",
             origin: "Origin",
             endpoint: "Endpoint",
-            size: "Size",
-            textColor: "Text color",
             type: {
                 Name: "Type",
                 Keys: {
@@ -20,6 +17,19 @@ const d: Dictionary = {
                     line_segment: "Line segment",
                 },
             },
+            characteristicId: "Characteristic ID",
+        },
+    },
+    MarkingCharacteristic: {
+        Name: "Marking characteristic",
+        Keys: {
+            id: "ID",
+            name: "Name",
+            type: "Type",
+            category: "Category",
+            backgroundColor: "Background color",
+            textColor: "Text color",
+            size: "Size",
         },
     },
     PrerenderingRadius: {

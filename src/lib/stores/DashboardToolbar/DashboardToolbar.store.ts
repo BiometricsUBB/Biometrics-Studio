@@ -19,9 +19,6 @@ type Settings = {
     };
     marking: {
         type: MARKING_TYPE;
-        backgroundColor: string;
-        textColor: string;
-        size: number;
     };
     viewport: {
         locked: boolean;
@@ -40,9 +37,6 @@ const INITIAL_STATE: State = {
         },
         marking: {
             type: MARKING_TYPE.POINT,
-            backgroundColor: "#61bd67",
-            textColor: "#0a130a",
-            size: 10,
         },
         viewport: {
             locked: false,

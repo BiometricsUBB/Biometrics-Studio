@@ -5,9 +5,11 @@ const d: Dictionary = {
     Theme: "Theme",
     Language: "Language",
     Settings: "Settings",
-    Homepage: "Panel",
     Markings: "Markings",
     Debug: "Debug",
+    Characteristics: "Characteristics",
+    Remove: "Remove",
+    Add: "Add",
 };
 
 export default d;

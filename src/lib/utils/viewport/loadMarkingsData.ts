@@ -17,9 +17,17 @@ import { MARKING_TYPE, MarkingBase } from "@/lib/markings/MarkingBase";
 import { RayMarking } from "@/lib/markings/RayMarking";
 import { PointMarking } from "@/lib/markings/PointMarking";
 import { LineSegmentMarking } from "@/lib/markings/LineSegmentMarking";
+import { MarkingCharacteristicsStore } from "@/lib/stores/MarkingCharacteristics/MarkingCharacteristics";
+import {
+    defaultBackgroundColor,
+    defaultSize,
+    defaultTextColor,
+    MarkingCharacteristic,
+    WORKING_MODE,
+} from "@/lib/markings/MarkingCharacteristic";
 import { ExportObject } from "./saveMarkingsDataWithDialog";
 
-function validateFileData(_data: unknown): _data is ExportObject {
+export function validateFileData(_data: unknown): _data is ExportObject {
     const fileData = _data as ExportObject;
     return (
         typeof fileData === "object" &&
@@ -29,56 +37,6 @@ function validateFileData(_data: unknown): _data is ExportObject {
         fileData.metadata.software.name === "biometrics-studio" &&
         "version" in fileData.metadata.software
     );
-}
-
-function inferMarking(
-    {
-        typeId,
-        label,
-        origin,
-        angleRad,
-        endpoint,
-    }: ExportObject["data"]["markings"][0],
-    markingStyleTypes: ExportObject["data"]["marking_types"]
-): MarkingBase {
-    const {
-        background_color: backgroundColor,
-        size,
-        text_color: textColor,
-        type,
-    } = markingStyleTypes.find(t => t.typeId === typeId)!;
-
-    if (type === MARKING_TYPE.RAY) {
-        return new RayMarking(
-            label,
-            origin,
-            backgroundColor,
-            textColor,
-            size,
-            angleRad!
-        );
-    }
-    if (type === MARKING_TYPE.POINT) {
-        return new PointMarking(
-            label,
-            origin,
-            backgroundColor,
-            textColor,
-            size
-        );
-    }
-    if (type === MARKING_TYPE.LINE_SEGMENT) {
-        return new LineSegmentMarking(
-            label,
-            origin,
-            backgroundColor,
-            textColor,
-            size,
-            endpoint!
-        );
-    }
-
-    throw new Error(`Unknown marking type: ${type}`);
 }
 
 export async function loadMarkingsData(filePath: string, canvasId: CANVAS_ID) {
@@ -116,9 +74,100 @@ export async function loadMarkingsData(filePath: string, canvasId: CANVAS_ID) {
         if (!confirmed) return;
     }
 
-    const markings: MarkingBase[] = fileContentJson.data.markings.map(marking =>
-        inferMarking(marking, fileContentJson.data.marking_types)
+    // TODO Get current working mode
+    if (fileContentJson.metadata.workingMode !== WORKING_MODE.FINGERPRINT) {
+        showErrorDialog(
+            t(
+                "The markings data was created with a different working mode ({{mode}}). Change the working mode to ({{mode}}) to load the data.",
+                {
+                    ns: "dialog",
+                    mode: fileContentJson.metadata.workingMode,
+                }
+            )
+        );
+        return;
+    }
+
+    const markings: MarkingBase[] = fileContentJson.data.markings.map(
+        marking => {
+            switch (marking.type) {
+                case MARKING_TYPE.POINT:
+                    return new PointMarking(
+                        marking.label,
+                        marking.origin,
+                        marking.characteristicId
+                    );
+                case MARKING_TYPE.RAY:
+                    return new RayMarking(
+                        marking.label,
+                        marking.origin,
+                        marking.characteristicId,
+                        marking.angleRad!
+                    );
+                case MARKING_TYPE.LINE_SEGMENT:
+                    return new LineSegmentMarking(
+                        marking.label,
+                        marking.origin,
+                        marking.characteristicId,
+                        marking.endpoint!
+                    );
+                default:
+                    throw new Error(`Unknown marking type: ${marking.type}`);
+            }
+        }
     );
+
+    const existingCharacteristics =
+        MarkingCharacteristicsStore.state.characteristics;
+
+    const requiredCharacteristics = new Map<
+        MarkingCharacteristic["id"],
+        MARKING_TYPE
+    >(markings.map(marking => [marking.characteristicId, marking.type]));
+
+    const missingCharacteristicsIds: string[] = requiredCharacteristics
+        .keys()
+        .filter(id => !existingCharacteristics.some(c => c.id === id))
+        .toArray();
+
+    // If characteristic exists in markings but not in the store
+    if (missingCharacteristicsIds.length > 0) {
+        const confirmed = await confirmFileSelectionDialog(
+            t(
+                "The imported markings data contains characteristics that are not present in the application. Would you like to:\n1. Automatically create default characteristics for the missing ones?\n2. Cancel and manually import the characteristics from a file?",
+                { ns: "dialog" }
+            ),
+            {
+                kind: "warning",
+                title: t("Missing marking characteristics detected", {
+                    ns: "dialog",
+                }),
+            }
+        );
+
+        if (!confirmed) return;
+
+        const characteristicsToAdd: MarkingCharacteristic[] = [];
+        requiredCharacteristics
+            .keys()
+            .filter(id => missingCharacteristicsIds.includes(id))
+            .forEach(id => {
+                const type = requiredCharacteristics.get(id)!;
+                characteristicsToAdd.push({
+                    id,
+                    name: id.slice(0, 6),
+                    type,
+                    backgroundColor: defaultBackgroundColor,
+                    textColor: defaultTextColor,
+                    size: defaultSize,
+                    category: fileContentJson.metadata.workingMode,
+                });
+            });
+
+        MarkingCharacteristicsStore.actions.characteristics.addMany(
+            characteristicsToAdd
+        );
+    }
 
     MarkingsStore(canvasId).actions.markings.reset();
     MarkingsStore(canvasId).actions.markings.addMany(markings);
