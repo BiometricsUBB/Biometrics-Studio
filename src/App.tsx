@@ -5,7 +5,7 @@ import { GlobalToolbar } from "@/components/toolbar/toolbar";
 import { useTranslation } from "react-i18next";
 import { cn } from "@/lib/utils/shadcn";
 import SelectMode from "@/views/selectMode";
-import { useLocalStorage } from "@/lib/hooks/useLocalStorage";
+import { useWorkingMode } from "@/providers/WorkingModeProvider";
 
 const Homepage = lazy(() =>
     import("@/components/tabs/homepage/homepage").then(module => ({
@@ -22,13 +22,11 @@ const enum TABS {
 export default function App() {
     const { t } = useTranslation();
     const [currentTab, setCurrentTab] = useState<TABS>(TABS.HOMEPAGE);
-    const [currentWorkingMode] = useLocalStorage("working_mode", "");
+    const { workingMode, setWorkingMode } = useWorkingMode();
 
     useEffect(() => {
-        setCurrentTab(
-            currentWorkingMode === "" ? TABS.SELECT_MODE : TABS.HOMEPAGE
-        );
-    }, [currentWorkingMode]);
+        setCurrentTab(workingMode === "" ? TABS.SELECT_MODE : TABS.HOMEPAGE);
+    }, [workingMode]);
 
     return (
         <main
@@ -38,31 +36,25 @@ export default function App() {
             <Tabs
                 value={currentTab}
                 onValueChange={tab => setCurrentTab(tab as TABS)}
-                defaultValue={TABS.HOMEPAGE}
+                defaultValue={
+                    workingMode === "" ? TABS.SELECT_MODE : TABS.HOMEPAGE
+                }
                 className="w-full flex flex-col items-center flex-grow"
             >
                 <TabsList className="w-fit">
                     <TabsTrigger value={TABS.SELECT_MODE}>
                         {t("Working mode")}
                     </TabsTrigger>
-                    <TabsTrigger
-                        disabled={
-                            currentWorkingMode === "" ||
-                            currentTab === TABS.SELECT_MODE
-                        }
-                        value={TABS.HOMEPAGE}
-                    >
-                        {t("Homepage")}
-                    </TabsTrigger>
-                    <TabsTrigger
-                        disabled={
-                            currentWorkingMode === "" ||
-                            currentTab === TABS.SELECT_MODE
-                        }
-                        value={TABS.SETTINGS}
-                    >
-                        {t("Settings")}
-                    </TabsTrigger>
+                    {workingMode !== "" && (
+                        <>
+                            <TabsTrigger value={TABS.HOMEPAGE}>
+                                {t("Homepage")}
+                            </TabsTrigger>
+                            <TabsTrigger value={TABS.SETTINGS}>
+                                {t("Settings")}
+                            </TabsTrigger>
+                        </>
+                    )}
                 </TabsList>
 
                 <TabsContent
