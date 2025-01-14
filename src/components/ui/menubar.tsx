@@ -25,7 +25,7 @@ const MenubarContent = React.forwardRef<
     <MenubarPrimitive.Content
         ref={ref}
         className={cn(
-            "border-2 border-input bg-secondary text-secondary-foreground",
+            "border-2 border-accent bg-secondary text-secondary-foreground",
             className
         )}
         {...props}
@@ -38,7 +38,7 @@ const MenubarTrigger = React.forwardRef<
 >((props, ref) => (
     <MenubarPrimitive.Trigger
         ref={ref}
-        className="px-2 hover:bg-input hover:text-input-foreground focus:outline-none"
+        className="px-2 hover:bg-accent hover:text-accent-foreground focus:outline-none"
         {...props}
     />
 ));
@@ -57,15 +57,8 @@ const MenubarGroup = MenubarPrimitive.Group;
 const MenubarItemIndicator = React.forwardRef<
     React.ElementRef<typeof MenubarPrimitive.ItemIndicator>,
     React.ComponentPropsWithoutRef<typeof MenubarPrimitive.ItemIndicator>
->(({ className, ...props }, ref) => (
-    <MenubarPrimitive.ItemIndicator
-        ref={ref}
-        className={cn(
-            // "px-1.5 py-0.5 hover:bg-input hover:text-input-foreground",
-            className
-        )}
-        {...props}
-    >
+>(({ ...props }, ref) => (
+    <MenubarPrimitive.ItemIndicator ref={ref} {...props}>
         <Check size={ICON.SIZE / 2} strokeWidth={ICON.STROKE_WIDTH} />
     </MenubarPrimitive.ItemIndicator>
 ));
@@ -77,7 +70,7 @@ const MenubarCheckboxItem = React.forwardRef<
     <MenubarPrimitive.CheckboxItem
         ref={ref}
         className={cn(
-            "flex space-x-2 items-center justify-between px-1.5 py-0.5 select-none hover:bg-input hover:text-input-foreground focus:outline-none",
+            "flex space-x-2 items-center justify-between px-1.5 py-0.5 select-none hover:bg-accent hover:text-accent-foreground focus:outline-none",
             className
         )}
         {...props}
@@ -100,7 +93,7 @@ const MenubarSubTrigger = React.forwardRef<
     <MenubarPrimitive.SubTrigger
         ref={ref}
         className={cn(
-            "flex space-x-5 items-center justify-between select-none px-1.5 py-0.5 hover:bg-input hover:text-input-foreground focus:outline-none",
+            "flex space-x-5 items-center justify-between select-none px-1.5 py-0.5 hover:bg-accent hover:text-accent-foreground focus:outline-none",
             className
         )}
         {...props}
@@ -117,7 +110,7 @@ const MenubarSubContent = React.forwardRef<
     <MenubarPrimitive.SubContent
         ref={ref}
         className={cn(
-            "border-2 border-input bg-secondary text-secondary-foreground",
+            "border-2 border-accent bg-secondary text-secondary-foreground",
             className
         )}
         {...props}

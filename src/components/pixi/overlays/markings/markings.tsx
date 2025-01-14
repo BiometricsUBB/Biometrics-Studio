@@ -73,8 +73,8 @@ export const Markings = memo(({ canvasId, markings, alpha }: MarkingsProps) => {
                         selectedMarkingLabel === marking.label,
                         marking,
                         markingCharacteristics.find(
-                            x => x.type === marking.type
-                        )!.style,
+                            x => x.id === marking.characteristicId
+                        )!,
                         viewportWidthRatio,
                         viewportHeightRatio,
                         showMarkingLabels

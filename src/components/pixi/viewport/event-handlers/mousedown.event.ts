@@ -211,7 +211,7 @@ export const handleRMBDown = (
         const markingType = DashboardToolbarStore.state.settings.marking.type;
 
         const { id: characteristicId } =
-            MarkingCharacteristicsStore.actions.selectedCharacteristics.getSelectedCharacteristicByType(
+            MarkingCharacteristicsStore.actions.activeCharacteristics.getActiveCharacteristicByType(
                 markingType
             );
 

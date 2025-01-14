@@ -25,21 +25,11 @@ const d: Dictionary = {
         Keys: {
             id: "ID",
             name: "Name",
-            type: "Characteristic type",
-        },
-        Style: {
-            Name: "Style",
-            Keys: {
-                backgroundColor: "Background color",
-                textColor: "Text color",
-                size: "Size",
-            },
-        },
-        Metadata: {
-            Name: "Metadata",
-            Keys: {
-                category: "Category",
-            },
+            type: "Type",
+            category: "Category",
+            backgroundColor: "Background color",
+            textColor: "Text color",
+            size: "Size",
         },
     },
     PrerenderingRadius: {

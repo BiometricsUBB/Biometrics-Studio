@@ -30,7 +30,7 @@ import { CUSTOM_GLOBAL_EVENTS } from "@/lib/utils/const";
 import { triggerPostMoveFlash } from "@atlaskit/pragmatic-drag-and-drop-flourish/trigger-post-move-flash";
 import { sleep } from "@/lib/utils/misc/sleep";
 import { GlobalStateStore } from "@/lib/stores/GlobalState";
-import { EmptyableMarking } from "./columns";
+import { EmptyableMarking } from "./markings-info-table-columns";
 
 // Original Table is wrapped with a <div> (see https://ui.shadcn.com/docs/components/table#radix-:r24:-content-manual),
 // but here we don't want it, so let's use a new component with only <table> tag
@@ -141,7 +141,7 @@ function SortingIndicator({ isSorted }: { isSorted: SortDirection | false }) {
     );
 }
 
-interface DataTableProps<TData, TValue> {
+interface MarkingsInfoTableProps<TData, TValue> {
     columns: ColumnDef<TData, TValue>[];
     selectedMarking: MarkingsState["selectedMarkingLabel"];
     data: TData[];
@@ -151,13 +151,13 @@ interface DataTableProps<TData, TValue> {
 
 let prevDataLength = 0;
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const DataTable = function <TData, TValue>({
+export const MarkingsInfoTable = function <TData, TValue>({
     columns,
     selectedMarking,
     data,
     height,
     canvasId,
-}: DataTableProps<TData, TValue>) {
+}: MarkingsInfoTableProps<TData, TValue>) {
     const ref = useRef<TableVirtuosoHandle>(null);
     const [sorting, setSorting] = useState<SortingState>([]);
     const [rowSelection, setRowSelection] = useState({});

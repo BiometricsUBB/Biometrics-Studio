@@ -1,6 +1,8 @@
 /* eslint-disable no-param-reassign */
 
 import { MarkingCharacteristic } from "@/lib/markings/MarkingCharacteristic";
+import { MarkingsStore } from "@/lib/stores/Markings";
+import { CANVAS_ID } from "@/components/pixi/canvas/hooks/useCanvasContext";
 import { _useMarkingCharacteristicsStore as useStore } from "./MarkingCharacteristics.store";
 
 class StoreClass {
@@ -11,35 +13,37 @@ class StoreClass {
     }
 
     readonly actions = {
-        selectedCharacteristics: {
-            setSelectedCharacteristicByType: (
+        activeCharacteristics: {
+            setActiveCharacteristicByType: (
                 type: MarkingCharacteristic["type"],
                 characteristicId: MarkingCharacteristic["id"]
             ) => {
-                if (
-                    !this.state.characteristics.find(
-                        characteristic => characteristic.id === characteristicId
-                    )
-                ) {
+                const newActiveCharacteristic = this.state.characteristics.find(
+                    characteristic => characteristic.id === characteristicId
+                );
+
+                if (!newActiveCharacteristic) {
                     throw new Error(
                         `Characteristic with id ${characteristicId} not found`
                     );
                 }
 
                 this.state.set(draft => {
-                    draft.selectedCharacteristics =
-                        draft.selectedCharacteristics.map(x =>
-                            x.type === type ? { ...x, id: characteristicId } : x
+                    draft.activeCharacteristics =
+                        draft.activeCharacteristics.map(characteristic =>
+                            characteristic.type === type
+                                ? newActiveCharacteristic
+                                : characteristic
                         );
                 });
             },
-            getSelectedCharacteristicByType: (
+            getActiveCharacteristicByType: (
                 type: MarkingCharacteristic["type"]
             ) => {
                 const characteristic = this.state.characteristics.find(
                     characteristic =>
                         characteristic.id ===
-                        this.state.selectedCharacteristics.find(
+                        this.state.activeCharacteristics.find(
                             x => x.type === type
                         )!.id
                 );
@@ -58,50 +62,107 @@ class StoreClass {
                 this.state.set(draft => {
                     draft.characteristics.push(characteristic);
                 });
+
+                if (
+                    !this.state.activeCharacteristics.find(
+                        x => x.type === characteristic.type
+                    )
+                ) {
+                    this.state.set(draft => {
+                        draft.activeCharacteristics.push(characteristic);
+                    });
+                }
             },
+            getConflicts: (characteristics: MarkingCharacteristic[]) => {
+                return this.state.characteristics.filter(characteristic =>
+                    characteristics.some(
+                        existingCharacteristic =>
+                            existingCharacteristic.id === characteristic.id
+                    )
+                );
+            },
+            addMany: (characteristics: MarkingCharacteristic[]) => {
+                this.state.set(draft => {
+                    // Remove existing characteristics that are in the passed array
+                    draft.characteristics = draft.characteristics.filter(
+                        characteristic =>
+                            !characteristics.some(
+                                c => c.id === characteristic.id
+                            )
+                    );
+
+                    // Add the passed characteristics
+                    draft.characteristics =
+                        draft.characteristics.concat(characteristics);
+
+                    characteristics.forEach(characteristic => {
+                        if (
+                            !draft.activeCharacteristics.find(
+                                x => x.type === characteristic.type
+                            )
+                        ) {
+                            draft.activeCharacteristics.push(characteristic);
+                        }
+                    });
+                });
+            },
+            checkIfCharacteristicIsInUse: (
+                characteristicId: MarkingCharacteristic["id"],
+                canvasId: CANVAS_ID
+            ) =>
+                MarkingsStore(canvasId).state.markings.some(
+                    marking => marking.characteristicId === characteristicId
+                ),
             removeById: (characteristicId: MarkingCharacteristic["id"]) => {
+                const { type } = this.state.characteristics.find(
+                    c => c.id === characteristicId
+                )!;
+
                 this.state.set(draft => {
                     draft.characteristics = draft.characteristics.filter(
                         characteristic => characteristic.id !== characteristicId
                     );
                 });
-            },
-            setCharacteristicSize: (
-                characteristicId: MarkingCharacteristic["id"],
-                size: MarkingCharacteristic["style"]["size"]
-            ) => {
+
                 this.state.set(draft => {
-                    const characteristic = draft.characteristics.find(
-                        c => c.id === characteristicId
+                    draft.activeCharacteristics =
+                        draft.activeCharacteristics.filter(
+                            characteristic =>
+                                characteristic.id !== characteristicId
+                        );
+
+                    const activeCharacteristic = draft.characteristics.find(
+                        x => x.type === type
                     );
-                    if (characteristic) {
-                        characteristic.style.size = size;
+
+                    if (activeCharacteristic) {
+                        draft.activeCharacteristics =
+                            draft.activeCharacteristics.concat([
+                                activeCharacteristic,
+                            ]);
                     }
                 });
             },
-            setCharacteristicBackgroundColor: (
+            setCharacteristic: (
                 characteristicId: MarkingCharacteristic["id"],
-                color: MarkingCharacteristic["style"]["backgroundColor"]
+                newValues: Partial<MarkingCharacteristic>
             ) => {
                 this.state.set(draft => {
                     const characteristic = draft.characteristics.find(
                         c => c.id === characteristicId
                     );
                     if (characteristic) {
-                        characteristic.style.backgroundColor = color;
+                        Object.assign(characteristic, newValues);
                     }
                 });
-            },
-            setCharacteristicTextColor: (
-                characteristicId: MarkingCharacteristic["id"],
-                color: MarkingCharacteristic["style"]["textColor"]
-            ) => {
+
                 this.state.set(draft => {
-                    const characteristic = draft.characteristics.find(
-                        c => c.id === characteristicId
-                    );
-                    if (characteristic) {
-                        characteristic.style.textColor = color;
+                    const activeCharacteristic =
+                        draft.activeCharacteristics.find(
+                            c => c.id === characteristicId
+                        );
+                    if (activeCharacteristic) {
+                        Object.assign(activeCharacteristic, newValues);
                     }
                 });
             },

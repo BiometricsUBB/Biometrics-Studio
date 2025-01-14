@@ -5,9 +5,11 @@ const d: Dictionary = {
     Theme: "Motyw",
     Language: "Język",
     Settings: "Ustawienia",
-    Homepage: "Panel",
     Markings: "Adnotacje",
     Debug: "Debug",
+    Characteristics: "Cechy",
+    Remove: "Usuń",
+    Add: "Dodaj",
 };
 
 export default d;

@@ -10,7 +10,7 @@ import { CANVAS_ID } from "@/components/pixi/canvas/hooks/useCanvasContext";
 
 /* eslint-disable no-param-reassign */
 
-export const enum MARKING_TYPE {
+export enum MARKING_TYPE {
     POINT = "point",
     RAY = "ray",
     LINE_SEGMENT = "line_segment",

@@ -12,13 +12,12 @@ export interface MarkingCharacteristic {
     id: string;
     name: string;
     type: MARKING_TYPE;
-    style: {
-        backgroundColor: ColorSource;
-        textColor: ColorSource;
-        size: number;
-    };
-    // Metadane będą potrzebne już przy pracy w kontekstach np. odciski palców, butów etc
-    metadata: {
-        category: WORKING_MODE;
-    };
+    backgroundColor: ColorSource;
+    textColor: ColorSource;
+    size: number;
+    category: WORKING_MODE;
 }
+
+export const defaultBackgroundColor = "#61BD67";
+export const defaultTextColor = "#0a130a";
+export const defaultSize = 10;

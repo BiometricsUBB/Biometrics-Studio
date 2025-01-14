@@ -137,9 +137,9 @@ class StoreClass {
             },
             addOne: (marking: MarkingBase) => {
                 if (this.state.markings.find(m => m.label === marking.label)) {
-                    this.setMarkingsAndUpdateHash(markings => {
-                        return markings.filter(m => m.label !== marking.label);
-                    });
+                    this.setMarkingsAndUpdateHash(markings =>
+                        markings.filter(m => m.label !== marking.label)
+                    );
                 }
 
                 this.setMarkingsAndUpdateHash(
@@ -148,7 +148,6 @@ class StoreClass {
                     })
                 );
                 this.setSelectedMarkingLabel(() => null);
-                return marking;
             },
             addMany: (markings: MarkingBase[]) =>
                 this.setMarkingsAndUpdateHash(

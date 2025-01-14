@@ -7,10 +7,10 @@ export class RayMarking extends MarkingBase {
     constructor(
         label: number,
         origin: Point,
-        featureName: string,
+        characteristicId: string,
         public angleRad: number
     ) {
-        super(label, origin, featureName);
+        super(label, origin, characteristicId);
         this.angleRad = angleRad;
     }
 }

@@ -8,13 +8,15 @@ import { PRERENDER_RADIUS_OPTIONS, THEMES } from "../stores/GlobalSettings";
 type Recordify<T> = { [K in Extract<T, string> as `${K}`]: string };
 
 export type i18nKeywords = Recordify<
-    | "Homepage"
     | "Settings"
     | "Language"
     | "Markings"
     | "Debug"
     | "Theme"
     | "Rendering"
+    | "Characteristics"
+    | "Remove"
+    | "Add"
 >;
 
 export type i18nCursor = {
@@ -41,18 +43,7 @@ export type i18nObject = {
     };
     MarkingCharacteristic: {
         Name: string;
-        Keys: Omit<
-            Recordify<keyof MarkingCharacteristic>,
-            "style" | "metadata"
-        >;
-        Style: {
-            Name: string;
-            Keys: Recordify<keyof MarkingCharacteristic["style"]>;
-        };
-        Metadata: {
-            Name: string;
-            Keys: Recordify<keyof MarkingCharacteristic["metadata"]>;
-        };
+        Keys: Recordify<keyof MarkingCharacteristic>;
     };
     PrerenderingRadius: {
         Name: string;
@@ -76,12 +67,20 @@ export type i18nTooltip = Recordify<
     | "Toggle scale mode"
     | "Toggle marking labels"
     | "Toggle viewport information"
+    | "Export marking characteristics"
+    | "Import marking characteristics"
 >;
 
 export type i18nDialog = Recordify<
     | "Are you sure you want to load this image?\n\nIt will remove the previously loaded image and all existing forensic marks."
     | "Are you sure you want to load markings data?\n\nIt will remove all existing forensic marks."
     | "The markings data was created with a different version of the application ({{version}}). Loading it might not work.\n\nAre you sure you want to load it?"
+    | "Marking characteristics were exported from a different version of the application ({{version}}). Loading it might not work.\n\nAre you sure you want to load it?"
+    | "The imported marking characteristics have conflicts with the existing ones:\n{{conflicts}}\n\nDo you want to overwrite them?"
+    | "Overwrite marking characteristics?"
+    | "The imported markings data contains characteristics that are not present in the application. Would you like to:\n1. Automatically create default characteristics for the missing ones?\n2. Cancel and manually import the characteristics from a file?"
+    | "Missing marking characteristics detected"
+    | "The markings data was created with a different working mode ({{mode}}). Change the working mode to ({{mode}}) to load the data."
 >;
 
 export type i18nDescription = Recordify<"Prerendering radius">;

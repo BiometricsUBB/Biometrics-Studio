@@ -1,7 +1,6 @@
 import React, { useState, Suspense } from "react";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Tabs, TabsContent } from "@/components/ui/tabs";
 import { GlobalToolbar } from "@/components/toolbar/toolbar";
-import { useTranslation } from "react-i18next";
 import { cn } from "@/lib/utils/shadcn";
 import { Menu } from "@/components/menu/menu";
 
@@ -13,11 +12,9 @@ const Homepage = React.lazy(() =>
 
 const enum TABS {
     HOMEPAGE = "homepage",
-    SETTINGS = "settings",
 }
 
 export default function App() {
-    const { t } = useTranslation();
     const [currentTab, setCurrentTab] = useState<TABS>(TABS.HOMEPAGE);
 
     return (
@@ -31,12 +28,6 @@ export default function App() {
                 defaultValue={TABS.HOMEPAGE}
                 className="w-full flex flex-col items-center flex-grow"
             >
-                <TabsList className="w-fit">
-                    <TabsTrigger value={TABS.HOMEPAGE}>
-                        {t("Homepage")}
-                    </TabsTrigger>
-                </TabsList>
-
                 <TabsContent
                     forceMount
                     value={TABS.HOMEPAGE}

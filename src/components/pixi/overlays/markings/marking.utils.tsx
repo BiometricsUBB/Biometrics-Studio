@@ -50,7 +50,7 @@ const drawPointMarking = (
     g: PixiGraphics,
     selected: boolean,
     { label }: PointMarking,
-    { backgroundColor, textColor, size }: MarkingCharacteristic["style"],
+    { backgroundColor, textColor, size }: MarkingCharacteristic,
     relativeOrigin: Point,
     showMarkingLabels?: boolean
 ) => {
@@ -81,7 +81,7 @@ const drawRayMarking = (
     g: PixiGraphics,
     selected: boolean,
     { angleRad, label }: RayMarking,
-    { backgroundColor, textColor, size }: MarkingCharacteristic["style"],
+    { backgroundColor, textColor, size }: MarkingCharacteristic,
     relativeOrigin: Point,
     showMarkingLabels?: boolean
 ) => {
@@ -130,7 +130,7 @@ const drawLineSegmentMarking = (
     g: PixiGraphics,
     selected: boolean,
     { label }: LineSegmentMarking,
-    { backgroundColor, textColor, size }: MarkingCharacteristic["style"],
+    { backgroundColor, textColor, size }: MarkingCharacteristic,
     relativeOrigin: Point,
     relativeEndpoint: Point,
     showMarkingLabels?: boolean
@@ -196,7 +196,7 @@ export const drawMarking = (
     g: PixiGraphics,
     isSelected: boolean,
     marking: MarkingBase,
-    style: MarkingCharacteristic["style"],
+    markingCharacteristic: MarkingCharacteristic,
     viewportWidthRatio: number,
     viewportHeightRatio: number,
     showMarkingLabels?: boolean
@@ -212,7 +212,7 @@ export const drawMarking = (
             g,
             isSelected,
             marking,
-            style,
+            markingCharacteristic,
             markingViewportPosition,
             showMarkingLabels
         );
@@ -221,7 +221,7 @@ export const drawMarking = (
             g,
             isSelected,
             marking,
-            style,
+            markingCharacteristic,
             markingViewportPosition,
             showMarkingLabels
         );
@@ -230,7 +230,7 @@ export const drawMarking = (
             g,
             isSelected,
             marking,
-            style,
+            markingCharacteristic,
             markingViewportPosition,
             marking.calculateEndpointViewportPosition(
                 viewportWidthRatio,
