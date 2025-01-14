@@ -18,13 +18,9 @@ export default function SelectMode() {
         <main className="w-full flex flex-col items-center justify-center">
             <div
                 className="absolute inset-0 top-2 bg-cover bg-center z-0 blur-sm"
-                style={{
-                    backgroundImage:
-                        "url('https://placehold.co/1920x1080/000000/FFFFFF/png?text=(WIP)')",
-                }}
                 aria-hidden="true"
             />
-            <div className="bg-background z-10 p-4 shadow-md">
+            <div className="bg-background border z-10 p-4 shadow-md">
                 <h1 className="text-2xl text-center font-bold text-foreground">
                     {t("Biometrics Studio")}
                 </h1>
