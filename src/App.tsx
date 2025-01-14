@@ -1,11 +1,11 @@
 import React, { useState, Suspense, lazy, useEffect } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Settings } from "@/components/tabs/settings/settings";
 import { GlobalToolbar } from "@/components/toolbar/toolbar";
 import { useTranslation } from "react-i18next";
 import { cn } from "@/lib/utils/shadcn";
 import SelectMode from "@/views/selectMode";
 import { useWorkingMode } from "@/lib/providers/WorkingModeProvider";
+import { Menu } from "@/components/menu/menu";
 
 const Homepage = lazy(() =>
     import("@/components/tabs/homepage/homepage").then(module => ({
@@ -33,6 +33,7 @@ export default function App() {
             data-testid="page-container"
             className="flex w-full min-h-dvh h-full flex-col items-center justify-between"
         >
+            <Menu />
             <Tabs
                 value={currentTab}
                 onValueChange={tab => setCurrentTab(tab as TABS)}
@@ -46,14 +47,9 @@ export default function App() {
                         {t("Working mode")}
                     </TabsTrigger>
                     {workingMode !== "" && (
-                        <>
-                            <TabsTrigger value={TABS.HOMEPAGE}>
-                                {t("Homepage")}
-                            </TabsTrigger>
-                            <TabsTrigger value={TABS.SETTINGS}>
-                                {t("Settings")}
-                            </TabsTrigger>
-                        </>
+                        <TabsTrigger value={TABS.HOMEPAGE}>
+                            {t("Homepage")}
+                        </TabsTrigger>
                     )}
                 </TabsList>
 
@@ -86,16 +82,6 @@ export default function App() {
                     <Suspense fallback={<div>Loading...</div>}>
                         <Homepage />
                     </Suspense>
-                </TabsContent>
-
-                <TabsContent
-                    forceMount
-                    value={TABS.SETTINGS}
-                    className={cn("w-full h-full", {
-                        hidden: currentTab !== TABS.SETTINGS,
-                    })}
-                >
-                    <Settings />
                 </TabsContent>
             </Tabs>
         </main>

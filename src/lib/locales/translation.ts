@@ -12,17 +12,11 @@ export type i18nKeywords = Recordify<
     | "Working mode"
     | "Homepage"
     | "Settings"
-    | "Interface"
-    | "Video"
     | "Language"
     | "Markings"
     | "Debug"
     | "Theme"
     | "Rendering"
-    | "Prerendering radius"
-    | "Dark mode"
-    | "On"
-    | "Off"
 >;
 
 export type i18nModes = Recordify<WORKING_MODE>;

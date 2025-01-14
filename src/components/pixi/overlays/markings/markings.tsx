@@ -16,8 +16,9 @@ import { drawMarking } from "./marking.utils";
 export type MarkingsProps = {
     markings: MarkingBase[];
     canvasId: CANVAS_ID;
+    alpha?: number;
 };
-export const Markings = memo(({ canvasId, markings }: MarkingsProps) => {
+export const Markings = memo(({ canvasId, markings, alpha }: MarkingsProps) => {
     const viewport = useGlobalViewport(canvasId) as Viewport;
     const app = useGlobalApp(canvasId) as Application<ICanvas>;
 
@@ -71,8 +72,12 @@ export const Markings = memo(({ canvasId, markings }: MarkingsProps) => {
                         showMarkingLabels
                     );
                 });
+
+            // Set the alpha to provided value or based on showMarkingLabels config
+            g.alpha = alpha ?? showMarkingLabels ? 1 : 0.5;
         },
         [
+            alpha,
             app.screen,
             viewport.x,
             viewport.y,

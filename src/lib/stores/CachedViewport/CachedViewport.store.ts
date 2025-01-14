@@ -14,6 +14,7 @@ type Zoom = {
 };
 
 type State = {
+    isDragging: boolean;
     scaled: ZoomValue;
     position: Position;
     oppositeScaled: ZoomValue;
@@ -22,6 +23,7 @@ type State = {
 };
 
 const INITIAL_STATE: State = {
+    isDragging: false,
     scaled: 1,
     position: { x: 0, y: 0 },
     oppositeScaled: 1,

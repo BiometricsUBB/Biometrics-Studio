@@ -5,13 +5,19 @@ import {
 } from "@/lib/stores/CachedViewport";
 import { round } from "@/lib/utils/math/round";
 import {
+    FitEvent,
+    fitHeight,
+    fitWidth,
+    fitWorld,
+} from "@/components/pixi/canvas/utils/fit-viewport";
+import {
     Delta,
     ViewportHandlerParams,
     updateCachedViewportStore,
 } from "./utils";
 
 export const handleOppositeMove = (
-    event: MovedEvent,
+    event: MovedEvent | FitEvent,
     params: ViewportHandlerParams,
     delta: Delta
 ) => {
@@ -23,21 +29,13 @@ export const handleOppositeMove = (
             break;
         }
         case "wheel": {
-            const {
-                value,
-                offset: { x, y },
-            } = delta as CachedViewportZoom;
+            const { value } = delta as CachedViewportZoom;
 
             const oldScale = viewport.scaled;
             const newScale = round(oldScale * value, 3);
 
             if (newScale !== store.state.oppositeScaled) {
-                viewport.setZoom(newScale);
-
-                viewport.moveCorner(
-                    viewport.corner.x - x,
-                    viewport.corner.y - y
-                );
+                viewport.setZoom(newScale, true);
             }
 
             viewport.emit("zoomed", {
@@ -46,6 +44,30 @@ export const handleOppositeMove = (
             });
 
             store.actions.viewport.opposite.setScaled(newScale);
+            break;
+        }
+        case "fit-height": {
+            fitHeight(viewport);
+            viewport?.emit("zoomed", {
+                type: "wheel",
+                viewport,
+            });
+            break;
+        }
+        case "fit-width": {
+            fitWidth(viewport);
+            viewport?.emit("zoomed", {
+                type: "wheel",
+                viewport,
+            });
+            break;
+        }
+        case "fit-world": {
+            fitWorld(viewport);
+            viewport?.emit("zoomed", {
+                type: "wheel",
+                viewport,
+            });
             break;
         }
         default: {

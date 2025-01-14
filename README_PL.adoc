@@ -10,9 +10,9 @@ image::./docs/biometrics-studio.png[]
 
 Masz trzy opcje instalacji aplikacji w systemie Windows:
 
-1. (najprostsze) Pobierz instalator ze strony wydań i uruchom go w swoim systemie. Instalator pobierze wszystkie niezbędne zależności i zainstaluje aplikację na Twoim komputerze. Następnie możesz uruchomić aplikację, otwierając skrót `biometrics-studio` na pulpicie.
+1. (najprostsze) **Pobierz instalator ze https://github.com/BiometricsUBB/Biometrics-Studio/releases[strony wydań] i uruchom go w swoim systemie. Instalator pobierze wszystkie niezbędne zależności i zainstaluje aplikację na Twoim komputerze. Następnie możesz uruchomić aplikację, otwierając skrót `biometrics-studio` na pulpicie.**
 
-2. (średnia trudność) Postępuj zgodnie z sekcją https://github.com/BiometricsUBB/Biometrics-Studio/blob/master-install-scripts/README_PL.adoc#rozw%C3%B3j[#Rozwój] poniżej, aby zainstalować aplikację na swoim systemie.
+2. (średnia trudność) Postępuj zgodnie z sekcją https://github.com/BiometricsUBB/Biometrics-Studio/blob/master/README_PL.adoc#rozw%C3%B3j[#Rozwój] poniżej, aby zainstalować aplikację na swoim systemie.
 
 3. (jeśli planujesz debugowanie lub późniejszy rozwój aplikacji) Sklonuj lub pobierz repozytorium i uruchom skrypt instalacyjny z poziomu wiersza poleceń (upewnij się, że jesteś w głównym katalogu projektu):
 ```

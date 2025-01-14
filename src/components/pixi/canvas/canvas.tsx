@@ -4,6 +4,8 @@ import { useCanvasContext } from "@/components/pixi/canvas/hooks/useCanvasContex
 import { IS_DEV_ENVIRONMENT } from "@/lib/utils/const";
 import { useEffect, useState } from "react";
 import { cn } from "@/lib/utils/shadcn";
+import { CenterMarkOverlay } from "@/components/pixi/overlays/center-mark-overlay";
+import { CachedViewportStore } from "@/lib/stores/CachedViewport";
 import { PixiApp } from "../app/app";
 import { DebugOverlay } from "../overlays/debug-overlay";
 import { MarkingOverlay } from "../overlays/marking-overlay";
@@ -25,7 +27,7 @@ export function Canvas({ options, className, ...props }: CanvasProps) {
         "--background"
     );
     const [isFontLoaded, setIsFontLoaded] = useState(false);
-    const [isDragging, setIsDragging] = useState(false);
+    const { isDragging } = CachedViewportStore(canvasMetadata.id).use();
 
     useEffect(() => {
         PIXI.BaseTexture.defaultOptions.scaleMode = 1;
@@ -63,14 +65,6 @@ export function Canvas({ options, className, ...props }: CanvasProps) {
                 },
                 className
             )}
-            onMouseDown={e => {
-                // jeśli nie środkowy przycisk, zakończ
-                if (e.buttons !== 4) return;
-                setIsDragging(true);
-            }}
-            onMouseUp={() => {
-                setIsDragging(false);
-            }}
         >
             {IS_DEV_ENVIRONMENT && (
                 <DebugOverlay canvasMetadata={canvasMetadata} />
@@ -81,6 +75,9 @@ export function Canvas({ options, className, ...props }: CanvasProps) {
                 canvasMetadata={canvasMetadata}
             />
             <MarkingOverlay canvasMetadata={canvasMetadata} />
+            {isDragging && (
+                <CenterMarkOverlay canvasMetadata={canvasMetadata} />
+            )}
         </Stage>
     );
 }

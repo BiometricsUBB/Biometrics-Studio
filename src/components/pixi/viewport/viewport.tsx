@@ -10,7 +10,7 @@ import { ReactPixiViewport } from "./react-pixi-viewport";
 import { CanvasMetadata } from "../canvas/hooks/useCanvasContext";
 import { ViewportHandlerParams } from "./event-handlers/utils";
 import {
-    handleMouseDown,
+    handleRMBDown,
     handleMove,
     handleOppositeMove,
     handleZoom,
@@ -43,16 +43,17 @@ export const Viewport = forwardRef<PixiViewport, ViewportProps>(
                     viewport
                         .drag({
                             wheel: true,
-                            mouseButtons: "middle",
+                            mouseButtons: "left",
                         })
                         .wheel({
                             percent: 0,
                             interrupt: true,
                             wheelZoom: true,
-                            keyToPress: ["ControlLeft", "ControlRight"],
+                            center: viewport.center,
                         })
                         .clampZoom({
                             minScale: 1 / 4,
+                            maxScale: 100,
                         });
 
                     viewport.on("childAdded", updateViewport);
@@ -71,6 +72,18 @@ export const Viewport = forwardRef<PixiViewport, ViewportProps>(
                         markingsStore: MarkingsStore(id),
                     };
 
+                    viewport.on("drag-start", () =>
+                        CachedViewportStore(id).actions.viewport.setIsDragging(
+                            true
+                        )
+                    );
+
+                    viewport.on("drag-end", () =>
+                        CachedViewportStore(id).actions.viewport.setIsDragging(
+                            false
+                        )
+                    );
+
                     viewport.on("moved", e => {
                         handleMove(e, handlerParams);
                     });
@@ -83,8 +96,8 @@ export const Viewport = forwardRef<PixiViewport, ViewportProps>(
                         handleZoom(e, handlerParams);
                     });
 
-                    viewport.on("mousedown", e => {
-                        handleMouseDown(e, handlerParams);
+                    viewport.on("rightdown", e => {
+                        handleRMBDown(e, handlerParams);
                     });
 
                     // eslint-disable-next-line no-param-reassign
