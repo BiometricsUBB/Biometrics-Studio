@@ -7,9 +7,11 @@ import { SettingsMenu } from "@/components/menu/settings-menu";
 import { cn } from "@/lib/utils/shadcn";
 import { ICON } from "@/lib/utils/const";
 import { ModeMenu } from "@/components/menu/mode-menu";
+import { useWorkingMode } from "@/lib/providers/WorkingModeProvider";
 
 export function Menu() {
     const [isMaximized, setIsMaximized] = useState(false);
+    const { workingMode } = useWorkingMode();
 
     useEffect(() => {
         const updateMaximized = async () => {
@@ -52,7 +54,8 @@ export function Menu() {
                         width={ICON.SIZE}
                     />
                 </div>
-                <ModeMenu />
+
+                {workingMode !== "" && <ModeMenu />}
                 <SettingsMenu />
             </div>
             <div id="windowControls" className="flex">
