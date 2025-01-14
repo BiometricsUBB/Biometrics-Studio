@@ -48,7 +48,7 @@ export function Menu() {
             <div id="leftMenu" className="flex grow-1">
                 <div className="flex items-center px-2">
                     <img
-                        src="/public/logo.svg"
+                        src="/logo.svg"
                         alt="Logo"
                         height={ICON.SIZE}
                         width={ICON.SIZE}
