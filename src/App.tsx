@@ -64,7 +64,12 @@ export default function App() {
                         hidden: currentTab !== TABS.SELECT_MODE,
                     })}
                 >
-                    <SelectMode />
+                    <SelectMode
+                        setCurrentWorkingMode={type => {
+                            setWorkingMode(type);
+                            setCurrentTab(TABS.HOMEPAGE);
+                        }}
+                    />
                 </TabsContent>
 
                 <TabsContent

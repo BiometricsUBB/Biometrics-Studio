@@ -2,7 +2,6 @@ import React from "react";
 import { Button } from "@/components/ui/button";
 import { useTranslation } from "react-i18next";
 import { Separator } from "@/components/ui/separator";
-import { useLocalStorage } from "@/lib/hooks/useLocalStorage";
 
 export enum WORKING_MODE {
     FINGERPRINT = "FINGERPRINT",
@@ -10,9 +9,14 @@ export enum WORKING_MODE {
     SHOE_PRINT = "SHOE_PRINT",
 }
 
-export default function SelectMode() {
+interface ISelectModeProps {
+    setCurrentWorkingMode: (mode: WORKING_MODE) => void;
+}
+
+export default function SelectMode({
+    setCurrentWorkingMode,
+}: ISelectModeProps) {
     const { t } = useTranslation();
-    const [, setCurrentWorkingMode] = useLocalStorage("working_mode", "");
 
     return (
         <main className="w-full flex flex-col items-center justify-center">
