@@ -11,7 +11,6 @@ type Recordify<T> = { [K in Extract<T, string> as `${K}`]: string };
 export type i18nKeywords = Recordify<
     | "Biometrics Studio"
     | "Working mode"
-    | "Homepage"
     | "Settings"
     | "Language"
     | "Markings"

@@ -27,8 +27,8 @@ export function Menu() {
                         width={ICON.SIZE}
                     />
                 </div>
-                {workingMode !== "" && <ModeMenu />}
                 <SettingsMenu />
+                {workingMode !== "" && <ModeMenu />}
                 <Dialog>
                     <DialogTrigger>{t("Characteristics")}</DialogTrigger>
                     <MarkingCharacteristicsDialogPortal />

@@ -1,5 +1,5 @@
 import React, { useState, Suspense, lazy, useEffect } from "react";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Tabs, TabsContent } from "@/components/ui/tabs";
 import { GlobalToolbar } from "@/components/toolbar/toolbar";
 import { cn } from "@/lib/utils/shadcn";
 import SelectMode from "@/views/selectMode";

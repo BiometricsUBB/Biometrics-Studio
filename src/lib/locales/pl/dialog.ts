@@ -18,7 +18,6 @@ const d: Dictionary = {
         "Wykryto brakujące cechy adnotacji",
     "The markings data was created with a different working mode ({{mode}}). Change the working mode to ({{mode}}) to load the data.":
         "Dane dotyczące adnotacji zostały utworzone w innym trybie pracy ({{mode}}). Zmień tryb pracy na ({{mode}}), aby załadować dane.",
-        "Dane dotyczące oznaczeń zostały utworzone za pomocą innej wersji aplikacji ({{version}}). Ich załadowanie może nie działać.\n\nCzy na pewno chcesz je załadować?",
     "Please select your working mode": "Proszę wybrać tryb pracy",
 };
 
