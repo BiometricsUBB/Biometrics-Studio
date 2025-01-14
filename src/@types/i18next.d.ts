@@ -5,6 +5,7 @@ import {
     i18nTooltip,
     i18nDescription,
     i18nDialog,
+    i18nModes,
 } from "@/lib/locales/translation";
 
 declare module "i18next" {
@@ -16,6 +17,7 @@ declare module "i18next" {
             "tooltip",
             "description",
             "dialog",
+            "modes",
         ];
         resources: {
             keywords: i18nKeywords;
@@ -24,6 +26,7 @@ declare module "i18next" {
             tooltip: i18nTooltip;
             description: i18nDescription;
             dialog: i18nDialog;
+            modes: i18nModes;
         };
     }
 }

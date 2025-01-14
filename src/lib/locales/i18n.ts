@@ -19,6 +19,7 @@ i18next
             "tooltip",
             "description",
             "dialog",
+            "modes",
         ],
         lng: GlobalSettingsStore.state.settings.language,
         fallbackLng: LANGUAGES.ENGLISH,

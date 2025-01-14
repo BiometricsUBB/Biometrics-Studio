@@ -2,7 +2,6 @@ import { i18nKeywords as Dictionary } from "@/lib/locales/translation";
 
 const d: Dictionary = {
     "Biometrics Studio": "Biometrics Studio",
-    "Please select your working mode": "Proszę wybrać tryb pracy",
     "Dark mode": "Tryb ciemny",
     "Prerendering radius": "Pre-renderowanie",
     Rendering: "Renderowanie",

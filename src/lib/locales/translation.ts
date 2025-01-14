@@ -2,13 +2,13 @@ import { MARKING_TYPE } from "@/lib/markings/MarkingBase";
 import { RayMarking } from "@/lib/markings/RayMarking";
 import { PointMarking } from "@/lib/markings/PointMarking";
 import { LineSegmentMarking } from "@/lib/markings/LineSegmentMarking";
+import { WORKING_MODE } from "@/views/selectMode";
 import { PRERENDER_RADIUS_OPTIONS, THEMES } from "../stores/GlobalSettings";
 
 type Recordify<T> = { [K in Extract<T, string> as `${K}`]: string };
 
 export type i18nKeywords = Recordify<
     | "Biometrics Studio"
-    | "Please select your working mode"
     | "Working mode"
     | "Homepage"
     | "Settings"
@@ -24,6 +24,8 @@ export type i18nKeywords = Recordify<
     | "On"
     | "Off"
 >;
+
+export type i18nModes = Recordify<WORKING_MODE>;
 
 export type i18nCursor = {
     Mode: Recordify<"Selection" | "Marking">;
@@ -75,6 +77,7 @@ export type i18nDialog = Recordify<
     | "Are you sure you want to load this image?\n\nIt will remove the previously loaded image and all existing forensic marks."
     | "Are you sure you want to load markings data?\n\nIt will remove all existing forensic marks."
     | "The markings data was created with a different version of the application ({{version}}). Loading it might not work.\n\nAre you sure you want to load it?"
+    | "Please select your working mode"
 >;
 
 export type i18nDescription = Recordify<"Prerendering radius">;

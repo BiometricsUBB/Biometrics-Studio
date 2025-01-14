@@ -7,6 +7,7 @@ const d: Dictionary = {
         "Czy na pewno chcesz załadować dane dotyczące oznaczeń?\n\nSpowoduje to usunięcie wszystkich istniejących oznaczeń śladów.",
     "The markings data was created with a different version of the application ({{version}}). Loading it might not work.\n\nAre you sure you want to load it?":
         "Dane dotyczące oznaczeń zostały utworzone za pomocą innej wersji aplikacji ({{version}}). Ich załadowanie może nie działać.\n\nCzy na pewno chcesz je załadować?",
+    "Please select your working mode": "Proszę wybrać tryb pracy",
 };
 
 export default d;
