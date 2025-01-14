@@ -43,12 +43,13 @@ export default function App() {
                 className="w-full flex flex-col items-center flex-grow"
             >
                 <TabsList className="w-fit">
-                    <TabsTrigger value={TABS.SELECT_MODE}>
-                        {t("Working mode")}
-                    </TabsTrigger>
-                    {workingMode !== "" && (
+                    {workingMode !== "" ? (
                         <TabsTrigger value={TABS.HOMEPAGE}>
                             {t("Homepage")}
+                        </TabsTrigger>
+                    ) : (
+                        <TabsTrigger value={TABS.SELECT_MODE}>
+                            {t("Working mode")}
                         </TabsTrigger>
                     )}
                 </TabsList>

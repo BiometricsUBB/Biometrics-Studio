@@ -110,6 +110,7 @@ export function SettingsMenu() {
                                 const value = THEMES[key];
                                 return (
                                     <MenubarCheckboxItem
+                                        key={key}
                                         checked={resolvedTheme === value}
                                         onCheckedChange={() => {
                                             setTheme(value);
