@@ -30,7 +30,7 @@ export default function SelectMode({
                 </h1>
                 <Separator />
                 <p className="text-xs text-center text-muted-foreground">
-                    {t("Please select your working mode")}
+                    {t("Please select your working mode", { ns: "dialog" })}
                 </p>
                 <div className="flex flex-col gap-2 mt-6">
                     {Object.values(WORKING_MODE).map(mode => (
@@ -40,7 +40,7 @@ export default function SelectMode({
                                 setCurrentWorkingMode(mode);
                             }}
                         >
-                            {mode}
+                            {t(mode, { ns: "modes" })}
                         </Button>
                     ))}
                 </div>
