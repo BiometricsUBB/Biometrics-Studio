@@ -1,7 +1,6 @@
 import React, { useState, Suspense, lazy, useEffect } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { GlobalToolbar } from "@/components/toolbar/toolbar";
-import { useTranslation } from "react-i18next";
 import { cn } from "@/lib/utils/shadcn";
 import SelectMode from "@/views/selectMode";
 import { useWorkingMode } from "@/lib/providers/WorkingModeProvider";
@@ -15,12 +14,10 @@ const Homepage = lazy(() =>
 
 const enum TABS {
     HOMEPAGE = "homepage",
-    SETTINGS = "settings",
     SELECT_MODE = "select_mode",
 }
 
 export default function App() {
-    const { t } = useTranslation();
     const [currentTab, setCurrentTab] = useState<TABS>(TABS.HOMEPAGE);
     const { workingMode, setWorkingMode } = useWorkingMode();
 
@@ -42,18 +39,6 @@ export default function App() {
                 }
                 className="w-full flex flex-col items-center flex-grow"
             >
-                <TabsList className="w-fit">
-                    {workingMode !== "" ? (
-                        <TabsTrigger value={TABS.HOMEPAGE}>
-                            {t("Homepage")}
-                        </TabsTrigger>
-                    ) : (
-                        <TabsTrigger value={TABS.SELECT_MODE}>
-                            {t("Working mode")}
-                        </TabsTrigger>
-                    )}
-                </TabsList>
-
                 <TabsContent
                     forceMount
                     value={TABS.SELECT_MODE}

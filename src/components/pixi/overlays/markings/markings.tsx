@@ -8,6 +8,7 @@ import { MarkingBase } from "@/lib/markings/MarkingBase";
 import { ShallowViewportStore } from "@/lib/stores/ShallowViewport";
 import { CanvasToolbarStore } from "@/lib/stores/CanvasToolbar";
 import { Viewport } from "pixi-viewport";
+import { MarkingCharacteristicsStore } from "@/lib/stores/MarkingCharacteristics/MarkingCharacteristics";
 import { useGlobalViewport } from "../../viewport/hooks/useGlobalViewport";
 import { CANVAS_ID } from "../../canvas/hooks/useCanvasContext";
 import { useGlobalApp } from "../../app/hooks/useGlobalApp";
@@ -48,6 +49,10 @@ export const Markings = memo(({ canvasId, markings, alpha }: MarkingsProps) => {
         state => state.selectedMarkingLabel
     );
 
+    const markingCharacteristics = MarkingCharacteristicsStore.use(
+        state => state.characteristics
+    );
+
     const drawMarkings = useCallback(
         (g: PixiGraphics) => {
             // wyrenderuj wszystkie markingi jako jedna grafika dla lepszej wydajności
@@ -67,6 +72,9 @@ export const Markings = memo(({ canvasId, markings, alpha }: MarkingsProps) => {
                         g,
                         selectedMarkingLabel === marking.label,
                         marking,
+                        markingCharacteristics.find(
+                            x => x.id === marking.characteristicId
+                        )!,
                         viewportWidthRatio,
                         viewportHeightRatio,
                         showMarkingLabels
@@ -86,6 +94,7 @@ export const Markings = memo(({ canvasId, markings, alpha }: MarkingsProps) => {
             markings,
             selectedMarkingLabel,
             showMarkingLabels,
+            markingCharacteristics,
         ]
     );
 

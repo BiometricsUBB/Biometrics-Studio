@@ -6,10 +6,12 @@ const d: Dictionary = {
     Theme: "Motyw",
     Language: "Język",
     Settings: "Ustawienia",
-    Homepage: "Panel",
-    "Working mode": "Tryb pracy",
     Markings: "Adnotacje",
     Debug: "Debug",
+    "Working mode": "Tryb pracy",
+    Characteristics: "Cechy",
+    Remove: "Usuń",
+    Add: "Dodaj",
 };
 
 export default d;

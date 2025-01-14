@@ -32,14 +32,6 @@ class StoreClass {
         });
     }
 
-    private setMarkingSettings(
-        callback: ActionProduceCallback<State["settings"]["marking"], State>
-    ) {
-        this.state.set(draft => {
-            draft.settings.marking = callback(draft.settings.marking, draft);
-        });
-    }
-
     readonly actions = {
         settings: {
             viewport: {
@@ -82,41 +74,15 @@ class StoreClass {
                 },
             },
             marking: {
-                setMarkingType: (
+                setSelectedMarkingType: (
                     type: State["settings"]["marking"]["type"]
                 ) => {
-                    this.setMarkingSettings(
-                        produce(settings => {
-                            settings.type = type;
-                        })
-                    );
+                    this.state.set(draft => {
+                        draft.settings.marking.type = type;
+                    });
                 },
-                setMarkingBackgroundColor: (
-                    color: State["settings"]["marking"]["backgroundColor"]
-                ) => {
-                    this.setMarkingSettings(
-                        produce(settings => {
-                            settings.backgroundColor = color;
-                        })
-                    );
-                },
-                setMarkingSize: (
-                    size: State["settings"]["marking"]["size"]
-                ) => {
-                    this.setMarkingSettings(
-                        produce(settings => {
-                            settings.size = size;
-                        })
-                    );
-                },
-                setMarkingTextColor: (
-                    color: State["settings"]["marking"]["textColor"]
-                ) => {
-                    this.setMarkingSettings(
-                        produce(settings => {
-                            settings.textColor = color;
-                        })
-                    );
+                getSelectedMarkingType: () => {
+                    return this.state.settings.marking.type;
                 },
             },
         },

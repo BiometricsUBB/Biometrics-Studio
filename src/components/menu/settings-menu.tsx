@@ -17,9 +17,12 @@ import {
 import i18n from "@/lib/locales/i18n";
 import { useEffect } from "react";
 import { useTheme } from "@/lib/hooks/useTheme";
-import { t } from "i18next";
+import { Menu as MenuIcon } from "lucide-react";
+import { ICON } from "@/lib/utils/const";
+import { useTranslation } from "react-i18next";
 
 export function SettingsMenu() {
+    const { t } = useTranslation();
     const { theme: resolvedTheme, setTheme } = useTheme();
     const { setTheme: setStoreTheme } =
         GlobalSettingsStore.actions.settings.interface;
@@ -32,7 +35,9 @@ export function SettingsMenu() {
 
     return (
         <MenubarMenu>
-            <MenubarTrigger>{t("Settings")}</MenubarTrigger>
+            <MenubarTrigger>
+                <MenuIcon size={ICON.SIZE} strokeWidth={ICON.STROKE_WIDTH} />
+            </MenubarTrigger>
             <MenubarPortal>
                 <MenubarContent>
                     <MenubarSub>

@@ -6,10 +6,12 @@ const d: Dictionary = {
     Theme: "Theme",
     Language: "Language",
     Settings: "Settings",
-    Homepage: "Panel",
-    "Working mode": "Working mode",
     Markings: "Markings",
     Debug: "Debug",
+    "Working mode": "Working mode",
+    Characteristics: "Characteristics",
+    Remove: "Remove",
+    Add: "Add",
 };
 
 export default d;

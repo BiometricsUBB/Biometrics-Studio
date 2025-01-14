@@ -12,10 +12,10 @@ import { BaseTexture, Sprite } from "pixi.js";
 import { getOppositeCanvasId } from "@/components/pixi/canvas/utils/get-opposite-canvas-id";
 import { getCanvas } from "@/components/pixi/canvas/hooks/useCanvas";
 import { basename } from "@tauri-apps/api/path";
-import { MARKING_TYPE, MarkingBase } from "@/lib/markings/MarkingBase";
+import { MarkingBase } from "@/lib/markings/MarkingBase";
 import { RayMarking } from "@/lib/markings/RayMarking";
-import { round } from "@/lib/utils/math/round";
 import { LineSegmentMarking } from "@/lib/markings/LineSegmentMarking";
+import { WORKING_MODE } from "@/lib/markings/MarkingCharacteristic";
 
 type ImageInfo = {
     name: string | null;
@@ -32,31 +32,22 @@ type SoftwareInfo = {
     version: string;
 };
 
-type MarkingStyleType = {
-    typeId: number;
-    type: MarkingBase["type"];
-    background_color: MarkingBase["backgroundColor"];
-    text_color: MarkingBase["textColor"];
-    size: MarkingBase["size"];
-};
-
 export type ExportObject = {
     metadata: {
         software: SoftwareInfo;
         image: ImageInfo | null;
         compared_image: ImageInfo | null;
+        workingMode: WORKING_MODE;
     };
     data: {
-        marking_types: MarkingStyleType[];
-        markings: ({
-            typeId: MarkingStyleType["typeId"];
-        } & {
-            typeId: number;
+        markings: {
+            label: MarkingBase["label"];
+            type: MarkingBase["type"];
+            origin: MarkingBase["origin"];
+            characteristicId: MarkingBase["characteristicId"];
             angleRad?: RayMarking["angleRad"];
             endpoint?: LineSegmentMarking["endpoint"];
-            label: MarkingBase["label"];
-            origin: MarkingBase["origin"];
-        })[];
+        }[];
     };
 };
 
@@ -82,83 +73,6 @@ function getImageData(picture: Sprite | undefined): ImageInfo | null {
     };
 }
 
-function getMarkingTypes(markings: MarkingBase[]): MarkingStyleType[] {
-    const markingTypes: MarkingStyleType[] = [];
-
-    let typeId = 0;
-
-    markings.forEach(marking => {
-        const { backgroundColor, textColor, size, type } = marking;
-
-        const existingType = markingTypes.find(styleType => {
-            return (
-                styleType.background_color === backgroundColor &&
-                styleType.text_color === textColor &&
-                styleType.type === type &&
-                styleType.size === size
-            );
-        });
-
-        if (!existingType) {
-            markingTypes.push({
-                typeId,
-                type,
-                background_color: backgroundColor,
-                text_color: textColor,
-                size,
-            });
-            typeId += 1;
-        }
-    });
-
-    return markingTypes;
-}
-
-function getReducedMarkings(
-    markings: MarkingBase[],
-    styleTypes: MarkingStyleType[]
-): {
-    typeId: MarkingStyleType["typeId"];
-    label: MarkingBase["label"];
-    origin: MarkingBase["origin"];
-    endpoint?: LineSegmentMarking["endpoint"];
-    angleRad?: RayMarking["angleRad"];
-}[] {
-    return markings.map(marking => {
-        const { backgroundColor, textColor, size, type } = marking;
-
-        const markingType = styleTypes.find(styleType => {
-            return (
-                styleType.background_color === backgroundColor &&
-                styleType.text_color === textColor &&
-                styleType.type === type &&
-                styleType.size === size
-            );
-        });
-
-        if (!markingType) {
-            throw new Error(
-                `Could not find marking type for marking with background color ${backgroundColor}, text color ${textColor}, size ${size} and type ${type}`
-            );
-        }
-
-        return {
-            typeId: markingType.typeId,
-            label: marking.label,
-            origin: {
-                x: round(marking.origin.x),
-                y: round(marking.origin.y),
-            },
-            ...(marking.type === MARKING_TYPE.RAY && {
-                angleRad: (marking as RayMarking).angleRad,
-            }),
-            ...(marking.type === MARKING_TYPE.LINE_SEGMENT && {
-                endpoint: (marking as LineSegmentMarking).endpoint,
-            }),
-        };
-    });
-}
-
 async function getData(
     viewport: Viewport,
     picture?: Sprite,
@@ -167,26 +81,19 @@ async function getData(
     const id = viewport.name as CanvasMetadata["id"] | null;
     if (id === null) throw new Error("Canvas ID not found");
 
-    const store = MarkingsStore(id);
-    const { markings } = store.state;
-
-    const appVersion = await getVersion();
-
-    const markingStyleTypes = getMarkingTypes(markings);
-    const reducedMarkings = getReducedMarkings(markings, markingStyleTypes);
-
     const exportObject: ExportObject = {
         metadata: {
             software: {
                 name: "biometrics-studio",
-                version: appVersion,
+                version: await getVersion(),
             },
             image: getImageData(picture),
             compared_image: getImageData(oppositePicture),
+            // TODO Get current working mode
+            workingMode: WORKING_MODE.FINGERPRINT,
         },
         data: {
-            marking_types: markingStyleTypes,
-            markings: reducedMarkings,
+            markings: MarkingsStore(id).state.markings,
         },
     };
 

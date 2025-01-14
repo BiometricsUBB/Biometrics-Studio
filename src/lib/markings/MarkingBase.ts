@@ -1,4 +1,4 @@
-import { ColorSource, Rectangle } from "pixi.js";
+import { Rectangle } from "pixi.js";
 import { immerable } from "immer";
 import {
     GlobalSettingsStore,
@@ -10,7 +10,7 @@ import { CANVAS_ID } from "@/components/pixi/canvas/hooks/useCanvasContext";
 
 /* eslint-disable no-param-reassign */
 
-export const enum MARKING_TYPE {
+export enum MARKING_TYPE {
     POINT = "point",
     RAY = "ray",
     LINE_SEGMENT = "line_segment",
@@ -31,15 +31,11 @@ export abstract class MarkingBase {
     protected constructor(
         public label: number,
         public origin: Point,
-        public backgroundColor: ColorSource,
-        public textColor: ColorSource,
-        public size: number
+        public characteristicId: string
     ) {
         this.label = label;
         this.origin = origin;
-        this.backgroundColor = backgroundColor;
-        this.textColor = textColor;
-        this.size = size;
+        this.characteristicId = characteristicId;
     }
 
     protected getPrerenderMargin() {
