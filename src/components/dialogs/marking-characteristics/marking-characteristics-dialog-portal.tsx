@@ -115,7 +115,7 @@ function MarkingCharacteristicsDialogPortal() {
                                 importMarkingCharacteristicsWithDialog()
                             }
                         >
-                            <Upload
+                            <Download
                                 size={ICON.SIZE}
                                 strokeWidth={ICON.STROKE_WIDTH}
                             />
@@ -133,7 +133,7 @@ function MarkingCharacteristicsDialogPortal() {
                                 exportMarkingCharacteristicsWithDialog()
                             }
                         >
-                            <Download
+                            <Upload
                                 size={ICON.SIZE}
                                 strokeWidth={ICON.STROKE_WIDTH}
                             />
