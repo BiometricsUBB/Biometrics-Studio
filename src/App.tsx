@@ -3,8 +3,8 @@ import { Tabs, TabsContent } from "@/components/ui/tabs";
 import { GlobalToolbar } from "@/components/toolbar/toolbar";
 import { cn } from "@/lib/utils/shadcn";
 import SelectMode from "@/views/selectMode";
-import { useWorkingMode } from "@/lib/providers/WorkingModeProvider";
 import { Menu } from "@/components/menu/menu";
+import { WorkingModeStore } from "@/lib/stores/WorkingMode";
 
 const Homepage = lazy(() =>
     import("@/components/tabs/homepage/homepage").then(module => ({
@@ -19,7 +19,7 @@ const enum TABS {
 
 export default function App() {
     const [currentTab, setCurrentTab] = useState<TABS>(TABS.HOMEPAGE);
-    const { workingMode, setWorkingMode } = useWorkingMode();
+    const { workingMode, setWorkingMode } = WorkingModeStore.use();
 
     useEffect(() => {
         setCurrentTab(workingMode === "" ? TABS.SELECT_MODE : TABS.HOMEPAGE);
