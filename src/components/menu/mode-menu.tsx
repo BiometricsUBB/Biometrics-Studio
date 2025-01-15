@@ -6,14 +6,14 @@ import {
     MenubarTrigger,
 } from "@/components/ui/menubar";
 import { t } from "i18next";
-import { useWorkingMode } from "@/lib/providers/WorkingModeProvider";
 import { WORKING_MODE } from "@/views/selectMode";
 import { MarkingsStore } from "@/lib/stores/Markings";
 import { CANVAS_ID } from "@/components/pixi/canvas/hooks/useCanvasContext";
 import { GlobalStateStore } from "@/lib/stores/GlobalState";
+import { WorkingModeStore } from "@/lib/stores/WorkingMode";
 
 export function ModeMenu() {
-    const { workingMode, setWorkingMode } = useWorkingMode();
+    const { workingMode, setWorkingMode } = WorkingModeStore.use();
 
     return (
         <MenubarMenu>
