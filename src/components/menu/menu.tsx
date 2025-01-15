@@ -3,15 +3,15 @@ import { SettingsMenu } from "@/components/menu/settings-menu";
 import { cn } from "@/lib/utils/shadcn";
 import { ICON } from "@/lib/utils/const";
 import { ModeMenu } from "@/components/menu/mode-menu";
-import { useWorkingMode } from "@/lib/providers/WorkingModeProvider";
 import { Dialog, DialogTrigger } from "@/components/ui/dialog";
 import MarkingCharacteristicsDialogPortal from "@/components/dialogs/marking-characteristics/marking-characteristics-dialog-portal";
 import { WindowControls } from "@/components/menu/window-controls";
 import { useTranslation } from "react-i18next";
+import { WorkingModeStore } from "@/lib/stores/WorkingMode";
 
 export function Menu() {
     const { t } = useTranslation();
-    const { workingMode } = useWorkingMode();
+    const { workingMode } = WorkingModeStore.use();
 
     return (
         <Menubar
