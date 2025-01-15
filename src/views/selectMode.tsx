@@ -6,7 +6,7 @@ import { Separator } from "@/components/ui/separator";
 export enum WORKING_MODE {
     FINGERPRINT = "FINGERPRINT",
     EAR = "EAR",
-    SHOE_PRINT = "SHOE_PRINT",
+    SHOEPRINT = "SHOEPRINT",
 }
 
 interface ISelectModeProps {
