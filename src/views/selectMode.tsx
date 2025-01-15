@@ -26,7 +26,7 @@ export default function SelectMode({
             />
             <div className="bg-background border z-10 p-4 shadow-md">
                 <h1 className="text-2xl text-center font-bold text-foreground">
-                    {t("Biometrics Studio")}
+                    Biometrics Studio
                 </h1>
                 <Separator />
                 <p className="text-xs text-center text-muted-foreground">
