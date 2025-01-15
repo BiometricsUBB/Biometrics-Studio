@@ -9,8 +9,6 @@ import { GlobalStateStore } from "@/lib/stores/GlobalState";
 
 const enum TABS {
     HOMEPAGE = "homepage",
-    SETTINGS = "settings",
-    WORKING_MODE = "working_mode",
 }
 
 const Homepage = React.lazy(() =>
