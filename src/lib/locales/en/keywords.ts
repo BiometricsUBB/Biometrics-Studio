@@ -7,6 +7,7 @@ const d: Dictionary = {
     Settings: "Settings",
     Markings: "Markings",
     Debug: "Debug",
+    "Working mode": "Working mode",
     Characteristics: "Characteristics",
     Remove: "Remove",
     Add: "Add",

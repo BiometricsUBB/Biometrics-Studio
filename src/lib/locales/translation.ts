@@ -3,11 +3,13 @@ import { RayMarking } from "@/lib/markings/RayMarking";
 import { PointMarking } from "@/lib/markings/PointMarking";
 import { LineSegmentMarking } from "@/lib/markings/LineSegmentMarking";
 import { MarkingCharacteristic } from "@/lib/markings/MarkingCharacteristic";
+import { WORKING_MODE } from "@/views/selectMode";
 import { PRERENDER_RADIUS_OPTIONS, THEMES } from "../stores/GlobalSettings";
 
 type Recordify<T> = { [K in Extract<T, string> as `${K}`]: string };
 
 export type i18nKeywords = Recordify<
+    | "Working mode"
     | "Settings"
     | "Language"
     | "Markings"
@@ -18,6 +20,8 @@ export type i18nKeywords = Recordify<
     | "Remove"
     | "Add"
 >;
+
+export type i18nModes = Recordify<WORKING_MODE>;
 
 export type i18nCursor = {
     Mode: Recordify<"Selection" | "Marking">;
@@ -81,6 +85,7 @@ export type i18nDialog = Recordify<
     | "The imported markings data contains characteristics that are not present in the application. Would you like to:\n1. Automatically create default characteristics for the missing ones?\n2. Cancel and manually import the characteristics from a file?"
     | "Missing marking characteristics detected"
     | "The markings data was created with a different working mode ({{mode}}). Change the working mode to ({{mode}}) to load the data."
+    | "Please select your working mode"
 >;
 
 export type i18nDescription = Recordify<"Prerendering radius">;

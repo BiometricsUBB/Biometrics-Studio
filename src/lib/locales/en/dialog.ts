@@ -18,6 +18,7 @@ const d: Dictionary = {
         "Missing marking characteristics detected",
     "The markings data was created with a different working mode ({{mode}}). Change the working mode to ({{mode}}) to load the data.":
         "The markings data was created with a different working mode ({{mode}}). Change the working mode to ({{mode}}) to load the data.",
+    "Please select your working mode": "Please select your working mode",
 };
 
 export default d;

@@ -1,10 +1,12 @@
-import React, { useState, Suspense } from "react";
+import React, { useState, Suspense, lazy, useEffect } from "react";
 import { Tabs, TabsContent } from "@/components/ui/tabs";
 import { GlobalToolbar } from "@/components/toolbar/toolbar";
 import { cn } from "@/lib/utils/shadcn";
+import SelectMode from "@/views/selectMode";
 import { Menu } from "@/components/menu/menu";
+import { WorkingModeStore } from "@/lib/stores/WorkingMode";
 
-const Homepage = React.lazy(() =>
+const Homepage = lazy(() =>
     import("@/components/tabs/homepage/homepage").then(module => ({
         default: module.Homepage,
     }))
@@ -12,10 +14,16 @@ const Homepage = React.lazy(() =>
 
 const enum TABS {
     HOMEPAGE = "homepage",
+    SELECT_MODE = "select_mode",
 }
 
 export default function App() {
     const [currentTab, setCurrentTab] = useState<TABS>(TABS.HOMEPAGE);
+    const { workingMode, setWorkingMode } = WorkingModeStore.use();
+
+    useEffect(() => {
+        setCurrentTab(workingMode === "" ? TABS.SELECT_MODE : TABS.HOMEPAGE);
+    }, [workingMode]);
 
     return (
         <main
@@ -24,10 +32,28 @@ export default function App() {
         >
             <Menu />
             <Tabs
+                value={currentTab}
                 onValueChange={tab => setCurrentTab(tab as TABS)}
-                defaultValue={TABS.HOMEPAGE}
+                defaultValue={
+                    workingMode === "" ? TABS.SELECT_MODE : TABS.HOMEPAGE
+                }
                 className="w-full flex flex-col items-center flex-grow"
             >
+                <TabsContent
+                    forceMount
+                    value={TABS.SELECT_MODE}
+                    className={cn("w-full h-full relative flex flex-grow", {
+                        hidden: currentTab !== TABS.SELECT_MODE,
+                    })}
+                >
+                    <SelectMode
+                        setCurrentWorkingMode={type => {
+                            setWorkingMode(type);
+                            setCurrentTab(TABS.HOMEPAGE);
+                        }}
+                    />
+                </TabsContent>
+
                 <TabsContent
                     forceMount
                     value={TABS.HOMEPAGE}
