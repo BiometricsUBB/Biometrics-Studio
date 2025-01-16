@@ -20,6 +20,7 @@ export function Menu() {
                     <img
                         src="/public/logo.svg"
                         alt="Logo"
+                        className="pointer-events-none select-none"
                         height={ICON.SIZE}
                         width={ICON.SIZE}
                     />
