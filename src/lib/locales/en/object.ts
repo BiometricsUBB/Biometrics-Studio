@@ -24,7 +24,8 @@ const d: Dictionary = {
         Name: "Marking characteristic",
         Keys: {
             id: "ID",
-            name: "Name",
+            displayName: "Local Name",
+            characteristicName: "Characteristic",
             markingClass: "Marking Class",
             category: "Category",
             backgroundColor: "Background color",

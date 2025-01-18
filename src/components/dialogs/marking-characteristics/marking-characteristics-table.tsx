@@ -32,9 +32,17 @@ function MarkingCharacteristicsTable() {
                 <thead>
                     <TableRow className={cn("bg-card")}>
                         <TableHead className="text-center text-card-foreground">
-                            {t(`MarkingCharacteristic.Keys.name`, {
+                            {t(`MarkingCharacteristic.Keys.displayName`, {
                                 ns: "object",
                             })}
+                        </TableHead>
+                        <TableHead className="text-center text-card-foreground">
+                            {t(
+                                `MarkingCharacteristic.Keys.characteristicName`,
+                                {
+                                    ns: "object",
+                                }
+                            )}
                         </TableHead>
                         <TableHead className="text-center text-card-foreground">
                             {t(`MarkingCharacteristic.Keys.markingClass`, {
@@ -65,12 +73,28 @@ function MarkingCharacteristicsTable() {
                             <TableCell>
                                 <Input
                                     className="h-6 !p-0"
-                                    title={`${t("MarkingCharacteristic.Keys.name", { ns: "object" })}`}
+                                    title={`${t("MarkingCharacteristic.Keys.displayName", { ns: "object" })}`}
                                     type="text"
-                                    value={item.name}
+                                    value={item.displayName}
                                     onChange={e => {
                                         setCharacteristic(item.id, {
-                                            name: e.target.value,
+                                            displayName: e.target.value,
+                                        });
+                                    }}
+                                />
+                            </TableCell>
+                            {/* Allowed changing the characteristicName input until the adding method is redesigned; 
+                                the characteristicName input should be repalced in the future to only display the characteristicName
+                            */}
+                            <TableCell>
+                                <Input
+                                    className="h-6 !p-0"
+                                    title={`${t("MarkingCharacteristic.Keys.characteristicName", { ns: "object" })}`}
+                                    type="text"
+                                    value={item.characteristicName}
+                                    onChange={e => {
+                                        setCharacteristic(item.id, {
+                                            characteristicName: e.target.value,
                                         });
                                     }}
                                 />

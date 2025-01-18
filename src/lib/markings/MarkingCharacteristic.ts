@@ -10,7 +10,8 @@ export enum WORKING_MODE {
 
 export interface MarkingCharacteristic {
     id: string;
-    name: string;
+    displayName: string;
+    characteristicName: string;
     markingClass: MARKING_CLASS;
     backgroundColor: ColorSource;
     textColor: ColorSource;

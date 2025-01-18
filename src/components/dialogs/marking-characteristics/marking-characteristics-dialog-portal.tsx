@@ -73,9 +73,18 @@ function MarkingCharacteristicsDialogPortal() {
                                                     MarkingCharacteristicsStore.actions.characteristics.add(
                                                         {
                                                             id: crypto.randomUUID(),
-                                                            name: t(
+                                                            characteristicName:
+                                                                t(
+                                                                    `Marking.Keys.markingClass.Keys.${MARKING_CLASS[key]}`,
+                                                                    {
+                                                                        ns: "object",
+                                                                    }
+                                                                ),
+                                                            displayName: t(
                                                                 `Marking.Keys.markingClass.Keys.${MARKING_CLASS[key]}`,
-                                                                { ns: "object" }
+                                                                {
+                                                                    ns: "object",
+                                                                }
                                                             ),
                                                             markingClass:
                                                                 MARKING_CLASS[

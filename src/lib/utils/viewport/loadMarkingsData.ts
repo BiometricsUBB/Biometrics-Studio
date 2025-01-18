@@ -162,7 +162,8 @@ export async function loadMarkingsData(filePath: string, canvasId: CANVAS_ID) {
                 const markingClass = requiredCharacteristics.get(id)!;
                 characteristicsToAdd.push({
                     id,
-                    name: id.slice(0, 6),
+                    characteristicName: id.slice(0, 6),
+                    displayName: id.slice(0, 6),
                     markingClass,
                     backgroundColor: defaultBackgroundColor,
                     textColor: defaultTextColor,

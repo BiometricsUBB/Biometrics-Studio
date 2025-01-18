@@ -24,7 +24,8 @@ const d: Dictionary = {
         Name: "Cecha adnotacji",
         Keys: {
             id: "ID",
-            name: "Nazwa",
+            displayName: "Nazwa Lokalna",
+            characteristicName: "Cecha",
             markingClass: "Klasa Oznaczenia",
             category: "Kategoria",
             backgroundColor: "Kolor tła",

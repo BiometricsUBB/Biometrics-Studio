@@ -43,7 +43,7 @@ export async function loadMarkingCharacteristicsData(filePath: string) {
 
     const conflicts = MarkingCharacteristicsStore.actions.characteristics
         .getConflicts(characteristics)
-        .map(conflict => conflict.name)
+        .map(conflict => conflict.characteristicName)
         .join(", ");
 
     if (conflicts.length > 0) {
