@@ -7,6 +7,7 @@ import { MarkingsStore } from "@/lib/stores/Markings";
 import { MarkingBase } from "@/lib/markings/MarkingBase";
 import { useTranslation } from "react-i18next";
 import { useMemo } from "react";
+import { MarkingCharacteristicsStore } from "@/lib/stores/MarkingCharacteristics/MarkingCharacteristics";
 
 export type EmptyMarking = {
     label: MarkingBase["label"];
@@ -91,6 +92,17 @@ export const useColumns = (
                                 <div>{marking.label}</div>
                             </div>
                         )),
+                },
+                {
+                    accessorKey: "characteristic",
+                    header: t("MarkingCharacteristic.Keys.characteristicName", {
+                        ns: "object",
+                    }),
+                    cell: info =>
+                        formatCell(info, ({ row }) => {
+                            const marking = row.original.characteristicId;
+                            return `${MarkingCharacteristicsStore.use().characteristics.find(e => e.id === marking)?.characteristicName}`;
+                        }),
                 },
                 {
                     accessorKey: "markingClass",
