@@ -154,16 +154,27 @@ export async function loadMarkingsData(filePath: string, canvasId: CANVAS_ID) {
 
         if (!confirmed) return;
 
+        // importing names from metadata
+        const metadataCharacteristics =
+            fileContentJson.metadata?.characteristics;
+
         const characteristicsToAdd: MarkingCharacteristic[] = [];
         requiredCharacteristics
             .keys()
             .filter(id => missingCharacteristicsIds.includes(id))
             .forEach(id => {
                 const markingClass = requiredCharacteristics.get(id)!;
+
+                const metadataCharacteristicName = metadataCharacteristics.find(
+                    o => o.characteristicId === id
+                )?.characteristicName;
+
+                // set names according to metadata if non existent use slice of id
                 characteristicsToAdd.push({
                     id,
-                    characteristicName: id.slice(0, 6),
-                    displayName: id.slice(0, 6),
+                    characteristicName:
+                        metadataCharacteristicName ?? id.slice(0, 6),
+                    displayName: metadataCharacteristicName ?? id.slice(0, 6),
                     markingClass,
                     backgroundColor: defaultBackgroundColor,
                     textColor: defaultTextColor,

@@ -16,6 +16,7 @@ import { MarkingBase } from "@/lib/markings/MarkingBase";
 import { RayMarking } from "@/lib/markings/RayMarking";
 import { LineSegmentMarking } from "@/lib/markings/LineSegmentMarking";
 import { WORKING_MODE } from "@/lib/markings/MarkingCharacteristic";
+import { MarkingCharacteristicsStore } from "@/lib/stores/MarkingCharacteristics/MarkingCharacteristics";
 
 type ImageInfo = {
     name: string | null;
@@ -38,6 +39,10 @@ export type ExportObject = {
         image: ImageInfo | null;
         compared_image: ImageInfo | null;
         workingMode: WORKING_MODE;
+        characteristics: {
+            characteristicId: string;
+            characteristicName: string;
+        }[];
     };
     data: {
         markings: {
@@ -91,6 +96,12 @@ async function getData(
             compared_image: getImageData(oppositePicture),
             // TODO Get current working mode
             workingMode: WORKING_MODE.FINGERPRINT,
+            characteristics:
+                // TODO: Currently this export evrything, but we should only export the characteristics used to mark the image
+                MarkingCharacteristicsStore.state.characteristics.map(e => ({
+                    characteristicId: e.id,
+                    characteristicName: e.characteristicName,
+                })),
         },
         data: {
             markings: MarkingsStore(id).state.markings,
