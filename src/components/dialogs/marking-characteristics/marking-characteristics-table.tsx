@@ -6,7 +6,7 @@ import { useDebouncedCallback } from "use-debounce";
 import { MarkingCharacteristicsStore } from "@/lib/stores/MarkingCharacteristics/MarkingCharacteristics";
 import { TableCell, TableHead, TableRow } from "@/components/ui/table";
 import { Trash2 } from "lucide-react";
-import { ICON } from "@/lib/utils/const";
+import { ICON, IS_DEV_ENVIRONMENT } from "@/lib/utils/const";
 import { Toggle } from "@/components/ui/toggle";
 import { CANVAS_ID } from "@/components/pixi/canvas/hooks/useCanvasContext";
 
@@ -64,7 +64,7 @@ function MarkingCharacteristicsTable() {
                                 ns: "object",
                             })}
                         </TableHead>
-                        <TableHead />
+                        {IS_DEV_ENVIRONMENT && <TableHead />}
                     </TableRow>
                 </thead>
                 <tbody>
@@ -148,35 +148,40 @@ function MarkingCharacteristicsTable() {
                                     }}
                                 />
                             </TableCell>
-                            <TableCell className="h-full text-center align-middle">
-                                <Toggle
-                                    title={t("Remove")}
-                                    className="block"
-                                    size="icon"
-                                    variant="outline"
-                                    pressed={false}
-                                    disabled={
-                                        MarkingCharacteristicsStore.actions.characteristics.checkIfCharacteristicIsInUse(
-                                            item.id,
-                                            CANVAS_ID.LEFT
-                                        ) ||
-                                        MarkingCharacteristicsStore.actions.characteristics.checkIfCharacteristicIsInUse(
-                                            item.id,
-                                            CANVAS_ID.RIGHT
-                                        )
-                                    }
-                                    onClickCapture={() => {
-                                        MarkingCharacteristicsStore.actions.characteristics.removeById(
-                                            item.id
-                                        );
-                                    }}
-                                >
-                                    <Trash2
-                                        size={ICON.SIZE}
-                                        strokeWidth={ICON.STROKE_WIDTH}
-                                    />
-                                </Toggle>
-                            </TableCell>
+                            {/*  The option to delete characteristics in the UI has been disabled for users. 
+                            However, this functionality remains unchanged and available in the developer version. 
+                            It will be restored after the release of the improved version of characteristics/presets. */}
+                            {IS_DEV_ENVIRONMENT && (
+                                <TableCell className="h-full text-center align-middle">
+                                    <Toggle
+                                        title={t("Remove")}
+                                        className="block"
+                                        size="icon"
+                                        variant="outline"
+                                        pressed={false}
+                                        disabled={
+                                            MarkingCharacteristicsStore.actions.characteristics.checkIfCharacteristicIsInUse(
+                                                item.id,
+                                                CANVAS_ID.LEFT
+                                            ) ||
+                                            MarkingCharacteristicsStore.actions.characteristics.checkIfCharacteristicIsInUse(
+                                                item.id,
+                                                CANVAS_ID.RIGHT
+                                            )
+                                        }
+                                        onClickCapture={() => {
+                                            MarkingCharacteristicsStore.actions.characteristics.removeById(
+                                                item.id
+                                            );
+                                        }}
+                                    >
+                                        <Trash2
+                                            size={ICON.SIZE}
+                                            strokeWidth={ICON.STROKE_WIDTH}
+                                        />
+                                    </Toggle>
+                                </TableCell>
+                            )}
                         </TableRow>
                     ))}
                 </tbody>
