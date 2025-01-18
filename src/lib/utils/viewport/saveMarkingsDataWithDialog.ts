@@ -1,6 +1,9 @@
 /* eslint-disable no-throw-literal */
 
-import { CanvasMetadata } from "@/components/pixi/canvas/hooks/useCanvasContext";
+import {
+    CANVAS_ID,
+    CanvasMetadata,
+} from "@/components/pixi/canvas/hooks/useCanvasContext";
 import { save } from "@tauri-apps/plugin-dialog";
 import { getVersion } from "@tauri-apps/api/app";
 import { t } from "i18next";
@@ -96,12 +99,24 @@ async function getData(
             compared_image: getImageData(oppositePicture),
             // TODO Get current working mode
             workingMode: WORKING_MODE.FINGERPRINT,
-            characteristics:
-                // TODO: Currently this export evrything, but we should only export the characteristics used to mark the image
-                MarkingCharacteristicsStore.state.characteristics.map(e => ({
-                    characteristicId: e.id,
-                    characteristicName: e.characteristicName,
-                })),
+            characteristics: MarkingCharacteristicsStore.state.characteristics
+                .filter(
+                    c =>
+                        MarkingCharacteristicsStore.actions.characteristics.checkIfCharacteristicIsInUse(
+                            c.id,
+                            CANVAS_ID.LEFT
+                        ) ||
+                        MarkingCharacteristicsStore.actions.characteristics.checkIfCharacteristicIsInUse(
+                            c.id,
+                            CANVAS_ID.RIGHT
+                        )
+                )
+                .map(c => {
+                    return {
+                        characteristicId: c.id,
+                        characteristicName: c.characteristicName,
+                    };
+                }),
         },
         data: {
             markings: MarkingsStore(id).state.markings,
