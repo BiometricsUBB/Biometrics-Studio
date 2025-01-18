@@ -37,7 +37,7 @@ function MarkingCharacteristicsTable() {
                             })}
                         </TableHead>
                         <TableHead className="text-center text-card-foreground">
-                            {t(`MarkingCharacteristic.Keys.type`, {
+                            {t(`MarkingCharacteristic.Keys.markingClass`, {
                                 ns: "object",
                             })}
                         </TableHead>
@@ -76,9 +76,12 @@ function MarkingCharacteristicsTable() {
                                 />
                             </TableCell>
                             <TableCell className={cn("p-1 cursor-default")}>
-                                {t(`Marking.Keys.type.Keys.${item.type}`, {
-                                    ns: "object",
-                                })}
+                                {t(
+                                    `Marking.Keys.markingClass.Keys.${item.markingClass}`,
+                                    {
+                                        ns: "object",
+                                    }
+                                )}
                             </TableCell>
                             <TableCell>
                                 <Input

@@ -93,14 +93,19 @@ export const useColumns = (
                         )),
                 },
                 {
-                    accessorKey: "type",
-                    header: t("Marking.Keys.type.Name", { ns: "object" }),
+                    accessorKey: "markingClass",
+                    header: t("Marking.Keys.markingClass.Name", {
+                        ns: "object",
+                    }),
                     cell: info =>
                         formatCell(info, ({ row }) => {
                             const marking = row.original;
-                            return t(`Marking.Keys.type.Keys.${marking.type}`, {
-                                ns: "object",
-                            });
+                            return t(
+                                `Marking.Keys.markingClass.Keys.${marking.markingClass}`,
+                                {
+                                    ns: "object",
+                                }
+                            );
                         }),
                 },
             ] as ColumnDef<EmptyableMarking, Element>[],

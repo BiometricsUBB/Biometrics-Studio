@@ -1,5 +1,5 @@
 import { ColorSource } from "pixi.js";
-import { MARKING_TYPE } from "@/lib/markings/MarkingBase";
+import { MARKING_CLASS } from "@/lib/markings/MarkingBase";
 
 // TODO docelowo to powinno być dodane przez Marcela w https://github.com/BiometricsUBB/Biometrics-Studio/pull/6 wtedy należy to przepiąć
 export enum WORKING_MODE {
@@ -11,7 +11,7 @@ export enum WORKING_MODE {
 export interface MarkingCharacteristic {
     id: string;
     name: string;
-    type: MARKING_TYPE;
+    markingClass: MARKING_CLASS;
     backgroundColor: ColorSource;
     textColor: ColorSource;
     size: number;

@@ -42,7 +42,7 @@ export type ExportObject = {
     data: {
         markings: {
             label: MarkingBase["label"];
-            type: MarkingBase["type"];
+            markingClass: MarkingBase["markingClass"];
             origin: MarkingBase["origin"];
             characteristicId: MarkingBase["characteristicId"];
             angleRad?: RayMarking["angleRad"];

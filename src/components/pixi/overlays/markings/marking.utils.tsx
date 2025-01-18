@@ -239,6 +239,6 @@ export const drawMarking = (
             showMarkingLabels
         );
     } else {
-        throw new Error(`Unsupported marking type: ${marking.type}`);
+        throw new Error(`Unsupported marking type: ${marking.markingClass}`);
     }
 };

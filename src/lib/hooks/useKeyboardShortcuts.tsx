@@ -1,4 +1,4 @@
-import { MARKING_TYPE } from "@/lib/markings/MarkingBase";
+import { MARKING_CLASS } from "@/lib/markings/MarkingBase";
 import {
     CURSOR_MODES,
     DashboardToolbarStore,
@@ -14,7 +14,7 @@ export const useKeyboardShortcuts = () => {
         viewport: viewportActions,
     } = actions.settings;
 
-    const { setSelectedMarkingType } = markingActions;
+    const { setSelectedMarkingClass } = markingActions;
     const { setCursorMode } = cursorActions;
     const { toggleLockedViewport, toggleLockScaleSync } = viewportActions;
 
@@ -33,15 +33,15 @@ export const useKeyboardShortcuts = () => {
     }, ["F2"]);
 
     useKeyDown(() => {
-        setSelectedMarkingType(MARKING_TYPE.POINT);
+        setSelectedMarkingClass(MARKING_CLASS.POINT);
     }, ["1"]);
 
     useKeyDown(() => {
-        setSelectedMarkingType(MARKING_TYPE.RAY);
+        setSelectedMarkingClass(MARKING_CLASS.RAY);
     }, ["2"]);
 
     useKeyDown(() => {
-        setSelectedMarkingType(MARKING_TYPE.LINE_SEGMENT);
+        setSelectedMarkingClass(MARKING_CLASS.LINE_SEGMENT);
     }, ["3"]);
 
     useKeyDown(() => {

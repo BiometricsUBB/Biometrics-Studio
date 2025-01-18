@@ -9,8 +9,8 @@ const d: Dictionary = {
             angleRad: "Angle",
             origin: "Origin",
             endpoint: "Endpoint",
-            type: {
-                Name: "Type",
+            markingClass: {
+                Name: "Marking class",
                 Keys: {
                     point: "Point",
                     ray: "Ray",
@@ -25,7 +25,7 @@ const d: Dictionary = {
         Keys: {
             id: "ID",
             name: "Name",
-            type: "Type",
+            markingClass: "Marking Class",
             category: "Category",
             backgroundColor: "Background color",
             textColor: "Text color",
