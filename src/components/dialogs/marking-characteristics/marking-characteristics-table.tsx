@@ -83,21 +83,32 @@ function MarkingCharacteristicsTable() {
                                     }}
                                 />
                             </TableCell>
-                            {/* Allowed changing the characteristicName input until the adding method is redesigned; 
-                                the characteristicName input should be repalced in the future to only display the characteristicName
+                            {/* 
+                            
+                                TODO:
+                                Allowed changing the characteristicName input in DEV_ENVIRONMENT until the adding method is redesigned; 
+                                the characteristicName input should be repalced in the future to only display the characteristicName through the app;
+
                             */}
                             <TableCell>
-                                <Input
-                                    className="h-6 !p-0"
-                                    title={`${t("MarkingCharacteristic.Keys.characteristicName", { ns: "object" })}`}
-                                    type="text"
-                                    value={item.characteristicName}
-                                    onChange={e => {
-                                        setCharacteristic(item.id, {
-                                            characteristicName: e.target.value,
-                                        });
-                                    }}
-                                />
+                                {IS_DEV_ENVIRONMENT ? (
+                                    <Input
+                                        className="h-6 !p-0"
+                                        title={`${t("MarkingCharacteristic.Keys.characteristicName", { ns: "object" })}`}
+                                        type="text"
+                                        value={item.characteristicName}
+                                        onChange={e => {
+                                            setCharacteristic(item.id, {
+                                                characteristicName:
+                                                    e.target.value,
+                                            });
+                                        }}
+                                    />
+                                ) : (
+                                    <span className="p-1 cursor-default">
+                                        {item.characteristicName}
+                                    </span>
+                                )}
                             </TableCell>
                             <TableCell className={cn("p-1 cursor-default")}>
                                 {t(
