@@ -14,7 +14,6 @@ import {
     defaultBackgroundColor,
     defaultSize,
     defaultTextColor,
-    WORKING_MODE,
 } from "@/lib/markings/MarkingCharacteristic";
 import { Download, Plus, Upload, X } from "lucide-react";
 import { ICON } from "@/lib/utils/const";
@@ -30,9 +29,12 @@ import {
 import { exportMarkingCharacteristicsWithDialog } from "@/components/dialogs/marking-characteristics/exportMarkingCharacteristicsWithDialog";
 import { importMarkingCharacteristicsWithDialog } from "@/components/dialogs/marking-characteristics/importMarkingCharacteristicsWithDialog";
 import { useTranslation } from "react-i18next";
+import { WorkingModeStore } from "@/lib/stores/WorkingMode";
 
 function MarkingCharacteristicsDialogPortal() {
     const { t } = useTranslation();
+
+    const { workingMode } = WorkingModeStore.state;
 
     return (
         <DialogPortal>
@@ -86,8 +88,7 @@ function MarkingCharacteristicsDialogPortal() {
                                                                 defaultTextColor,
                                                             size: defaultSize,
                                                             category:
-                                                                // TODO Get current working mode
-                                                                WORKING_MODE.FINGERPRINT,
+                                                                workingMode,
                                                         }
                                                     )
                                                 }

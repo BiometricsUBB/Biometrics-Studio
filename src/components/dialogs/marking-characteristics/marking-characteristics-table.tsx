@@ -1,6 +1,5 @@
 import { cn } from "@/lib/utils/shadcn";
 import { Input } from "@/components/ui/input";
-import { WORKING_MODE } from "@/lib/markings/MarkingCharacteristic";
 import { t } from "i18next";
 import { useDebouncedCallback } from "use-debounce";
 import { MarkingCharacteristicsStore } from "@/lib/stores/MarkingCharacteristics/MarkingCharacteristics";
@@ -9,11 +8,12 @@ import { Trash2 } from "lucide-react";
 import { ICON } from "@/lib/utils/const";
 import { Toggle } from "@/components/ui/toggle";
 import { CANVAS_ID } from "@/components/pixi/canvas/hooks/useCanvasContext";
+import { WorkingModeStore } from "@/lib/stores/WorkingMode";
 
 function MarkingCharacteristicsTable() {
     const characteristics = MarkingCharacteristicsStore.use(state =>
         state.characteristics.filter(
-            c => c.category === WORKING_MODE.FINGERPRINT
+            c => c.category === WorkingModeStore.state.workingMode
         )
     );
 

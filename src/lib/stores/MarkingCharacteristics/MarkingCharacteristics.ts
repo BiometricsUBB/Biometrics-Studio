@@ -3,6 +3,8 @@
 import { MarkingCharacteristic } from "@/lib/markings/MarkingCharacteristic";
 import { MarkingsStore } from "@/lib/stores/Markings";
 import { CANVAS_ID } from "@/components/pixi/canvas/hooks/useCanvasContext";
+import { WORKING_MODE } from "@/views/selectMode";
+import { WorkingModeStore } from "@/lib/stores/WorkingMode";
 import { _useMarkingCharacteristicsStore as useStore } from "./MarkingCharacteristics.store";
 
 class StoreClass {
@@ -16,10 +18,16 @@ class StoreClass {
         activeCharacteristics: {
             setActiveCharacteristicByType: (
                 type: MarkingCharacteristic["type"],
-                characteristicId: MarkingCharacteristic["id"]
+                characteristicId: MarkingCharacteristic["id"],
+                workingMode?: WORKING_MODE | null
             ) => {
+                if (!workingMode) {
+                    workingMode = WorkingModeStore.state.workingMode;
+                }
                 const newActiveCharacteristic = this.state.characteristics.find(
-                    characteristic => characteristic.id === characteristicId
+                    characteristic =>
+                        characteristic.id === characteristicId &&
+                        characteristic.category === workingMode
                 );
 
                 if (!newActiveCharacteristic) {
@@ -38,14 +46,18 @@ class StoreClass {
                 });
             },
             getActiveCharacteristicByType: (
-                type: MarkingCharacteristic["type"]
+                type: MarkingCharacteristic["type"],
+                workingMode?: WORKING_MODE | null
             ) => {
+                if (!workingMode) {
+                    workingMode = WorkingModeStore.state.workingMode;
+                }
                 const characteristic = this.state.characteristics.find(
                     characteristic =>
                         characteristic.id ===
                         this.state.activeCharacteristics.find(
-                            x => x.type === type
-                        )!.id
+                            x => x.type === type && x.category === workingMode
+                        )?.id
                 );
 
                 if (!characteristic) {
