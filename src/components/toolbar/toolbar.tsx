@@ -1,7 +1,7 @@
 /* eslint-disable no-param-reassign */
 import { Toggle } from "@/components/ui/toggle";
 import { cn } from "@/lib/utils/shadcn";
-import { HTMLAttributes, useEffect } from "react";
+import { HTMLAttributes } from "react";
 import {
     CURSOR_MODES,
     DashboardToolbarStore,
