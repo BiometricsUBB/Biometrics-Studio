@@ -50,7 +50,7 @@ class StoreClass {
 
                 if (!characteristic) {
                     throw new Error(
-                        `Characteristic with markingClass ${markingClass} not found`
+                        `Characteristic with marking class ${markingClass} not found`
                     );
                 }
 

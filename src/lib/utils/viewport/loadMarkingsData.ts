@@ -113,7 +113,7 @@ export async function loadMarkingsData(filePath: string, canvasId: CANVAS_ID) {
                     );
                 default:
                     throw new Error(
-                        `Unknown marking type: ${marking.markingClass}`
+                        `Unknown marking class: ${marking.markingClass}`
                     );
             }
         }
