@@ -140,7 +140,7 @@ export function GlobalToolbar({ className, ...props }: GlobalToolbarProps) {
                                 <DropdownMenuItem
                                     key={characteristic.id}
                                     onClick={() => {
-                                        MarkingCharacteristicsStore.actions.activeCharacteristics.setActiveCharacteristicByClass(
+                                        MarkingCharacteristicsStore.actions.activeCharacteristics.setActiveCharacteristicByMarkingClass(
                                             selectedMarkingClass,
                                             characteristic.id
                                         );

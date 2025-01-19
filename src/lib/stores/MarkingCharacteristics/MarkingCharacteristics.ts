@@ -14,7 +14,7 @@ class StoreClass {
 
     readonly actions = {
         activeCharacteristics: {
-            setActiveCharacteristicByClass: (
+            setActiveCharacteristicByMarkingClass: (
                 markingClass: MarkingCharacteristic["markingClass"],
                 characteristicId: MarkingCharacteristic["id"]
             ) => {
@@ -37,7 +37,7 @@ class StoreClass {
                         );
                 });
             },
-            getActiveCharacteristicByClass: (
+            getActiveCharacteristicByMarkingClass: (
                 markingClass: MarkingCharacteristic["markingClass"]
             ) => {
                 const characteristic = this.state.characteristics.find(
