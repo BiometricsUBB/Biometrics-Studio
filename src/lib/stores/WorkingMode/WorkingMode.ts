@@ -12,7 +12,7 @@ class StoreClass {
 
     readonly actions = {
         setWorkingMode: (mode: State["workingMode"]) => {
-            this.state.setWorkingMode(mode);
+            this.state.setWorkingMode(mode!);
         },
         resetWorkingMode: () => {
             this.state.resetWorkingMode();
