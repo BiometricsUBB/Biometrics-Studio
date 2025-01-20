@@ -1,6 +1,11 @@
 import { create } from "zustand";
-import { devtools, persist } from "zustand/middleware";
+import { createJSONStorage, devtools, persist } from "zustand/middleware";
 import { WORKING_MODE } from "@/views/selectMode";
+import { createStore, Store } from "@tauri-apps/plugin-store";
+import { tauriStorage } from "@/lib/stores/tauri-storage-adapter.helpers";
+
+const STORE_NAME = "working-mode";
+const STORE_FILE: Store = await createStore(`${STORE_NAME}.dat`);
 
 type State = {
     workingMode: WORKING_MODE | null;
@@ -22,7 +27,8 @@ const useWorkingModeStore = create<State>()(
                     set(() => ({ workingMode: INITIAL_STATE.workingMode })),
             }),
             {
-                name: "working-mode",
+                name: STORE_NAME,
+                storage: createJSONStorage(() => tauriStorage(STORE_FILE)),
             }
         )
     )
