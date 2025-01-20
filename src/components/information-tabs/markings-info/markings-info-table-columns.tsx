@@ -101,7 +101,7 @@ export const useColumns = (
                     cell: info =>
                         formatCell(info, ({ row }) => {
                             const marking = row.original.characteristicId;
-                            return `${MarkingCharacteristicsStore.use().characteristics.find(e => e.id === marking)?.characteristicName}`;
+                            return `${MarkingCharacteristicsStore.use().characteristics.find(e => e.id === marking)?.displayName}`;
                         }),
                 },
                 {

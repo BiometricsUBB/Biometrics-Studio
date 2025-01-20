@@ -132,7 +132,7 @@ export function GlobalToolbar({ className, ...props }: GlobalToolbarProps) {
                         )}
                         disabled={!selectedCharacteristic}
                     >
-                        {selectedCharacteristic?.characteristicName}
+                        {selectedCharacteristic?.displayName}
                     </DropdownMenuTrigger>
                     <DropdownMenuPortal>
                         <DropdownMenuContent>
@@ -146,7 +146,7 @@ export function GlobalToolbar({ className, ...props }: GlobalToolbarProps) {
                                         );
                                     }}
                                 >
-                                    {characteristic.characteristicName}
+                                    {characteristic.displayName}
                                 </DropdownMenuItem>
                             ))}
                         </DropdownMenuContent>
