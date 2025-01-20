@@ -1,4 +1,3 @@
-/* eslint-disable no-param-reassign */
 import { Toggle } from "@/components/ui/toggle";
 import { cn } from "@/lib/utils/shadcn";
 import { HTMLAttributes } from "react";
@@ -45,6 +44,7 @@ export function GlobalToolbar({ className, ...props }: GlobalToolbarProps) {
     const { mode: cursorMode } = DashboardToolbarStore.use(
         state => state.settings.cursor
     );
+    const workingMode = WorkingModeStore.use(state => state.workingMode);
 
     const { locked: isViewportLocked, scaleSync: isViewportScaleSync } =
         DashboardToolbarStore.use(state => state.settings.viewport);
@@ -57,21 +57,23 @@ export function GlobalToolbar({ className, ...props }: GlobalToolbarProps) {
         state => state.activeCharacteristics
     );
 
-    const workingMode = WorkingModeStore.use(state => state.workingMode);
-
     const selectedCharacteristic = activeCharacteristics.find(
         characteristic =>
             characteristic.type === selectedMarkingType &&
             characteristic.category === workingMode
     );
 
-    const markingTypeCharacteristics = MarkingCharacteristicsStore.use(state =>
-        state.characteristics.filter(
-            characteristic =>
-                characteristic.type === selectedMarkingType &&
-                characteristic.category === workingMode
-        )
-    );
+    const availableMarkingCharacteristicsForWorkingMode =
+        MarkingCharacteristicsStore.use(state =>
+            state.characteristics.filter(
+                characteristic => characteristic.category === workingMode
+            )
+        );
+
+    const markingTypeCharacteristics =
+        availableMarkingCharacteristicsForWorkingMode.filter(
+            characteristic => characteristic.type === selectedMarkingType
+        );
 
     const setCharacteristic = useDebouncedCallback(
         (id, value) =>
@@ -137,7 +139,7 @@ export function GlobalToolbar({ className, ...props }: GlobalToolbarProps) {
                             "w-36 overflow-hidden text-ellipsis whitespace-nowrap",
                             className
                         )}
-                        disabled={!selectedCharacteristic}
+                        disabled={!markingTypeCharacteristics.length}
                     >
                         {selectedCharacteristic?.name}
                     </DropdownMenuTrigger>
@@ -149,7 +151,8 @@ export function GlobalToolbar({ className, ...props }: GlobalToolbarProps) {
                                     onClick={() => {
                                         MarkingCharacteristicsStore.actions.activeCharacteristics.setActiveCharacteristicByType(
                                             selectedMarkingType,
-                                            characteristic.id
+                                            characteristic.id,
+                                            workingMode!
                                         );
                                     }}
                                 >
@@ -171,10 +174,8 @@ export function GlobalToolbar({ className, ...props }: GlobalToolbarProps) {
                         value={MARKING_TYPE.POINT}
                         title={`${t("Marking.Keys.type.Keys.point", { ns: "object" })} (1)`}
                         disabled={
-                            !activeCharacteristics.some(
-                                x =>
-                                    x.type === MARKING_TYPE.POINT &&
-                                    x.category === workingMode
+                            !availableMarkingCharacteristicsForWorkingMode.some(
+                                x => x.type === MARKING_TYPE.POINT
                             )
                         }
                         onClick={() => {
@@ -194,10 +195,8 @@ export function GlobalToolbar({ className, ...props }: GlobalToolbarProps) {
                             );
                         }}
                         disabled={
-                            !activeCharacteristics.some(
-                                x =>
-                                    x.type === MARKING_TYPE.RAY &&
-                                    x.category === workingMode
+                            !availableMarkingCharacteristicsForWorkingMode.some(
+                                x => x.type === MARKING_TYPE.RAY
                             )
                         }
                     >
@@ -215,10 +214,8 @@ export function GlobalToolbar({ className, ...props }: GlobalToolbarProps) {
                             );
                         }}
                         disabled={
-                            !activeCharacteristics.some(
-                                x =>
-                                    x.type === MARKING_TYPE.LINE_SEGMENT &&
-                                    x.category === workingMode
+                            !availableMarkingCharacteristicsForWorkingMode.some(
+                                x => x.type === MARKING_TYPE.LINE_SEGMENT
                             )
                         }
                     >
