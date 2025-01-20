@@ -7,6 +7,7 @@ import { MarkingsStore } from "@/lib/stores/Markings";
 import { MarkingBase } from "@/lib/markings/MarkingBase";
 import { useTranslation } from "react-i18next";
 import { useMemo } from "react";
+import { MarkingCharacteristicsStore } from "@/lib/stores/MarkingCharacteristics/MarkingCharacteristics";
 
 export type EmptyMarking = {
     label: MarkingBase["label"];
@@ -93,14 +94,30 @@ export const useColumns = (
                         )),
                 },
                 {
-                    accessorKey: "type",
-                    header: t("Marking.Keys.type.Name", { ns: "object" }),
+                    accessorKey: "characteristic",
+                    header: t("MarkingCharacteristic.Keys.characteristicName", {
+                        ns: "object",
+                    }),
+                    cell: info =>
+                        formatCell(info, ({ row }) => {
+                            const marking = row.original.characteristicId;
+                            return `${MarkingCharacteristicsStore.use().characteristics.find(e => e.id === marking)?.displayName}`;
+                        }),
+                },
+                {
+                    accessorKey: "markingClass",
+                    header: t("Marking.Keys.markingClass.Name", {
+                        ns: "object",
+                    }),
                     cell: info =>
                         formatCell(info, ({ row }) => {
                             const marking = row.original;
-                            return t(`Marking.Keys.type.Keys.${marking.type}`, {
-                                ns: "object",
-                            });
+                            return t(
+                                `Marking.Keys.markingClass.Keys.${marking.markingClass}`,
+                                {
+                                    ns: "object",
+                                }
+                            );
                         }),
                 },
             ] as ColumnDef<EmptyableMarking, Element>[],

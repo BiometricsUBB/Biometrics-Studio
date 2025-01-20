@@ -18,7 +18,7 @@ import {
 import { Download, Plus, Upload, X } from "lucide-react";
 import { ICON } from "@/lib/utils/const";
 import MarkingCharacteristicsTable from "@/components/dialogs/marking-characteristics/marking-characteristics-table";
-import { MARKING_TYPE } from "@/lib/markings/MarkingBase";
+import { MARKING_CLASS } from "@/lib/markings/MarkingBase";
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -65,8 +65,8 @@ function MarkingCharacteristicsDialogPortal() {
                                 <DropdownMenuContent>
                                     {(
                                         Object.keys(
-                                            MARKING_TYPE
-                                        ) as (keyof typeof MARKING_TYPE)[]
+                                            MARKING_CLASS
+                                        ) as (keyof typeof MARKING_CLASS)[]
                                     ).map(key => {
                                         return (
                                             <DropdownMenuItem
@@ -75,13 +75,23 @@ function MarkingCharacteristicsDialogPortal() {
                                                     MarkingCharacteristicsStore.actions.characteristics.add(
                                                         {
                                                             id: crypto.randomUUID(),
-                                                            name: t(
-                                                                `Marking.Keys.type.Keys.${MARKING_TYPE[key]}`,
-                                                                { ns: "object" }
+                                                            characteristicName:
+                                                                t(
+                                                                    `Marking.Keys.markingClass.Keys.${MARKING_CLASS[key]}`,
+                                                                    {
+                                                                        ns: "object",
+                                                                    }
+                                                                ),
+                                                            displayName: t(
+                                                                `Marking.Keys.markingClass.Keys.${MARKING_CLASS[key]}`,
+                                                                {
+                                                                    ns: "object",
+                                                                }
                                                             ),
-                                                            type: MARKING_TYPE[
-                                                                key
-                                                            ],
+                                                            markingClass:
+                                                                MARKING_CLASS[
+                                                                    key
+                                                                ],
                                                             backgroundColor:
                                                                 defaultBackgroundColor,
                                                             textColor:
@@ -94,7 +104,7 @@ function MarkingCharacteristicsDialogPortal() {
                                                 }
                                             >
                                                 {t(
-                                                    `Marking.Keys.type.Keys.${MARKING_TYPE[key]}`,
+                                                    `Marking.Keys.markingClass.Keys.${MARKING_CLASS[key]}`,
                                                     { ns: "object" }
                                                 )}
                                             </DropdownMenuItem>

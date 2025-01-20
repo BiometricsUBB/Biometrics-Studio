@@ -74,15 +74,15 @@ class StoreClass {
                 },
             },
             marking: {
-                setSelectedMarkingType: (
-                    type: State["settings"]["marking"]["type"]
+                setSelectedMarkingClass: (
+                    markingClass: State["settings"]["marking"]["markingClass"]
                 ) => {
                     this.state.set(draft => {
-                        draft.settings.marking.type = type;
+                        draft.settings.marking.markingClass = markingClass;
                     });
                 },
-                getSelectedMarkingType: () => {
-                    return this.state.settings.marking.type;
+                getSelectedMarkingClass: () => {
+                    return this.state.settings.marking.markingClass;
                 },
             },
         },

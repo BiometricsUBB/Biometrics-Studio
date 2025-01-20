@@ -1,6 +1,6 @@
-import { MARKING_TYPE } from "@/lib/markings/MarkingBase";
-import { MarkingCharacteristicsStore } from "@/lib/stores/MarkingCharacteristics/MarkingCharacteristics";
+import { MARKING_CLASS } from "@/lib/markings/MarkingBase";
 import { WorkingModeStore } from "@/lib/stores/WorkingMode";
+import { MarkingCharacteristicsStore } from "@/lib/stores/MarkingCharacteristics/MarkingCharacteristics";
 import {
     CURSOR_MODES,
     DashboardToolbarStore,
@@ -16,17 +16,17 @@ export const useKeyboardShortcuts = () => {
         viewport: viewportActions,
     } = actions.settings;
 
-    const { setSelectedMarkingType } = markingActions;
+    const { setSelectedMarkingClass } = markingActions;
     const { setCursorMode } = cursorActions;
     const { toggleLockedViewport, toggleLockScaleSync } = viewportActions;
     const { workingMode } = WorkingModeStore.state;
 
-    function isMarkingTypeAvailable(markingType: MARKING_TYPE) {
+    function isMarkingClassAvailable(markingClass: MARKING_CLASS) {
         return (
             MarkingCharacteristicsStore.state.characteristics.filter(
                 characteristic =>
                     characteristic.category === workingMode &&
-                    characteristic.type === markingType
+                    characteristic.markingClass === markingClass
             ).length > 0
         );
     }
@@ -46,18 +46,18 @@ export const useKeyboardShortcuts = () => {
     }, ["F2"]);
 
     useKeyDown(() => {
-        if (!isMarkingTypeAvailable(MARKING_TYPE.POINT)) return;
-        setSelectedMarkingType(MARKING_TYPE.POINT);
+        if (!isMarkingClassAvailable(MARKING_CLASS.POINT)) return;
+        setSelectedMarkingClass(MARKING_CLASS.POINT);
     }, ["1"]);
 
     useKeyDown(() => {
-        if (!isMarkingTypeAvailable(MARKING_TYPE.RAY)) return;
-        setSelectedMarkingType(MARKING_TYPE.RAY);
+        if (!isMarkingClassAvailable(MARKING_CLASS.RAY)) return;
+        setSelectedMarkingClass(MARKING_CLASS.RAY);
     }, ["2"]);
 
     useKeyDown(() => {
-        if (!isMarkingTypeAvailable(MARKING_TYPE.LINE_SEGMENT)) return;
-        setSelectedMarkingType(MARKING_TYPE.LINE_SEGMENT);
+        if (!isMarkingClassAvailable(MARKING_CLASS.LINE_SEGMENT)) return;
+        setSelectedMarkingClass(MARKING_CLASS.LINE_SEGMENT);
     }, ["3"]);
 
     useKeyDown(() => {

@@ -16,8 +16,8 @@ class StoreClass {
 
     readonly actions = {
         activeCharacteristics: {
-            setActiveCharacteristicByType: (
-                type: MarkingCharacteristic["type"],
+            setActiveCharacteristicByMarkingClass: (
+                markingClass: MarkingCharacteristic["markingClass"],
                 characteristicId: MarkingCharacteristic["id"],
                 workingMode: WORKING_MODE
             ) => {
@@ -36,14 +36,14 @@ class StoreClass {
                 this.state.set(draft => {
                     draft.activeCharacteristics =
                         draft.activeCharacteristics.map(characteristic =>
-                            characteristic.type === type
+                            characteristic.markingClass === markingClass
                                 ? newActiveCharacteristic
                                 : characteristic
                         );
                 });
             },
-            getActiveCharacteristicByType: (
-                type: MarkingCharacteristic["type"],
+            getActiveCharacteristicByMarkingClass: (
+                markingClass: MarkingCharacteristic["markingClass"],
                 workingMode?: WORKING_MODE
             ) => {
                 if (!workingMode)
@@ -53,13 +53,15 @@ class StoreClass {
                     characteristic =>
                         characteristic.id ===
                         this.state.activeCharacteristics.find(
-                            x => x.type === type && x.category === workingMode
+                            x =>
+                                x.markingClass === markingClass &&
+                                x.category === workingMode
                         )?.id
                 );
 
                 if (!characteristic) {
                     throw new Error(
-                        `Characteristic with type ${type} not found`
+                        `Characteristic with marking class ${markingClass} not found`
                     );
                 }
 
@@ -75,7 +77,7 @@ class StoreClass {
                 if (
                     !this.state.activeCharacteristics.find(
                         x =>
-                            x.type === characteristic.type &&
+                            x.markingClass === characteristic.markingClass &&
                             x.category === WorkingModeStore.state.workingMode
                     )
                 ) {
@@ -110,7 +112,8 @@ class StoreClass {
                         if (
                             !draft.activeCharacteristics.find(
                                 x =>
-                                    x.type === characteristic.type &&
+                                    x.markingClass ===
+                                        characteristic.markingClass &&
                                     x.category ===
                                         WorkingModeStore.state.workingMode
                             )
@@ -128,7 +131,7 @@ class StoreClass {
                     marking => marking.characteristicId === characteristicId
                 ),
             removeById: (characteristicId: MarkingCharacteristic["id"]) => {
-                const { type } = this.state.characteristics.find(
+                const { markingClass } = this.state.characteristics.find(
                     c => c.id === characteristicId
                 )!;
 
@@ -147,7 +150,7 @@ class StoreClass {
 
                     const activeCharacteristic = draft.characteristics.find(
                         x =>
-                            x.type === type &&
+                            x.markingClass === markingClass &&
                             x.category === WorkingModeStore.state.workingMode
                     );
 

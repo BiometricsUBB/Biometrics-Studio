@@ -1,4 +1,4 @@
-import { MARKING_TYPE } from "@/lib/markings/MarkingBase";
+import { MARKING_CLASS } from "@/lib/markings/MarkingBase";
 import { RayMarking } from "@/lib/markings/RayMarking";
 import { PointMarking } from "@/lib/markings/PointMarking";
 import { LineSegmentMarking } from "@/lib/markings/LineSegmentMarking";
@@ -34,14 +34,14 @@ export type i18nObject = {
             Recordify<
                 keyof RayMarking | keyof PointMarking | keyof LineSegmentMarking
             >,
-            | "type"
+            | "markingClass"
             | "isVisible"
             | "calculateOriginViewportPosition"
             | "calculateEndpointViewportPosition"
         > & {
-            type: {
+            markingClass: {
                 Name: string;
-                Keys: Recordify<MARKING_TYPE>;
+                Keys: Recordify<MARKING_CLASS>;
             };
         };
     };

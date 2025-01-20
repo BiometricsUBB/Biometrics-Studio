@@ -1,7 +1,7 @@
 import { createStore, Store } from "@tauri-apps/plugin-store";
 import { create } from "zustand";
 import { createJSONStorage, devtools, persist } from "zustand/middleware";
-import { MARKING_TYPE } from "@/lib/markings/MarkingBase";
+import { MARKING_CLASS } from "@/lib/markings/MarkingBase";
 import { Immer, produceCallback } from "../immer.helpers";
 import { tauriStorage } from "../tauri-storage-adapter.helpers";
 
@@ -18,7 +18,7 @@ type Settings = {
         mode: CURSOR_MODES;
     };
     marking: {
-        type: MARKING_TYPE;
+        markingClass: MARKING_CLASS;
     };
     viewport: {
         locked: boolean;
@@ -36,7 +36,7 @@ const INITIAL_STATE: State = {
             mode: CURSOR_MODES.SELECTION,
         },
         marking: {
-            type: MARKING_TYPE.POINT,
+            markingClass: MARKING_CLASS.POINT,
         },
         viewport: {
             locked: false,

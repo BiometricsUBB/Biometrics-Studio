@@ -5,7 +5,7 @@ import {
 } from "@/lib/stores/DashboardToolbar";
 import { CUSTOM_GLOBAL_EVENTS } from "@/lib/utils/const";
 import { getAngle } from "@/lib/utils/math/getAngle";
-import { MARKING_TYPE } from "@/lib/markings/MarkingBase";
+import { MARKING_CLASS } from "@/lib/markings/MarkingBase";
 import { PointMarking } from "@/lib/markings/PointMarking";
 import { RayMarking } from "@/lib/markings/RayMarking";
 import { LineSegmentMarking } from "@/lib/markings/LineSegmentMarking";
@@ -209,27 +209,27 @@ export const handleRMBDown = (
     );
 
     if (cursorMode === CURSOR_MODES.MARKING) {
-        const markingType = DashboardToolbarStore.state.settings.marking.type;
+        const { markingClass } = DashboardToolbarStore.state.settings.marking;
         const workingMode = WorkingModeStore.state.workingMode!;
 
         const { id: characteristicId } =
-            MarkingCharacteristicsStore.actions.activeCharacteristics.getActiveCharacteristicByType(
-                markingType,
+            MarkingCharacteristicsStore.actions.activeCharacteristics.getActiveCharacteristicByMarkingClass(
+                markingClass,
                 workingMode
             );
 
-        switch (markingType) {
-            case MARKING_TYPE.POINT: {
+        switch (markingClass) {
+            case MARKING_CLASS.POINT: {
                 handlePointMarking(e, interrupt, characteristicId, params);
                 break;
             }
 
-            case MARKING_TYPE.RAY: {
+            case MARKING_CLASS.RAY: {
                 handleRayMarking(e, interrupt, characteristicId, params);
                 break;
             }
 
-            case MARKING_TYPE.LINE_SEGMENT: {
+            case MARKING_CLASS.LINE_SEGMENT: {
                 handleLineSegmentMarking(
                     e,
                     interrupt,
@@ -240,7 +240,7 @@ export const handleRMBDown = (
             }
 
             default:
-                throw new Error(markingType satisfies never);
+                throw new Error(markingClass satisfies never);
         }
     }
 };

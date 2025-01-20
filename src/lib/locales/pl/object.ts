@@ -9,8 +9,8 @@ const d: Dictionary = {
             angleRad: "Kąt",
             origin: "Źródło",
             endpoint: "Koniec",
-            type: {
-                Name: "Typ",
+            markingClass: {
+                Name: "Klasa adnotacji",
                 Keys: {
                     point: "Punkt",
                     ray: "Linia skierowana",
@@ -24,8 +24,9 @@ const d: Dictionary = {
         Name: "Cecha adnotacji",
         Keys: {
             id: "ID",
-            name: "Nazwa",
-            type: "Typ",
+            displayName: "Nazwa lokalna",
+            characteristicName: "Cecha",
+            markingClass: "Klasa adnotacji",
             category: "Kategoria",
             backgroundColor: "Kolor tła",
             textColor: "Kolor tekstu",

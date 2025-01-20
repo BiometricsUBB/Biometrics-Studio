@@ -1,11 +1,12 @@
 import { ColorSource } from "pixi.js";
-import { MARKING_TYPE } from "@/lib/markings/MarkingBase";
+import { MARKING_CLASS } from "@/lib/markings/MarkingBase";
 import { WORKING_MODE } from "@/views/selectMode";
 
 export interface MarkingCharacteristic {
     id: string;
-    name: string;
-    type: MARKING_TYPE;
+    displayName: string;
+    characteristicName: string;
+    markingClass: MARKING_CLASS;
     backgroundColor: ColorSource;
     textColor: ColorSource;
     size: number;

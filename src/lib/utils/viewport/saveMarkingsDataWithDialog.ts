@@ -1,6 +1,9 @@
 /* eslint-disable no-throw-literal */
 
-import { CanvasMetadata } from "@/components/pixi/canvas/hooks/useCanvasContext";
+import {
+    CANVAS_ID,
+    CanvasMetadata,
+} from "@/components/pixi/canvas/hooks/useCanvasContext";
 import { save } from "@tauri-apps/plugin-dialog";
 import { getVersion } from "@tauri-apps/api/app";
 import { t } from "i18next";
@@ -15,8 +18,8 @@ import { basename } from "@tauri-apps/api/path";
 import { MarkingBase } from "@/lib/markings/MarkingBase";
 import { RayMarking } from "@/lib/markings/RayMarking";
 import { LineSegmentMarking } from "@/lib/markings/LineSegmentMarking";
+import { MarkingCharacteristicsStore } from "@/lib/stores/MarkingCharacteristics/MarkingCharacteristics";
 import { WorkingModeStore } from "@/lib/stores/WorkingMode";
-import { WORKING_MODE } from "@/views/selectMode";
 
 type ImageInfo = {
     name: string | null;
@@ -39,11 +42,15 @@ export type ExportObject = {
         image: ImageInfo | null;
         compared_image: ImageInfo | null;
         workingMode: WORKING_MODE;
+        characteristics: {
+            characteristicId: string;
+            characteristicName: string;
+        }[];
     };
     data: {
         markings: {
             label: MarkingBase["label"];
-            type: MarkingBase["type"];
+            markingClass: MarkingBase["markingClass"];
             origin: MarkingBase["origin"];
             characteristicId: MarkingBase["characteristicId"];
             angleRad?: RayMarking["angleRad"];
@@ -94,6 +101,24 @@ async function getData(
             image: getImageData(picture),
             compared_image: getImageData(oppositePicture),
             workingMode: workingMode!,
+            characteristics: MarkingCharacteristicsStore.state.characteristics
+                .filter(
+                    c =>
+                        MarkingCharacteristicsStore.actions.characteristics.checkIfCharacteristicIsInUse(
+                            c.id,
+                            CANVAS_ID.LEFT
+                        ) ||
+                        MarkingCharacteristicsStore.actions.characteristics.checkIfCharacteristicIsInUse(
+                            c.id,
+                            CANVAS_ID.RIGHT
+                        )
+                )
+                .map(c => {
+                    return {
+                        characteristicId: c.id,
+                        characteristicName: c.characteristicName,
+                    };
+                }),
         },
         data: {
             markings,
