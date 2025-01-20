@@ -209,10 +209,12 @@ export const handleRMBDown = (
 
     if (cursorMode === CURSOR_MODES.MARKING) {
         const markingType = DashboardToolbarStore.state.settings.marking.type;
+        const workingMode = WorkingModeStore.state.workingMode!;
 
         const { id: characteristicId } =
             MarkingCharacteristicsStore.actions.activeCharacteristics.getActiveCharacteristicByType(
-                markingType
+                markingType,
+                workingMode
             );
 
         switch (markingType) {
