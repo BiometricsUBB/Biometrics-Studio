@@ -10,7 +10,7 @@ const d: Dictionary = {
             origin: "Źródło",
             endpoint: "Koniec",
             markingClass: {
-                Name: "Klasa oznaczenia",
+                Name: "Klasa adnotacji",
                 Keys: {
                     point: "Punkt",
                     ray: "Linia skierowana",
@@ -26,7 +26,7 @@ const d: Dictionary = {
             id: "ID",
             displayName: "Nazwa lokalna",
             characteristicName: "Cecha",
-            markingClass: "Klasa oznaczenia",
+            markingClass: "Klasa adnotacji",
             category: "Kategoria",
             backgroundColor: "Kolor tła",
             textColor: "Kolor tekstu",
