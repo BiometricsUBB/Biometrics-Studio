@@ -11,7 +11,7 @@ import { WorkingModeStore } from "@/lib/stores/WorkingMode";
 
 export function Menu() {
     const { t } = useTranslation();
-    const { workingMode } = WorkingModeStore.use();
+    const workingMode = WorkingModeStore.use(state => state.workingMode);
 
     return (
         <Menubar
@@ -29,7 +29,7 @@ export function Menu() {
                     />
                 </div>
                 <SettingsMenu />
-                {workingMode !== "" && (
+                {workingMode && (
                     <>
                         <ModeMenu />
                         <Dialog>
