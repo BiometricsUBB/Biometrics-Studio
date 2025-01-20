@@ -19,6 +19,8 @@ const d: Dictionary = {
     "The markings data was created with a different working mode ({{mode}}). Change the working mode to ({{mode}}) to load the data.":
         "The markings data was created with a different working mode ({{mode}}). Change the working mode to ({{mode}}) to load the data.",
     "Please select your working mode": "Please select your working mode",
+    "You are trying to load marking characteristics for a non-existing working mode.":
+        "You are trying to load marking characteristics for a non-existing working mode.",
 };
 
 export default d;
