@@ -88,7 +88,7 @@ function MarkingCharacteristicsDialogPortal() {
                                                                 defaultTextColor,
                                                             size: defaultSize,
                                                             category:
-                                                                workingMode,
+                                                                workingMode!,
                                                         }
                                                     )
                                                 }
@@ -139,6 +139,11 @@ function MarkingCharacteristicsDialogPortal() {
                                 strokeWidth={ICON.STROKE_WIDTH}
                             />
                         </Toggle>
+
+                        <span className="ml-1">
+                            {t("Working mode")}:{" "}
+                            <span className="font-bold">{workingMode}</span>
+                        </span>
                     </div>
 
                     <div>
