@@ -4,7 +4,7 @@ import { WORKING_MODE } from "@/views/selectMode";
 
 type State = {
     workingMode: WORKING_MODE | null;
-    setWorkingMode: (mode: WORKING_MODE | null) => void;
+    setWorkingMode: (mode: WORKING_MODE) => void;
     resetWorkingMode: () => void;
 };
 

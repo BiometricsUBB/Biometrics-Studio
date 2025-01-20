@@ -19,10 +19,10 @@ class StoreClass {
             setActiveCharacteristicByType: (
                 type: MarkingCharacteristic["type"],
                 characteristicId: MarkingCharacteristic["id"],
-                workingMode?: WORKING_MODE | null
+                workingMode?: WORKING_MODE
             ) => {
                 if (!workingMode) {
-                    workingMode = WorkingModeStore.state.workingMode;
+                    workingMode = WorkingModeStore.state.workingMode!;
                 }
                 const newActiveCharacteristic = this.state.characteristics.find(
                     characteristic =>
@@ -47,11 +47,11 @@ class StoreClass {
             },
             getActiveCharacteristicByType: (
                 type: MarkingCharacteristic["type"],
-                workingMode?: WORKING_MODE | null
+                workingMode?: WORKING_MODE
             ) => {
-                if (!workingMode) {
-                    workingMode = WorkingModeStore.state.workingMode;
-                }
+                if (!workingMode)
+                    workingMode = WorkingModeStore.state.workingMode!;
+
                 const characteristic = this.state.characteristics.find(
                     characteristic =>
                         characteristic.id ===

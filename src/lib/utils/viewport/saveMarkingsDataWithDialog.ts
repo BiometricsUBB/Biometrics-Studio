@@ -38,7 +38,7 @@ export type ExportObject = {
         software: SoftwareInfo;
         image: ImageInfo | null;
         compared_image: ImageInfo | null;
-        workingMode: WORKING_MODE | null;
+        workingMode: WORKING_MODE;
     };
     data: {
         markings: {
@@ -93,7 +93,7 @@ async function getData(
             },
             image: getImageData(picture),
             compared_image: getImageData(oppositePicture),
-            workingMode,
+            workingMode: workingMode!,
         },
         data: {
             markings,

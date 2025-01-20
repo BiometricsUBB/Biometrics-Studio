@@ -9,7 +9,7 @@ export interface MarkingCharacteristic {
     backgroundColor: ColorSource;
     textColor: ColorSource;
     size: number;
-    category: WORKING_MODE | null;
+    category: WORKING_MODE;
 }
 
 export const defaultBackgroundColor = "#61BD67";
