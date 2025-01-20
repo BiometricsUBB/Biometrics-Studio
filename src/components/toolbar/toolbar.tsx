@@ -17,7 +17,7 @@ import {
     Spline,
 } from "lucide-react";
 import { ICON } from "@/lib/utils/const";
-import { MARKING_TYPE } from "@/lib/markings/MarkingBase";
+import { MARKING_CLASS } from "@/lib/markings/MarkingBase";
 import { useTranslation } from "react-i18next";
 import { MarkingCharacteristicsStore } from "@/lib/stores/MarkingCharacteristics/MarkingCharacteristics";
 import { useDebouncedCallback } from "use-debounce";
@@ -47,7 +47,7 @@ export function GlobalToolbar({ className, ...props }: GlobalToolbarProps) {
     const { locked: isViewportLocked, scaleSync: isViewportScaleSync } =
         DashboardToolbarStore.use(state => state.settings.viewport);
 
-    const { type: selectedMarkingType } = DashboardToolbarStore.use(
+    const { markingClass: selectedMarkingClass } = DashboardToolbarStore.use(
         state => state.settings.marking
     );
 
@@ -56,12 +56,13 @@ export function GlobalToolbar({ className, ...props }: GlobalToolbarProps) {
     );
 
     const selectedCharacteristic = activeCharacteristics.find(
-        characteristic => characteristic.type === selectedMarkingType
+        characteristic => characteristic.markingClass === selectedMarkingClass
     );
 
-    const markingTypeCharacteristics = MarkingCharacteristicsStore.use(state =>
+    const markingClassCharacteristics = MarkingCharacteristicsStore.use(state =>
         state.characteristics.filter(
-            characteristic => characteristic.type === selectedMarkingType
+            characteristic =>
+                characteristic.markingClass === selectedMarkingClass
         )
     );
 
@@ -131,61 +132,61 @@ export function GlobalToolbar({ className, ...props }: GlobalToolbarProps) {
                         )}
                         disabled={!selectedCharacteristic}
                     >
-                        {selectedCharacteristic?.name}
+                        {selectedCharacteristic?.displayName}
                     </DropdownMenuTrigger>
                     <DropdownMenuPortal>
                         <DropdownMenuContent>
-                            {markingTypeCharacteristics.map(characteristic => (
+                            {markingClassCharacteristics.map(characteristic => (
                                 <DropdownMenuItem
                                     key={characteristic.id}
                                     onClick={() => {
-                                        MarkingCharacteristicsStore.actions.activeCharacteristics.setActiveCharacteristicByType(
-                                            selectedMarkingType,
+                                        MarkingCharacteristicsStore.actions.activeCharacteristics.setActiveCharacteristicByMarkingClass(
+                                            selectedMarkingClass,
                                             characteristic.id
                                         );
                                     }}
                                 >
-                                    {characteristic.name}
+                                    {characteristic.displayName}
                                 </DropdownMenuItem>
                             ))}
                         </DropdownMenuContent>
                     </DropdownMenuPortal>
                 </DropdownMenu>
 
-                {/* Selected marking type e,g. point */}
+                {/* Selected marking class e,g. point */}
                 <ToggleGroup
                     type="single"
-                    value={selectedCharacteristic?.type ?? undefined}
+                    value={selectedCharacteristic?.markingClass ?? undefined}
                     variant="outline"
                     size="icon"
                 >
                     <ToggleGroupItem
-                        value={MARKING_TYPE.POINT}
-                        title={`${t("Marking.Keys.type.Keys.point", { ns: "object" })} (1)`}
+                        value={MARKING_CLASS.POINT}
+                        title={`${t("Marking.Keys.markingClass.Keys.point", { ns: "object" })} (1)`}
                         disabled={
                             !activeCharacteristics.some(
-                                x => x.type === MARKING_TYPE.POINT
+                                x => x.markingClass === MARKING_CLASS.POINT
                             )
                         }
                         onClick={() => {
-                            DashboardToolbarStore.actions.settings.marking.setSelectedMarkingType(
-                                MARKING_TYPE.POINT
+                            DashboardToolbarStore.actions.settings.marking.setSelectedMarkingClass(
+                                MARKING_CLASS.POINT
                             );
                         }}
                     >
                         <Dot size={ICON.SIZE} strokeWidth={ICON.STROKE_WIDTH} />
                     </ToggleGroupItem>
                     <ToggleGroupItem
-                        value={MARKING_TYPE.RAY}
-                        title={`${t("Marking.Keys.type.Keys.ray", { ns: "object" })} (2)`}
+                        value={MARKING_CLASS.RAY}
+                        title={`${t("Marking.Keys.markingClass.Keys.ray", { ns: "object" })} (2)`}
                         onClick={() => {
-                            DashboardToolbarStore.actions.settings.marking.setSelectedMarkingType(
-                                MARKING_TYPE.RAY
+                            DashboardToolbarStore.actions.settings.marking.setSelectedMarkingClass(
+                                MARKING_CLASS.RAY
                             );
                         }}
                         disabled={
                             !activeCharacteristics.some(
-                                x => x.type === MARKING_TYPE.RAY
+                                x => x.markingClass === MARKING_CLASS.RAY
                             )
                         }
                     >
@@ -195,16 +196,18 @@ export function GlobalToolbar({ className, ...props }: GlobalToolbarProps) {
                         />
                     </ToggleGroupItem>
                     <ToggleGroupItem
-                        value={MARKING_TYPE.LINE_SEGMENT}
-                        title={`${t("Marking.Keys.type.Keys.line_segment", { ns: "object" })} (3)`}
+                        value={MARKING_CLASS.LINE_SEGMENT}
+                        title={`${t("Marking.Keys.markingClass.Keys.line_segment", { ns: "object" })} (3)`}
                         onClick={() => {
-                            DashboardToolbarStore.actions.settings.marking.setSelectedMarkingType(
-                                MARKING_TYPE.LINE_SEGMENT
+                            DashboardToolbarStore.actions.settings.marking.setSelectedMarkingClass(
+                                MARKING_CLASS.LINE_SEGMENT
                             );
                         }}
                         disabled={
                             !activeCharacteristics.some(
-                                x => x.type === MARKING_TYPE.LINE_SEGMENT
+                                x =>
+                                    x.markingClass ===
+                                    MARKING_CLASS.LINE_SEGMENT
                             )
                         }
                     >

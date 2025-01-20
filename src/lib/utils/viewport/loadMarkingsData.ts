@@ -13,7 +13,7 @@ import { t } from "i18next";
 import { Viewport } from "pixi-viewport";
 import { getOppositeCanvasId } from "@/components/pixi/canvas/utils/get-opposite-canvas-id";
 import { readTextFile } from "@tauri-apps/plugin-fs";
-import { MARKING_TYPE, MarkingBase } from "@/lib/markings/MarkingBase";
+import { MARKING_CLASS, MarkingBase } from "@/lib/markings/MarkingBase";
 import { RayMarking } from "@/lib/markings/RayMarking";
 import { PointMarking } from "@/lib/markings/PointMarking";
 import { LineSegmentMarking } from "@/lib/markings/LineSegmentMarking";
@@ -90,21 +90,21 @@ export async function loadMarkingsData(filePath: string, canvasId: CANVAS_ID) {
 
     const markings: MarkingBase[] = fileContentJson.data.markings.map(
         marking => {
-            switch (marking.type) {
-                case MARKING_TYPE.POINT:
+            switch (marking.markingClass) {
+                case MARKING_CLASS.POINT:
                     return new PointMarking(
                         marking.label,
                         marking.origin,
                         marking.characteristicId
                     );
-                case MARKING_TYPE.RAY:
+                case MARKING_CLASS.RAY:
                     return new RayMarking(
                         marking.label,
                         marking.origin,
                         marking.characteristicId,
                         marking.angleRad!
                     );
-                case MARKING_TYPE.LINE_SEGMENT:
+                case MARKING_CLASS.LINE_SEGMENT:
                     return new LineSegmentMarking(
                         marking.label,
                         marking.origin,
@@ -112,7 +112,9 @@ export async function loadMarkingsData(filePath: string, canvasId: CANVAS_ID) {
                         marking.endpoint!
                     );
                 default:
-                    throw new Error(`Unknown marking type: ${marking.type}`);
+                    throw new Error(
+                        `Unknown marking class: ${marking.markingClass}`
+                    );
             }
         }
     );
@@ -122,8 +124,13 @@ export async function loadMarkingsData(filePath: string, canvasId: CANVAS_ID) {
 
     const requiredCharacteristics = new Map<
         MarkingCharacteristic["id"],
-        MARKING_TYPE
-    >(markings.map(marking => [marking.characteristicId, marking.type]));
+        MARKING_CLASS
+    >(
+        markings.map(marking => [
+            marking.characteristicId,
+            marking.markingClass,
+        ])
+    );
 
     const missingCharacteristicsIds: string[] = requiredCharacteristics
         .keys()
@@ -147,16 +154,33 @@ export async function loadMarkingsData(filePath: string, canvasId: CANVAS_ID) {
 
         if (!confirmed) return;
 
+        // importing names from metadata
+        const metadataCharacteristics =
+            fileContentJson.metadata?.characteristics;
+
         const characteristicsToAdd: MarkingCharacteristic[] = [];
         requiredCharacteristics
             .keys()
             .filter(id => missingCharacteristicsIds.includes(id))
             .forEach(id => {
-                const type = requiredCharacteristics.get(id)!;
+                const markingClass = requiredCharacteristics.get(id)!;
+
+                const metadataCharacteristicName = metadataCharacteristics.find(
+                    o => o.characteristicId === id
+                )?.characteristicName;
+
+                // set names according to metadata if non existent use slice of id
+                /* 
+                    TODO: if characteristicName is not present display a warning and allow user to name it
+                    As currently if there is no characteristicName in the import file it will be named as the first 6 characters of the id
+                    breaking the convention of the user naming the characteristics 
+                */
                 characteristicsToAdd.push({
                     id,
-                    name: id.slice(0, 6),
-                    type,
+                    characteristicName:
+                        metadataCharacteristicName ?? id.slice(0, 6),
+                    displayName: metadataCharacteristicName ?? id.slice(0, 6),
+                    markingClass,
                     backgroundColor: defaultBackgroundColor,
                     textColor: defaultTextColor,
                     size: defaultSize,

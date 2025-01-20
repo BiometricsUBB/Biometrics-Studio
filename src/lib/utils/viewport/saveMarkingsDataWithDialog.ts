@@ -1,6 +1,9 @@
 /* eslint-disable no-throw-literal */
 
-import { CanvasMetadata } from "@/components/pixi/canvas/hooks/useCanvasContext";
+import {
+    CANVAS_ID,
+    CanvasMetadata,
+} from "@/components/pixi/canvas/hooks/useCanvasContext";
 import { save } from "@tauri-apps/plugin-dialog";
 import { getVersion } from "@tauri-apps/api/app";
 import { t } from "i18next";
@@ -16,6 +19,7 @@ import { MarkingBase } from "@/lib/markings/MarkingBase";
 import { RayMarking } from "@/lib/markings/RayMarking";
 import { LineSegmentMarking } from "@/lib/markings/LineSegmentMarking";
 import { WORKING_MODE } from "@/lib/markings/MarkingCharacteristic";
+import { MarkingCharacteristicsStore } from "@/lib/stores/MarkingCharacteristics/MarkingCharacteristics";
 
 type ImageInfo = {
     name: string | null;
@@ -38,11 +42,15 @@ export type ExportObject = {
         image: ImageInfo | null;
         compared_image: ImageInfo | null;
         workingMode: WORKING_MODE;
+        characteristics: {
+            characteristicId: string;
+            characteristicName: string;
+        }[];
     };
     data: {
         markings: {
             label: MarkingBase["label"];
-            type: MarkingBase["type"];
+            markingClass: MarkingBase["markingClass"];
             origin: MarkingBase["origin"];
             characteristicId: MarkingBase["characteristicId"];
             angleRad?: RayMarking["angleRad"];
@@ -91,6 +99,24 @@ async function getData(
             compared_image: getImageData(oppositePicture),
             // TODO Get current working mode
             workingMode: WORKING_MODE.FINGERPRINT,
+            characteristics: MarkingCharacteristicsStore.state.characteristics
+                .filter(
+                    c =>
+                        MarkingCharacteristicsStore.actions.characteristics.checkIfCharacteristicIsInUse(
+                            c.id,
+                            CANVAS_ID.LEFT
+                        ) ||
+                        MarkingCharacteristicsStore.actions.characteristics.checkIfCharacteristicIsInUse(
+                            c.id,
+                            CANVAS_ID.RIGHT
+                        )
+                )
+                .map(c => {
+                    return {
+                        characteristicId: c.id,
+                        characteristicName: c.characteristicName,
+                    };
+                }),
         },
         data: {
             markings: MarkingsStore(id).state.markings,

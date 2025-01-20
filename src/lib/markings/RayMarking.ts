@@ -1,8 +1,8 @@
 // eslint-disable-next-line import/no-cycle
-import { MarkingBase, MARKING_TYPE, Point } from "@/lib/markings/MarkingBase";
+import { MarkingBase, MARKING_CLASS, Point } from "@/lib/markings/MarkingBase";
 
 export class RayMarking extends MarkingBase {
-    readonly type = MARKING_TYPE.RAY;
+    readonly markingClass = MARKING_CLASS.RAY;
 
     constructor(
         label: number,

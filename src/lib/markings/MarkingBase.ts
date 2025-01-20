@@ -10,7 +10,7 @@ import { CANVAS_ID } from "@/components/pixi/canvas/hooks/useCanvasContext";
 
 /* eslint-disable no-param-reassign */
 
-export enum MARKING_TYPE {
+export enum MARKING_CLASS {
     POINT = "point",
     RAY = "ray",
     LINE_SEGMENT = "line_segment",
@@ -24,7 +24,7 @@ export interface Point {
 export abstract class MarkingBase {
     [immerable] = true;
 
-    public abstract readonly type: MARKING_TYPE;
+    public abstract readonly markingClass: MARKING_CLASS;
 
     public readonly id: string = crypto.randomUUID();
 
