@@ -1,4 +1,6 @@
 import { MARKING_TYPE } from "@/lib/markings/MarkingBase";
+import { MarkingCharacteristicsStore } from "@/lib/stores/MarkingCharacteristics/MarkingCharacteristics";
+import { WorkingModeStore } from "@/lib/stores/WorkingMode";
 import {
     CURSOR_MODES,
     DashboardToolbarStore,
@@ -17,6 +19,17 @@ export const useKeyboardShortcuts = () => {
     const { setSelectedMarkingType } = markingActions;
     const { setCursorMode } = cursorActions;
     const { toggleLockedViewport, toggleLockScaleSync } = viewportActions;
+    const { workingMode } = WorkingModeStore.state;
+
+    function isMarkingTypeAvailable(markingType: MARKING_TYPE) {
+        return (
+            MarkingCharacteristicsStore.state.characteristics.filter(
+                characteristic =>
+                    characteristic.category === workingMode &&
+                    characteristic.type === markingType
+            ).length > 0
+        );
+    }
 
     useKeyDown(() => {
         document.dispatchEvent(
@@ -33,14 +46,17 @@ export const useKeyboardShortcuts = () => {
     }, ["F2"]);
 
     useKeyDown(() => {
+        if (!isMarkingTypeAvailable(MARKING_TYPE.POINT)) return;
         setSelectedMarkingType(MARKING_TYPE.POINT);
     }, ["1"]);
 
     useKeyDown(() => {
+        if (!isMarkingTypeAvailable(MARKING_TYPE.RAY)) return;
         setSelectedMarkingType(MARKING_TYPE.RAY);
     }, ["2"]);
 
     useKeyDown(() => {
+        if (!isMarkingTypeAvailable(MARKING_TYPE.LINE_SEGMENT)) return;
         setSelectedMarkingType(MARKING_TYPE.LINE_SEGMENT);
     }, ["3"]);
 
