@@ -10,6 +10,7 @@ import { MarkingCharacteristicsStore } from "@/lib/stores/MarkingCharacteristics
 import { MarkingCharacteristicsExportObject } from "@/components/dialogs/marking-characteristics/exportMarkingCharacteristicsWithDialog";
 import { validateFileData } from "@/lib/utils/viewport/loadMarkingsData";
 import { WORKING_MODE } from "@/views/selectMode";
+import { WorkingModeStore } from "@/lib/stores/WorkingMode";
 
 export async function loadMarkingCharacteristicsData(filePath: string) {
     const fileContentString = await readTextFile(filePath);
@@ -41,14 +42,14 @@ export async function loadMarkingCharacteristicsData(filePath: string) {
     }
 
     // TODO: fix this - create a working mode when we allow the creation of new ones
-    const availableWorkingModesFromData =
+    const workingModesFromData =
         fileContentJson.data.markingCharacteristics
             ?.map(item => item.category)
             .flat() || [];
     const supportedWorkingModes = Object.keys(WORKING_MODE);
 
     if (
-        availableWorkingModesFromData.filter(
+        workingModesFromData.filter(
             mode => !supportedWorkingModes.includes(mode)
         ).length
     ) {
@@ -82,6 +83,10 @@ export async function loadMarkingCharacteristicsData(filePath: string) {
             }
         );
         if (!confirmed) return;
+    }
+
+    if (workingModesFromData.length === 1 && workingModesFromData[0]) {
+        WorkingModeStore.actions.setWorkingMode(workingModesFromData[0]);
     }
 
     MarkingCharacteristicsStore.actions.characteristics.addMany(
