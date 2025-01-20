@@ -57,7 +57,7 @@ export function GlobalToolbar({ className, ...props }: GlobalToolbarProps) {
         state => state.activeCharacteristics
     );
 
-    const { workingMode } = WorkingModeStore.state;
+    const workingMode = WorkingModeStore.use(state => state.workingMode);
 
     const selectedCharacteristic = activeCharacteristics.find(
         characteristic =>

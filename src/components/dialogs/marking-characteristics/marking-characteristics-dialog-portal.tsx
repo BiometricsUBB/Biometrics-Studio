@@ -34,7 +34,7 @@ import { WorkingModeStore } from "@/lib/stores/WorkingMode";
 function MarkingCharacteristicsDialogPortal() {
     const { t } = useTranslation();
 
-    const { workingMode } = WorkingModeStore.state;
+    const workingMode = WorkingModeStore.use(state => state.workingMode);
 
     return (
         <DialogPortal>
