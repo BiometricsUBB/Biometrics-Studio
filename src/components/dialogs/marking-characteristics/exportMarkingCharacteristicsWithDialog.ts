@@ -56,7 +56,7 @@ export async function exportMarkingCharacteristicsWithDialog() {
             canCreateDirectories: true,
             defaultPath: await join(
                 await desktopDir(),
-                `marking-characteristics-${WorkingModeStore.state.workingMode?.toLowerCase().replace(" ", "_")}.json`
+                `marking-characteristics-${WorkingModeStore.state.workingMode?.toLowerCase()}.json`
             ),
         });
 
