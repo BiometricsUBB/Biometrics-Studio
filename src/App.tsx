@@ -22,7 +22,7 @@ export default function App() {
     const { workingMode, setWorkingMode } = WorkingModeStore.use();
 
     useEffect(() => {
-        setCurrentTab(workingMode === "" ? TABS.SELECT_MODE : TABS.HOMEPAGE);
+        setCurrentTab(!workingMode ? TABS.SELECT_MODE : TABS.HOMEPAGE);
     }, [workingMode]);
 
     return (
@@ -34,9 +34,7 @@ export default function App() {
             <Tabs
                 value={currentTab}
                 onValueChange={tab => setCurrentTab(tab as TABS)}
-                defaultValue={
-                    workingMode === "" ? TABS.SELECT_MODE : TABS.HOMEPAGE
-                }
+                defaultValue={!workingMode ? TABS.SELECT_MODE : TABS.HOMEPAGE}
                 className="w-full flex flex-col items-center flex-grow"
             >
                 <TabsContent
