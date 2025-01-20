@@ -6,6 +6,7 @@ import { showErrorDialog } from "@/lib/errors/showErrorDialog";
 import { desktopDir, join } from "@tauri-apps/api/path";
 import { MarkingCharacteristic } from "@/lib/markings/MarkingCharacteristic";
 import { MarkingCharacteristicsStore } from "@/lib/stores/MarkingCharacteristics/MarkingCharacteristics";
+import { WorkingModeStore } from "@/lib/stores/WorkingMode";
 
 type SoftwareInfo = {
     name: string;
@@ -31,7 +32,9 @@ async function getData(): Promise<string> {
         },
         data: {
             markingCharacteristics:
-                MarkingCharacteristicsStore.state.characteristics,
+                MarkingCharacteristicsStore.state.characteristics.filter(
+                    c => c.category === WorkingModeStore.state.workingMode
+                ),
         },
     };
 
@@ -53,7 +56,7 @@ export async function exportMarkingCharacteristicsWithDialog() {
             canCreateDirectories: true,
             defaultPath: await join(
                 await desktopDir(),
-                "marking-characteristics.json"
+                `marking-characteristics-${WorkingModeStore.state.workingMode?.toLowerCase().replace(" ", "_")}.json`
             ),
         });
 
