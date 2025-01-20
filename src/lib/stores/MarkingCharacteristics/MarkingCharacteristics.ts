@@ -74,7 +74,9 @@ class StoreClass {
 
                 if (
                     !this.state.activeCharacteristics.find(
-                        x => x.type === characteristic.type
+                        x =>
+                            x.type === characteristic.type &&
+                            x.category === WorkingModeStore.state.workingMode
                     )
                 ) {
                     this.state.set(draft => {
@@ -107,7 +109,10 @@ class StoreClass {
                     characteristics.forEach(characteristic => {
                         if (
                             !draft.activeCharacteristics.find(
-                                x => x.type === characteristic.type
+                                x =>
+                                    x.type === characteristic.type &&
+                                    x.category ===
+                                        WorkingModeStore.state.workingMode
                             )
                         ) {
                             draft.activeCharacteristics.push(characteristic);
@@ -141,7 +146,9 @@ class StoreClass {
                         );
 
                     const activeCharacteristic = draft.characteristics.find(
-                        x => x.type === type
+                        x =>
+                            x.type === type &&
+                            x.category === WorkingModeStore.state.workingMode
                     );
 
                     if (activeCharacteristic) {
