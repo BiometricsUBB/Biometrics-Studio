@@ -43,9 +43,13 @@ export async function loadMarkingCharacteristicsData(filePath: string) {
 
     // TODO: fix this - create a working mode when we allow the creation of new ones
     const workingModesFromData =
-        fileContentJson.data.markingCharacteristics
-            ?.map(item => item.category)
-            .flat() || [];
+        Array.from(
+            new Set(
+                fileContentJson.data.markingCharacteristics
+                    ?.map(item => item.category)
+                    .flat()
+            )
+        ) || [];
     const supportedWorkingModes = Object.keys(WORKING_MODE);
 
     if (
