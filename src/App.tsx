@@ -1,4 +1,4 @@
-import React, { useState, Suspense, lazy, useEffect } from "react";
+import React, { useState, Suspense, lazy } from "react";
 import { Tabs, TabsContent } from "@/components/ui/tabs";
 import { GlobalToolbar } from "@/components/toolbar/toolbar";
 import { cn } from "@/lib/utils/shadcn";
@@ -18,12 +18,8 @@ const enum TABS {
 }
 
 export default function App() {
-    const [currentTab, setCurrentTab] = useState<TABS>(TABS.HOMEPAGE);
-    const { workingMode, setWorkingMode } = WorkingModeStore.use();
-
-    useEffect(() => {
-        setCurrentTab(!workingMode ? TABS.SELECT_MODE : TABS.HOMEPAGE);
-    }, [workingMode]);
+    const [currentTab, setCurrentTab] = useState<TABS>(TABS.SELECT_MODE);
+    const { setWorkingMode } = WorkingModeStore.use();
 
     return (
         <main
@@ -34,7 +30,6 @@ export default function App() {
             <Tabs
                 value={currentTab}
                 onValueChange={tab => setCurrentTab(tab as TABS)}
-                defaultValue={!workingMode ? TABS.SELECT_MODE : TABS.HOMEPAGE}
                 className="w-full flex flex-col items-center flex-grow"
             >
                 <TabsContent
