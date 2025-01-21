@@ -1,6 +1,5 @@
 /* eslint-disable no-shadow */
-export const IS_DEV_ENVIRONMENT = true;
-//    process && process.env["NODE_ENV"] === "development";
+export const IS_DEV_ENVIRONMENT = import.meta.env.MODE === "development";
 
 export const ICON = {
     SIZE: 24,
