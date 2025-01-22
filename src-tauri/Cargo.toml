@@ -1,8 +1,8 @@
 [package]
 name = "biometrics-studio"
-version = "0.3.1"
+version = "0.4.0"
 description = "Application for forensic trace comparison"
-authors = ["Cyprian Zdebski", "Konrad Boryś"]
+authors = ["Cyprian Zdebski", "Konrad Boryś", "Marcel Gańczarczyk"]
 license = ""
 repository = ""
 default-run = "biometrics-studio"

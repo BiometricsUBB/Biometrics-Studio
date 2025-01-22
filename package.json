@@ -1,7 +1,7 @@
 {
     "name": "biometrics-studio",
     "description": "Application for forensic trace comparison",
-    "version": "0.3.1",
+    "version": "0.4.0",
     "author": {
         "name": "Cyprian Zdebski",
         "email": "cyprianz5mail@gmail.com",
@@ -12,6 +12,11 @@
             "name": "Konrad Boryś",
             "email": "konrad.borys@outlook.com",
             "url": "https://github.com/kborys"
+        },
+        {
+            "name": "Marcel Gańczarczyk",
+            "email": "marcel@mganczarczyk.pl",
+            "url": "https://mganczarczyk.pl"
         }
     ],
     "repository": {
