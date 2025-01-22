@@ -86,6 +86,7 @@ export type i18nDialog = Recordify<
     | "Missing marking characteristics detected"
     | "The markings data was created with a different working mode ({{mode}}). Change the working mode to ({{mode}}) to load the data."
     | "Please select your working mode"
+    | "You are trying to load marking characteristics for a non-existing working mode."
 >;
 
 export type i18nDescription = Recordify<"Prerendering radius">;

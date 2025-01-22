@@ -18,8 +18,9 @@ import { basename } from "@tauri-apps/api/path";
 import { MarkingBase } from "@/lib/markings/MarkingBase";
 import { RayMarking } from "@/lib/markings/RayMarking";
 import { LineSegmentMarking } from "@/lib/markings/LineSegmentMarking";
-import { WORKING_MODE } from "@/lib/markings/MarkingCharacteristic";
 import { MarkingCharacteristicsStore } from "@/lib/stores/MarkingCharacteristics/MarkingCharacteristics";
+import { WorkingModeStore } from "@/lib/stores/WorkingMode";
+import { WORKING_MODE } from "@/views/selectMode";
 
 type ImageInfo = {
     name: string | null;
@@ -89,6 +90,9 @@ async function getData(
     const id = viewport.name as CanvasMetadata["id"] | null;
     if (id === null) throw new Error("Canvas ID not found");
 
+    const { workingMode } = WorkingModeStore.state;
+    const { markings } = MarkingsStore(id).state;
+
     const exportObject: ExportObject = {
         metadata: {
             software: {
@@ -97,8 +101,7 @@ async function getData(
             },
             image: getImageData(picture),
             compared_image: getImageData(oppositePicture),
-            // TODO Get current working mode
-            workingMode: WORKING_MODE.FINGERPRINT,
+            workingMode: workingMode!,
             characteristics: MarkingCharacteristicsStore.state.characteristics
                 .filter(
                     c =>
@@ -119,7 +122,7 @@ async function getData(
                 }),
         },
         data: {
-            markings: MarkingsStore(id).state.markings,
+            markings,
         },
     };
 

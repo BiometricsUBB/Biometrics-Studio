@@ -9,6 +9,8 @@ import { readTextFile } from "@tauri-apps/plugin-fs";
 import { MarkingCharacteristicsStore } from "@/lib/stores/MarkingCharacteristics/MarkingCharacteristics";
 import { MarkingCharacteristicsExportObject } from "@/components/dialogs/marking-characteristics/exportMarkingCharacteristicsWithDialog";
 import { validateFileData } from "@/lib/utils/viewport/loadMarkingsData";
+import { WORKING_MODE } from "@/views/selectMode";
+import { WorkingModeStore } from "@/lib/stores/WorkingMode";
 
 export async function loadMarkingCharacteristicsData(filePath: string) {
     const fileContentString = await readTextFile(filePath);
@@ -39,6 +41,31 @@ export async function loadMarkingCharacteristicsData(filePath: string) {
         if (!confirmed) return;
     }
 
+    // TODO: fix this - create a working mode when we allow the creation of new ones
+    const workingModesFromData =
+        Array.from(
+            new Set(
+                fileContentJson.data.markingCharacteristics
+                    ?.map(item => item.category)
+                    .flat()
+            )
+        ) || [];
+    const supportedWorkingModes = Object.keys(WORKING_MODE);
+
+    if (
+        workingModesFromData.filter(
+            mode => !supportedWorkingModes.includes(mode)
+        ).length
+    ) {
+        showErrorDialog(
+            t(
+                "You are trying to load marking characteristics for a non-existing working mode.",
+                { ns: "dialog" }
+            )
+        );
+        return;
+    }
+
     const characteristics = fileContentJson.data.markingCharacteristics;
 
     const conflicts = MarkingCharacteristicsStore.actions.characteristics
@@ -60,6 +87,10 @@ export async function loadMarkingCharacteristicsData(filePath: string) {
             }
         );
         if (!confirmed) return;
+    }
+
+    if (workingModesFromData.length === 1 && workingModesFromData[0]) {
+        WorkingModeStore.actions.setWorkingMode(workingModesFromData[0]);
     }
 
     MarkingCharacteristicsStore.actions.characteristics.addMany(

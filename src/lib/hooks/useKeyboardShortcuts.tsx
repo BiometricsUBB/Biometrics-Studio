@@ -1,4 +1,6 @@
 import { MARKING_CLASS } from "@/lib/markings/MarkingBase";
+import { WorkingModeStore } from "@/lib/stores/WorkingMode";
+import { MarkingCharacteristicsStore } from "@/lib/stores/MarkingCharacteristics/MarkingCharacteristics";
 import {
     CURSOR_MODES,
     DashboardToolbarStore,
@@ -17,6 +19,17 @@ export const useKeyboardShortcuts = () => {
     const { setSelectedMarkingClass } = markingActions;
     const { setCursorMode } = cursorActions;
     const { toggleLockedViewport, toggleLockScaleSync } = viewportActions;
+    const { workingMode } = WorkingModeStore.state;
+
+    function isMarkingClassAvailable(markingClass: MARKING_CLASS) {
+        return (
+            MarkingCharacteristicsStore.state.characteristics.filter(
+                characteristic =>
+                    characteristic.category === workingMode &&
+                    characteristic.markingClass === markingClass
+            ).length > 0
+        );
+    }
 
     useKeyDown(() => {
         document.dispatchEvent(
@@ -33,14 +46,17 @@ export const useKeyboardShortcuts = () => {
     }, ["F2"]);
 
     useKeyDown(() => {
+        if (!isMarkingClassAvailable(MARKING_CLASS.POINT)) return;
         setSelectedMarkingClass(MARKING_CLASS.POINT);
     }, ["1"]);
 
     useKeyDown(() => {
+        if (!isMarkingClassAvailable(MARKING_CLASS.RAY)) return;
         setSelectedMarkingClass(MARKING_CLASS.RAY);
     }, ["2"]);
 
     useKeyDown(() => {
+        if (!isMarkingClassAvailable(MARKING_CLASS.LINE_SEGMENT)) return;
         setSelectedMarkingClass(MARKING_CLASS.LINE_SEGMENT);
     }, ["3"]);
 

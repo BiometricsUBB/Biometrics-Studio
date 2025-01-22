@@ -1,12 +1,6 @@
 import { ColorSource } from "pixi.js";
 import { MARKING_CLASS } from "@/lib/markings/MarkingBase";
-
-// TODO docelowo to powinno być dodane przez Marcela w https://github.com/BiometricsUBB/Biometrics-Studio/pull/6 wtedy należy to przepiąć
-export enum WORKING_MODE {
-    FINGERPRINT = "FINGERPRINT",
-    EAR = "EAR",
-    SHOEPRINT = "SHOEPRINT",
-}
+import { WORKING_MODE } from "@/views/selectMode";
 
 export interface MarkingCharacteristic {
     id: string;

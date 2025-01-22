@@ -3,6 +3,8 @@
 import { MarkingCharacteristic } from "@/lib/markings/MarkingCharacteristic";
 import { MarkingsStore } from "@/lib/stores/Markings";
 import { CANVAS_ID } from "@/components/pixi/canvas/hooks/useCanvasContext";
+import { WORKING_MODE } from "@/views/selectMode";
+import { WorkingModeStore } from "@/lib/stores/WorkingMode";
 import { _useMarkingCharacteristicsStore as useStore } from "./MarkingCharacteristics.store";
 
 class StoreClass {
@@ -16,10 +18,13 @@ class StoreClass {
         activeCharacteristics: {
             setActiveCharacteristicByMarkingClass: (
                 markingClass: MarkingCharacteristic["markingClass"],
-                characteristicId: MarkingCharacteristic["id"]
+                characteristicId: MarkingCharacteristic["id"],
+                workingMode: WORKING_MODE
             ) => {
                 const newActiveCharacteristic = this.state.characteristics.find(
-                    characteristic => characteristic.id === characteristicId
+                    characteristic =>
+                        characteristic.id === characteristicId &&
+                        characteristic.category === workingMode
                 );
 
                 if (!newActiveCharacteristic) {
@@ -38,14 +43,20 @@ class StoreClass {
                 });
             },
             getActiveCharacteristicByMarkingClass: (
-                markingClass: MarkingCharacteristic["markingClass"]
+                markingClass: MarkingCharacteristic["markingClass"],
+                workingMode?: WORKING_MODE
             ) => {
+                if (!workingMode)
+                    workingMode = WorkingModeStore.state.workingMode!;
+
                 const characteristic = this.state.characteristics.find(
                     characteristic =>
                         characteristic.id ===
                         this.state.activeCharacteristics.find(
-                            x => x.markingClass === markingClass
-                        )!.id
+                            x =>
+                                x.markingClass === markingClass &&
+                                x.category === workingMode
+                        )?.id
                 );
 
                 if (!characteristic) {
@@ -65,7 +76,9 @@ class StoreClass {
 
                 if (
                     !this.state.activeCharacteristics.find(
-                        x => x.markingClass === characteristic.markingClass
+                        x =>
+                            x.markingClass === characteristic.markingClass &&
+                            x.category === WorkingModeStore.state.workingMode
                     )
                 ) {
                     this.state.set(draft => {
@@ -100,7 +113,9 @@ class StoreClass {
                             !draft.activeCharacteristics.find(
                                 x =>
                                     x.markingClass ===
-                                    characteristic.markingClass
+                                        characteristic.markingClass &&
+                                    x.category ===
+                                        WorkingModeStore.state.workingMode
                             )
                         ) {
                             draft.activeCharacteristics.push(characteristic);
@@ -134,7 +149,9 @@ class StoreClass {
                         );
 
                     const activeCharacteristic = draft.characteristics.find(
-                        x => x.markingClass === markingClass
+                        x =>
+                            x.markingClass === markingClass &&
+                            x.category === WorkingModeStore.state.workingMode
                     );
 
                     if (activeCharacteristic) {

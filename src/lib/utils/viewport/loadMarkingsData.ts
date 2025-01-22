@@ -23,8 +23,8 @@ import {
     defaultSize,
     defaultTextColor,
     MarkingCharacteristic,
-    WORKING_MODE,
 } from "@/lib/markings/MarkingCharacteristic";
+import { WorkingModeStore } from "@/lib/stores/WorkingMode";
 import { ExportObject } from "./saveMarkingsDataWithDialog";
 
 export function validateFileData(_data: unknown): _data is ExportObject {
@@ -74,8 +74,10 @@ export async function loadMarkingsData(filePath: string, canvasId: CANVAS_ID) {
         if (!confirmed) return;
     }
 
-    // TODO Get current working mode
-    if (fileContentJson.metadata.workingMode !== WORKING_MODE.FINGERPRINT) {
+    if (
+        fileContentJson.metadata.workingMode !==
+        WorkingModeStore.state.workingMode
+    ) {
         showErrorDialog(
             t(
                 "The markings data was created with a different working mode ({{mode}}). Change the working mode to ({{mode}}) to load the data.",

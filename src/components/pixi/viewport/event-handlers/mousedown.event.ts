@@ -10,6 +10,7 @@ import { PointMarking } from "@/lib/markings/PointMarking";
 import { RayMarking } from "@/lib/markings/RayMarking";
 import { LineSegmentMarking } from "@/lib/markings/LineSegmentMarking";
 import { MarkingCharacteristicsStore } from "@/lib/stores/MarkingCharacteristics/MarkingCharacteristics";
+import { WorkingModeStore } from "@/lib/stores/WorkingMode";
 import { ViewportHandlerParams, getNormalizedMousePosition } from "./utils";
 
 let onMouseMove: (e: FederatedPointerEvent) => void = () => {};
@@ -209,10 +210,12 @@ export const handleRMBDown = (
 
     if (cursorMode === CURSOR_MODES.MARKING) {
         const { markingClass } = DashboardToolbarStore.state.settings.marking;
+        const workingMode = WorkingModeStore.state.workingMode!;
 
         const { id: characteristicId } =
             MarkingCharacteristicsStore.actions.activeCharacteristics.getActiveCharacteristicByMarkingClass(
-                markingClass
+                markingClass,
+                workingMode
             );
 
         switch (markingClass) {
