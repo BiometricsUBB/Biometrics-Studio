@@ -171,7 +171,7 @@ export async function loadMarkingsData(filePath: string, canvasId: CANVAS_ID) {
                     o => o.characteristicId === id
                 )?.characteristicName;
 
-                // set names according to metadata if non existent use slice of id
+                // set names according to metadata if non-existent use slice of id
                 /* 
                     TODO: if characteristicName is not present display a warning and allow user to name it
                     As currently if there is no characteristicName in the import file it will be named as the first 6 characters of the id
