@@ -230,7 +230,7 @@ export function GlobalToolbar({ className, ...props }: GlobalToolbarProps) {
                     </ToggleGroupItem>
                     <ToggleGroupItem
                         value={MARKING_CLASS.BOUNDING_BOX}
-                        title={`${t("Marking.Keys.markingClass.Keys.bounding_box", { ns: "object" })} (3)`}
+                        title={`${t("Marking.Keys.markingClass.Keys.bounding_box", { ns: "object" })} (4)`}
                         onClick={() => {
                             DashboardToolbarStore.actions.settings.marking.setSelectedMarkingClass(
                                 MARKING_CLASS.BOUNDING_BOX
