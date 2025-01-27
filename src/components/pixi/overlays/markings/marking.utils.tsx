@@ -61,7 +61,6 @@ const drawPointMarking = (
     showMarkingLabels?: boolean
 ) => {
     const { x, y } = relativeOrigin;
-
     if (selected) {
         g.lineStyle(1, textColor);
         g.beginFill(0x0000ff, 0.5);
@@ -278,8 +277,8 @@ export const drawMarking = (
         viewportHeightRatio
     );
 
-    const markingTypeHandlers: Record<string, () => void> = {
-        PointMarking: () =>
+    const markingDrawers: Record<string, (marking: MarkingBase) => void> = {
+        PointMarking: marking =>
             drawPointMarking(
                 g,
                 isSelected,
@@ -288,7 +287,7 @@ export const drawMarking = (
                 markingViewportPosition,
                 showMarkingLabels
             ),
-        RayMarking: () =>
+        RayMarking: marking =>
             drawRayMarking(
                 g,
                 isSelected,
@@ -297,42 +296,42 @@ export const drawMarking = (
                 markingViewportPosition,
                 showMarkingLabels
             ),
-        LineSegmentMarking: () =>
+        LineSegmentMarking: marking => {
+            const lineSegmentMarking = marking as LineSegmentMarking;
             drawLineSegmentMarking(
                 g,
                 isSelected,
-                marking as LineSegmentMarking,
+                lineSegmentMarking,
                 markingCharacteristic,
                 markingViewportPosition,
-                (
-                    marking as LineSegmentMarking
-                ).calculateEndpointViewportPosition(
+                lineSegmentMarking.calculateEndpointViewportPosition(
                     viewportWidthRatio,
                     viewportHeightRatio
                 ),
                 showMarkingLabels
-            ),
-        BoundingBoxMarking: () =>
+            );
+        },
+        BoundingBoxMarking: marking => {
+            const boundingBoxMarking = marking as BoundingBoxMarking;
             drawBoundingBoxMarking(
                 g,
                 isSelected,
-                marking as BoundingBoxMarking,
+                boundingBoxMarking,
                 markingCharacteristic,
                 markingViewportPosition,
-                (
-                    marking as BoundingBoxMarking
-                ).calculateEndpointViewportPosition(
+                boundingBoxMarking.calculateEndpointViewportPosition(
                     viewportWidthRatio,
                     viewportHeightRatio
                 ),
                 showMarkingLabels
-            ),
+            );
+        },
     };
 
-    const handler = markingTypeHandlers[marking.constructor.name];
-    if (handler) {
-        handler();
-    } else {
+    const drawer = markingDrawers[marking.constructor.name];
+    if (!drawer) {
         throw new Error(`Unsupported marking class: ${marking.markingClass}`);
     }
+
+    drawer(marking);
 };
