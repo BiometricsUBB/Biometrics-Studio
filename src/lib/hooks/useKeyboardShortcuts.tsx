@@ -61,6 +61,11 @@ export const useKeyboardShortcuts = () => {
     }, ["3"]);
 
     useKeyDown(() => {
+        if (!isMarkingClassAvailable(MARKING_CLASS.BOUNDING_BOX)) return;
+        setSelectedMarkingClass(MARKING_CLASS.BOUNDING_BOX);
+    }, ["4"]);
+
+    useKeyDown(() => {
         toggleLockedViewport();
     }, ["l"]);
 

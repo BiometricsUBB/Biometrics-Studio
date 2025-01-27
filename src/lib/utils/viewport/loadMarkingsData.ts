@@ -25,6 +25,7 @@ import {
     MarkingCharacteristic,
 } from "@/lib/markings/MarkingCharacteristic";
 import { WorkingModeStore } from "@/lib/stores/WorkingMode";
+import { BoundingBoxMarking } from "@/lib/markings/BoundingBoxMarking";
 import { ExportObject } from "./saveMarkingsDataWithDialog";
 
 export function validateFileData(_data: unknown): _data is ExportObject {
@@ -113,6 +114,13 @@ export async function loadMarkingsData(filePath: string, canvasId: CANVAS_ID) {
                         marking.characteristicId,
                         marking.endpoint!
                     );
+                case MARKING_CLASS.BOUNDING_BOX:
+                    return new BoundingBoxMarking(
+                        marking.label,
+                        marking.origin,
+                        marking.characteristicId,
+                        marking.endpoint!
+                    );
                 default:
                     throw new Error(
                         `Unknown marking class: ${marking.markingClass}`
@@ -171,7 +179,7 @@ export async function loadMarkingsData(filePath: string, canvasId: CANVAS_ID) {
                     o => o.characteristicId === id
                 )?.characteristicName;
 
-                // set names according to metadata if non existent use slice of id
+                // set names according to metadata if non-existent use slice of id
                 /* 
                     TODO: if characteristicName is not present display a warning and allow user to name it
                     As currently if there is no characteristicName in the import file it will be named as the first 6 characters of the id

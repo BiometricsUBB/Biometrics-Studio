@@ -15,6 +15,7 @@ const d: Dictionary = {
                     point: "Punkt",
                     ray: "Linia skierowana",
                     line_segment: "Odcinek",
+                    bounding_box: "Prostokąt",
                 },
             },
             characteristicId: "ID charakterystyki",

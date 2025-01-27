@@ -14,6 +14,7 @@ import {
     MousePointer,
     SendToBack,
     Spline,
+    Square,
 } from "lucide-react";
 import { ICON } from "@/lib/utils/const";
 import { MARKING_CLASS } from "@/lib/markings/MarkingBase";
@@ -223,6 +224,27 @@ export function GlobalToolbar({ className, ...props }: GlobalToolbarProps) {
                         }
                     >
                         <Spline
+                            size={ICON.SIZE}
+                            strokeWidth={ICON.STROKE_WIDTH}
+                        />
+                    </ToggleGroupItem>
+                    <ToggleGroupItem
+                        value={MARKING_CLASS.BOUNDING_BOX}
+                        title={`${t("Marking.Keys.markingClass.Keys.bounding_box", { ns: "object" })} (4)`}
+                        onClick={() => {
+                            DashboardToolbarStore.actions.settings.marking.setSelectedMarkingClass(
+                                MARKING_CLASS.BOUNDING_BOX
+                            );
+                        }}
+                        disabled={
+                            !availableMarkingCharacteristicsForWorkingMode.some(
+                                x =>
+                                    x.markingClass ===
+                                    MARKING_CLASS.BOUNDING_BOX
+                            )
+                        }
+                    >
+                        <Square
                             size={ICON.SIZE}
                             strokeWidth={ICON.STROKE_WIDTH}
                         />

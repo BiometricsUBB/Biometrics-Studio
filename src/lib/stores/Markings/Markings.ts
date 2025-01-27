@@ -13,6 +13,7 @@ import { MarkingBase } from "@/lib/markings/MarkingBase";
 import { LineSegmentMarking } from "@/lib/markings/LineSegmentMarking";
 import { RayMarking } from "@/lib/markings/RayMarking";
 import { PointMarking } from "@/lib/markings/PointMarking";
+import { BoundingBoxMarking } from "@/lib/markings/BoundingBoxMarking";
 import { ActionProduceCallback } from "../immer.helpers";
 import {
     _createMarkingsStore as createStore,
@@ -173,7 +174,12 @@ class StoreClass {
             setTemporaryMarking: (marking: MarkingBase | null) =>
                 this.setTemporaryMarking(produce(() => marking)),
             updateTemporaryMarking: (
-                props: Partial<PointMarking | RayMarking | LineSegmentMarking>
+                props: Partial<
+                    | PointMarking
+                    | RayMarking
+                    | LineSegmentMarking
+                    | BoundingBoxMarking
+                >
             ) =>
                 this.setTemporaryMarking(
                     produce(marking => {

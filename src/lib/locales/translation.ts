@@ -4,6 +4,7 @@ import { PointMarking } from "@/lib/markings/PointMarking";
 import { LineSegmentMarking } from "@/lib/markings/LineSegmentMarking";
 import { MarkingCharacteristic } from "@/lib/markings/MarkingCharacteristic";
 import { WORKING_MODE } from "@/views/selectMode";
+import { BoundingBoxMarking } from "@/lib/markings/BoundingBoxMarking";
 import { PRERENDER_RADIUS_OPTIONS, THEMES } from "../stores/GlobalSettings";
 
 type Recordify<T> = { [K in Extract<T, string> as `${K}`]: string };
@@ -32,7 +33,10 @@ export type i18nObject = {
         Name: string;
         Keys: Omit<
             Recordify<
-                keyof RayMarking | keyof PointMarking | keyof LineSegmentMarking
+                | keyof RayMarking
+                | keyof PointMarking
+                | keyof LineSegmentMarking
+                | keyof BoundingBoxMarking
             >,
             | "markingClass"
             | "isVisible"

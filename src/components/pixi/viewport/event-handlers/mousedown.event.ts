@@ -11,6 +11,7 @@ import { RayMarking } from "@/lib/markings/RayMarking";
 import { LineSegmentMarking } from "@/lib/markings/LineSegmentMarking";
 import { MarkingCharacteristicsStore } from "@/lib/stores/MarkingCharacteristics/MarkingCharacteristics";
 import { WorkingModeStore } from "@/lib/stores/WorkingMode";
+import { BoundingBoxMarking } from "@/lib/markings/BoundingBoxMarking";
 import { ViewportHandlerParams, getNormalizedMousePosition } from "./utils";
 
 let onMouseMove: (e: FederatedPointerEvent) => void = () => {};
@@ -185,6 +186,62 @@ function handleLineSegmentMarking(
     viewport.addEventListener("rightup", onRMBUp, { once: true });
 }
 
+const handleBoundingBoxMarking = (
+    e: FederatedPointerEvent,
+    interrupt: () => void,
+    characteristicId: string,
+    params: ViewportHandlerParams
+) => {
+    const { viewport, markingsStore, cachedViewportStore } = params;
+
+    markingsStore.actions.temporaryMarking.setTemporaryMarking(
+        new BoundingBoxMarking(
+            markingsStore.actions.labelGenerator.getLabel(),
+            getNormalizedMousePosition(e, viewport),
+            characteristicId,
+            getNormalizedMousePosition(e, viewport)
+        )
+    );
+
+    onMouseMove = (e: FederatedPointerEvent) => {
+        markingsStore.actions.temporaryMarking.updateTemporaryMarking({
+            endpoint: getNormalizedMousePosition(e, viewport),
+        });
+    };
+
+    onRMBUp = () => {
+        viewport.removeEventListener("mousemove", onMouseMove);
+
+        cachedViewportStore.actions.viewport.setRayPosition(
+            getNormalizedMousePosition(e, viewport)
+        );
+
+        onRMBDown = () => {
+            viewport.removeEventListener("mousemove", onMouseMove);
+
+            markingsStore.actions.markings.addOne(
+                markingsStore.state.temporaryMarking as BoundingBoxMarking
+            );
+
+            document.dispatchEvent(
+                new Event(CUSTOM_GLOBAL_EVENTS.INTERRUPT_MARKING)
+            );
+            document.removeEventListener(
+                CUSTOM_GLOBAL_EVENTS.INTERRUPT_MARKING,
+                interrupt
+            );
+        };
+
+        viewport.addEventListener("mousemove", onMouseMove);
+        viewport.addEventListener("rightdown", onRMBDown, {
+            once: true,
+        });
+    };
+
+    viewport.addEventListener("mousemove", onMouseMove);
+    viewport.addEventListener("rightup", onRMBUp, { once: true });
+};
+
 export const handleRMBDown = (
     e: FederatedPointerEvent,
     params: ViewportHandlerParams
@@ -231,6 +288,16 @@ export const handleRMBDown = (
 
             case MARKING_CLASS.LINE_SEGMENT: {
                 handleLineSegmentMarking(
+                    e,
+                    interrupt,
+                    characteristicId,
+                    params
+                );
+                break;
+            }
+
+            case MARKING_CLASS.BOUNDING_BOX: {
+                handleBoundingBoxMarking(
                     e,
                     interrupt,
                     characteristicId,
