@@ -1,10 +1,16 @@
-import { ColorSource, Graphics as PixiGraphics } from "pixi.js";
+import {
+    ColorSource,
+    Graphics as PixiGraphics,
+    TextStyle,
+    Text,
+} from "pixi.js";
 import { RayMarking } from "@/lib/markings/RayMarking";
 import { PointMarking } from "@/lib/markings/PointMarking";
 import { MarkingBase, Point } from "@/lib/markings/MarkingBase";
 import { BitmapText } from "@pixi/text-bitmap";
 import { LineSegmentMarking } from "@/lib/markings/LineSegmentMarking";
 import { MarkingCharacteristic } from "@/lib/markings/MarkingCharacteristic";
+import { BoundingBoxMarking } from "@/lib/markings/BoundingBoxMarking";
 
 export const getFontName = (fontSize: number) => {
     const FONT_FAMILY_NAME = "Cousine";
@@ -55,6 +61,7 @@ const drawPointMarking = (
     showMarkingLabels?: boolean
 ) => {
     const { x, y } = relativeOrigin;
+
     if (selected) {
         g.lineStyle(1, textColor);
         g.beginFill(0x0000ff, 0.5);
@@ -192,6 +199,70 @@ const drawLineSegmentMarking = (
     g.addChild(endpoint);
 };
 
+const drawBoundingBoxMarking = (
+    g: PixiGraphics,
+    selected: boolean,
+    { label }: BoundingBoxMarking,
+    { backgroundColor, textColor, size }: MarkingCharacteristic,
+    relativeOrigin: Point,
+    relativeEndpoint: Point,
+    showMarkingLabels?: boolean
+) => {
+    const { x, y } = relativeOrigin;
+    const { x: ex, y: ey } = relativeEndpoint;
+
+    const rectX = Math.min(x, ex);
+    const rectY = Math.min(y, ey);
+    const rectWidth = Math.abs(ex - x);
+    const rectHeight = Math.abs(ey - y);
+
+    if (selected) {
+        g.lineStyle(1, textColor);
+        g.beginFill(0x0000ff, 0.5);
+        g.drawRect(
+            rectX - size - 2,
+            rectY - size - 2,
+            rectWidth + size * 2 + 4,
+            rectHeight + size * 2 + 4
+        );
+    }
+
+    // Bounding box outline
+    g.lineStyle(2, textColor);
+    g.drawRect(rectX, rectY, rectWidth, rectHeight);
+
+    // Bounding box fill
+    g.beginFill(backgroundColor, 0.3);
+    g.drawRect(rectX, rectY, rectWidth, rectHeight);
+    g.endFill();
+
+    if (showMarkingLabels) {
+        const labelPadding = 4;
+        const labelText = String(label);
+        const hexTextColor = `${textColor.toString(16).padStart(6, "0")}`;
+
+        const textStyle = new TextStyle({
+            fontSize: size * 1.5,
+            fill: hexTextColor,
+            fontWeight: "bold",
+        });
+
+        const labelTextObj = new Text(labelText, textStyle);
+
+        const labelWidth = labelTextObj.width + labelPadding * 2;
+        const labelHeight = labelTextObj.height + labelPadding;
+
+        g.beginFill(backgroundColor, 1);
+        g.drawRect(rectX, rectY - labelHeight, labelWidth, labelHeight);
+        g.endFill();
+
+        labelTextObj.x = rectX + labelPadding;
+        labelTextObj.y = rectY - labelHeight + labelPadding / 2;
+
+        g.addChild(labelTextObj);
+    }
+};
+
 export const drawMarking = (
     g: PixiGraphics,
     isSelected: boolean,
@@ -206,38 +277,61 @@ export const drawMarking = (
         viewportWidthRatio,
         viewportHeightRatio
     );
-    // TODO to refactor
-    if (marking instanceof PointMarking) {
-        drawPointMarking(
-            g,
-            isSelected,
-            marking,
-            markingCharacteristic,
-            markingViewportPosition,
-            showMarkingLabels
-        );
-    } else if (marking instanceof RayMarking) {
-        drawRayMarking(
-            g,
-            isSelected,
-            marking,
-            markingCharacteristic,
-            markingViewportPosition,
-            showMarkingLabels
-        );
-    } else if (marking instanceof LineSegmentMarking) {
-        drawLineSegmentMarking(
-            g,
-            isSelected,
-            marking,
-            markingCharacteristic,
-            markingViewportPosition,
-            marking.calculateEndpointViewportPosition(
-                viewportWidthRatio,
-                viewportHeightRatio
+
+    const markingTypeHandlers: Record<string, () => void> = {
+        PointMarking: () =>
+            drawPointMarking(
+                g,
+                isSelected,
+                marking as PointMarking,
+                markingCharacteristic,
+                markingViewportPosition,
+                showMarkingLabels
             ),
-            showMarkingLabels
-        );
+        RayMarking: () =>
+            drawRayMarking(
+                g,
+                isSelected,
+                marking as RayMarking,
+                markingCharacteristic,
+                markingViewportPosition,
+                showMarkingLabels
+            ),
+        LineSegmentMarking: () =>
+            drawLineSegmentMarking(
+                g,
+                isSelected,
+                marking as LineSegmentMarking,
+                markingCharacteristic,
+                markingViewportPosition,
+                (
+                    marking as LineSegmentMarking
+                ).calculateEndpointViewportPosition(
+                    viewportWidthRatio,
+                    viewportHeightRatio
+                ),
+                showMarkingLabels
+            ),
+        BoundingBoxMarking: () =>
+            drawBoundingBoxMarking(
+                g,
+                isSelected,
+                marking as BoundingBoxMarking,
+                markingCharacteristic,
+                markingViewportPosition,
+                (
+                    marking as BoundingBoxMarking
+                ).calculateEndpointViewportPosition(
+                    viewportWidthRatio,
+                    viewportHeightRatio
+                ),
+                showMarkingLabels
+            ),
+    };
+
+    const handler = markingTypeHandlers[marking.constructor.name];
+    if (handler) {
+        handler();
     } else {
         throw new Error(`Unsupported marking class: ${marking.markingClass}`);
     }

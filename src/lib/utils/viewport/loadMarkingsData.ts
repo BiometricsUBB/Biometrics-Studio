@@ -25,6 +25,7 @@ import {
     MarkingCharacteristic,
 } from "@/lib/markings/MarkingCharacteristic";
 import { WorkingModeStore } from "@/lib/stores/WorkingMode";
+import { BoundingBoxMarking } from "@/lib/markings/BoundingBoxMarking";
 import { ExportObject } from "./saveMarkingsDataWithDialog";
 
 export function validateFileData(_data: unknown): _data is ExportObject {
@@ -108,6 +109,13 @@ export async function loadMarkingsData(filePath: string, canvasId: CANVAS_ID) {
                     );
                 case MARKING_CLASS.LINE_SEGMENT:
                     return new LineSegmentMarking(
+                        marking.label,
+                        marking.origin,
+                        marking.characteristicId,
+                        marking.endpoint!
+                    );
+                case MARKING_CLASS.BOUNDING_BOX:
+                    return new BoundingBoxMarking(
                         marking.label,
                         marking.origin,
                         marking.characteristicId,

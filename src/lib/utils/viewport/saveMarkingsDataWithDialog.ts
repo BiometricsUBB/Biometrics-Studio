@@ -21,6 +21,7 @@ import { LineSegmentMarking } from "@/lib/markings/LineSegmentMarking";
 import { MarkingCharacteristicsStore } from "@/lib/stores/MarkingCharacteristics/MarkingCharacteristics";
 import { WorkingModeStore } from "@/lib/stores/WorkingMode";
 import { WORKING_MODE } from "@/views/selectMode";
+import { BoundingBoxMarking } from "@/lib/markings/BoundingBoxMarking";
 
 type ImageInfo = {
     name: string | null;
@@ -55,7 +56,9 @@ export type ExportObject = {
             origin: MarkingBase["origin"];
             characteristicId: MarkingBase["characteristicId"];
             angleRad?: RayMarking["angleRad"];
-            endpoint?: LineSegmentMarking["endpoint"];
+            endpoint?:
+                | LineSegmentMarking["endpoint"]
+                | BoundingBoxMarking["endpoint"];
         }[];
     };
 };

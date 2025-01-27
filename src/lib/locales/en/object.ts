@@ -15,6 +15,7 @@ const d: Dictionary = {
                     point: "Point",
                     ray: "Ray",
                     line_segment: "Line segment",
+                    bounding_box: "Bounding box",
                 },
             },
             characteristicId: "Characteristic ID",
