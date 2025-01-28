@@ -1,5 +1,6 @@
 import { showErrorDialog } from "@/lib/errors/showErrorDialog";
 import { getVersion } from "@tauri-apps/api/app";
+import { resourceDir } from "@tauri-apps/api/path";
 import {
     confirm as confirmFileSelectionDialog,
     open as openFileSelectionDialog,
@@ -100,6 +101,9 @@ export async function loadMarkingCharacteristicsData(filePath: string) {
 
 export async function importMarkingCharacteristicsWithDialog() {
     try {
+        const appInstallDir = await resourceDir();
+        const presetsPath = `${appInstallDir}/presets/`;
+
         const filePath = await openFileSelectionDialog({
             title: t("Import marking characteristics", {
                 ns: "tooltip",
@@ -113,6 +117,7 @@ export async function importMarkingCharacteristicsWithDialog() {
             directory: false,
             canCreateDirectories: false,
             multiple: false,
+            defaultPath: presetsPath,
         });
 
         if (filePath === null) return;
