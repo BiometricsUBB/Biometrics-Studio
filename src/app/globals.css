@@ -26,6 +26,7 @@
         --destructive-foreground: 120 22.5% 90.41%;
         --radius: 0;
         --ds-background-selected: #61bd6780;
+        --separator: 0 0% 9.4%;
     }
 
     .dark {
@@ -49,6 +50,7 @@
         --secondary-foreground: 124 31% 97.8%;
         --destructive-foreground: 120 3.45% 5.69%;
         --ds-background-selected: #61bd6780;
+        --separator: 0 0% 100%;
     }
 }
 

@@ -34,6 +34,7 @@ import {
     defaultTextColor,
 } from "@/lib/markings/MarkingCharacteristic";
 import { WorkingModeStore } from "@/lib/stores/WorkingMode";
+import Separator from "@/components/toolbar/separator";
 import { ToolbarGroup } from "./group";
 import { ToggleGroup, ToggleGroupItem } from "../ui/toggle-group";
 import { Input } from "../ui/input";
@@ -134,12 +135,14 @@ export function GlobalToolbar({ className, ...props }: GlobalToolbarProps) {
                 </ToggleGroup>
             </ToolbarGroup>
 
+            <Separator />
+
             <ToolbarGroup>
                 {/* Selected characteristic and dropdown menu with existing characteristics */}
                 <DropdownMenu>
                     <DropdownMenuTrigger
                         className={cn(
-                            "w-36 overflow-hidden text-ellipsis whitespace-nowrap",
+                            "w-36 mr-2 overflow-hidden text-ellipsis whitespace-nowrap",
                             className
                         )}
                         disabled={!markingClassCharacteristics.length}
@@ -257,6 +260,8 @@ export function GlobalToolbar({ className, ...props }: GlobalToolbarProps) {
                 </ToggleGroup>
             </ToolbarGroup>
 
+            <Separator />
+
             {/* Characteristics style e.g. color */}
             <ToolbarGroup>
                 <Input
@@ -304,6 +309,8 @@ export function GlobalToolbar({ className, ...props }: GlobalToolbarProps) {
                     }}
                 />
             </ToolbarGroup>
+
+            <Separator />
 
             {/* Additional tools */}
             <ToolbarGroup>
