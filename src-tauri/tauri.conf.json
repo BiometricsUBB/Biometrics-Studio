@@ -64,6 +64,7 @@
                 "title": "Biometrics Studio",
                 "label": "splashscreen",
                 "url": "splashscreen.html",
+                "shadow": false,
                 "width": 384,
                 "height": 216,
                 "resizable": false,
