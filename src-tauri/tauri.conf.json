@@ -32,7 +32,7 @@
             "providerShortName": null,
             "signingIdentity": null
         },
-        "resources": [],
+        "resources": { "../presets/**/*": "presets/" },
         "shortDescription": "",
         "linux": {
             "deb": {
@@ -41,7 +41,7 @@
         }
     },
     "productName": "biometrics-studio",
-    "version": "0.4.2",
+    "version": "0.4.3",
     "identifier": "com.biometrics-studio.app",
     "plugins": {},
     "app": {

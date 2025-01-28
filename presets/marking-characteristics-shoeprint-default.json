@@ -1,0 +1,52 @@
+{
+    "metadata": {
+        "software": {
+            "name": "biometrics-studio",
+            "version": "0.4.3"
+        }
+    },
+    "data": {
+        "markingCharacteristics": [
+            {
+                "id": "8c99a981-3e03-4846-ada3-1293bb383251",
+                "characteristicName": "Mark",
+                "displayName": "Odcisk buta",
+                "markingClass": "bounding_box",
+                "backgroundColor": "#51d259",
+                "textColor": "#0a130a",
+                "size": 10,
+                "category": "SHOEPRINT"
+            },
+            {
+                "id": "aae66e2a-6418-4467-a5e9-212bf62298b1",
+                "characteristicName": "UniqueFeature",
+                "displayName": "Unikalna cecha",
+                "markingClass": "bounding_box",
+                "backgroundColor": "#bd61a0",
+                "textColor": "#0a130a",
+                "size": 10,
+                "category": "SHOEPRINT"
+            },
+            {
+                "id": "01f6acd5-67a5-4922-b784-1ae110167fe7",
+                "characteristicName": "Heel",
+                "displayName": "Pięta",
+                "markingClass": "bounding_box",
+                "backgroundColor": "#dfcf68",
+                "textColor": "#0a130a",
+                "size": 10,
+                "category": "SHOEPRINT"
+            },
+            {
+                "id": "5e5ea9ea-7302-480d-a5fe-c3284e48b51d",
+                "characteristicName": "LongitudinalAxis",
+                "displayName": "Oś podłużna",
+                "markingClass": "line_segment",
+                "backgroundColor": "#6042f5",
+                "textColor": "#0a130a",
+                "size": 10,
+                "category": "SHOEPRINT"
+            }
+        ]
+    }
+}
