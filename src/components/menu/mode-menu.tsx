@@ -17,7 +17,13 @@ export function ModeMenu() {
 
     return (
         <MenubarMenu>
-            <MenubarTrigger>{t("Working mode")}</MenubarTrigger>
+            <MenubarTrigger>
+                {t("Working mode")}:{" "}
+                {workingMode
+                    ? workingMode.charAt(0).toUpperCase() +
+                      workingMode.slice(1).toLowerCase()
+                    : ""}
+            </MenubarTrigger>
             <MenubarPortal>
                 <MenubarContent>
                     {Object.values(WORKING_MODE).map(mode => (
