@@ -6,15 +6,15 @@ import {
     DashboardToolbarStore,
 } from "@/lib/stores/DashboardToolbar";
 import {
-    Dot,
-    DraftingCompass,
-    Fingerprint,
+    CircleArrowOutUpRight,
+    CircleDot,
+    Crosshair,
+    Hand,
     LockKeyhole,
     LockKeyholeOpen,
-    MousePointer,
     SendToBack,
-    Spline,
-    Square,
+    Slash,
+    SquareDashedMousePointer,
 } from "lucide-react";
 import { ICON } from "@/lib/utils/const";
 import { MARKING_CLASS } from "@/lib/markings/MarkingBase";
@@ -111,7 +111,8 @@ export function GlobalToolbar({ className, ...props }: GlobalToolbarProps) {
                             );
                         }}
                     >
-                        <MousePointer
+                        <Hand
+                            className="p-px"
                             size={ICON.SIZE}
                             strokeWidth={ICON.STROKE_WIDTH}
                         />
@@ -125,7 +126,7 @@ export function GlobalToolbar({ className, ...props }: GlobalToolbarProps) {
                             );
                         }}
                     >
-                        <Fingerprint
+                        <Crosshair
                             size={ICON.SIZE}
                             strokeWidth={ICON.STROKE_WIDTH}
                         />
@@ -186,7 +187,11 @@ export function GlobalToolbar({ className, ...props }: GlobalToolbarProps) {
                             );
                         }}
                     >
-                        <Dot size={ICON.SIZE} strokeWidth={ICON.STROKE_WIDTH} />
+                        <CircleDot
+                            className="p-px"
+                            size={ICON.SIZE}
+                            strokeWidth={ICON.STROKE_WIDTH}
+                        />
                     </ToggleGroupItem>
                     <ToggleGroupItem
                         value={MARKING_CLASS.RAY}
@@ -202,7 +207,7 @@ export function GlobalToolbar({ className, ...props }: GlobalToolbarProps) {
                             )
                         }
                     >
-                        <DraftingCompass
+                        <CircleArrowOutUpRight
                             size={ICON.SIZE}
                             strokeWidth={ICON.STROKE_WIDTH}
                         />
@@ -223,7 +228,7 @@ export function GlobalToolbar({ className, ...props }: GlobalToolbarProps) {
                             )
                         }
                     >
-                        <Spline
+                        <Slash
                             size={ICON.SIZE}
                             strokeWidth={ICON.STROKE_WIDTH}
                         />
@@ -244,7 +249,7 @@ export function GlobalToolbar({ className, ...props }: GlobalToolbarProps) {
                             )
                         }
                     >
-                        <Square
+                        <SquareDashedMousePointer
                             size={ICON.SIZE}
                             strokeWidth={ICON.STROKE_WIDTH}
                         />

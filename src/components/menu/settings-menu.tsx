@@ -17,7 +17,7 @@ import {
 import i18n from "@/lib/locales/i18n";
 import { useEffect } from "react";
 import { useTheme } from "@/lib/hooks/useTheme";
-import { Menu as MenuIcon } from "lucide-react";
+import { Settings as MenuIcon } from "lucide-react";
 import { ICON } from "@/lib/utils/const";
 import { useTranslation } from "react-i18next";
 
