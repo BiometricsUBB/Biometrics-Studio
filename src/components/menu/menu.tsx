@@ -30,15 +30,16 @@ export function Menu() {
                 </div>
                 <SettingsMenu />
                 {workingMode && (
-                    <>
+                    <div className="flex flex-row items-center [&>*]:h-full">
                         <ModeMenu />
+                        <span className="mx-2 !h-auto">•</span>
                         <Dialog>
                             <DialogTrigger>
                                 {t("Characteristics")}
                             </DialogTrigger>
                             <MarkingCharacteristicsDialogPortal />
                         </Dialog>
-                    </>
+                    </div>
                 )}
             </div>
             <WindowControls />
