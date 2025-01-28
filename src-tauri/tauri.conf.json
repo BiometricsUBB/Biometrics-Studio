@@ -32,7 +32,7 @@
             "providerShortName": null,
             "signingIdentity": null
         },
-        "resources": [],
+        "resources": { "../presets/**/*": "presets/" },
         "shortDescription": "",
         "linux": {
             "deb": {
