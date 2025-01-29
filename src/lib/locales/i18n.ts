@@ -22,7 +22,7 @@ i18next
             "modes",
         ],
         lng: GlobalSettingsStore.state.settings.language,
-        fallbackLng: LANGUAGES.POLISH,
+        fallbackLng: LANGUAGES.ENGLISH,
         load: "languageOnly",
     });
 

@@ -45,7 +45,7 @@ type State = {
 
 const INITIAL_STATE: State = {
     settings: {
-        language: LANGUAGES.ENGLISH,
+        language: LANGUAGES.POLISH,
         interface: {
             theme: THEMES.SYSTEM,
         },
