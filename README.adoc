@@ -33,34 +33,34 @@ pnpm i
 pnpm tauri dev
 ....
 
-=== Adding New Marking Types (Current as of: 2024-12-16)
-Example of adding https://github.com/BiometricsUBB/Biometrics-Studio/pull/13/commits/a3fcc39ca85326d0b83e4f7265f80f759e98e359[Line Segment Marking Type]
+=== Adding New Marking Classes (Current as of: 2025-01-30)
 
-. Create a New Type
-.. Add the new marking type to the `MarkingType` enum in `MarkingBase`.
+. Create a New Class
+.. Add the new marking class to the `MarkingClass` enum in `MarkingBase`.
 .. Add a new class extending `MarkingBase`:
-... Assign the `type` variable.
+... Assign the `markingClass` variable.
 ... Override the necessary methods, especially `isVisible`.
-.. Add the new type to the parameter properties of the `updateTemporaryMarking` method in `Markings.ts` for proper updating.
+.. Add the new class to the parameter properties of the `updateTemporaryMarking` method in `Markings.ts` for proper updating.
 
 . Add Translations
-.. Add the new type to the list of keys in `translation.ts`.
+.. Add the new class to the list of keys in `translation.ts`.
 .. Exclude functions from translation by adding an exclusion for their names.
 .. Add translations in `locales/lang/object.ts`.
 
 . Create Drawing Logic
-.. In `marking.utils.tsx`, add a case for the new type and implement the drawing logic.
+.. In `marking.utils.tsx`, add a case for the new class and implement the drawing logic.
 ... If the logic uses absolute positioning, calculate its `viewportPosition` to ensure it works properly with zoom (based on `MarkingBase.calculateOriginViewportPosition`).
 
 . Create a Handler for Mouse Events
-.. In `mousedown.event.ts`, add a case for the new type and implement the logic.
+.. Add new 'ClassMarkingHandler' extending 'MarkingHandler'
+.. In `markingModePlugin.ts`, add a case for the new class and invoke the created handler
 
 . Add a Cursor Mode Button to the Toolbar
-.. In `toolbar.tsx`, add a `ToggleGroupItem` for the new type.
+.. In `toolbar.tsx`, add a `ToggleGroupItem` for the new class.
 ... Browse icons at https://lucide.dev/icons/[LucideIcons].
 
 . Adjust Save Markings to File Logic in `saveMarkingsDataWithDialog.ts`
-.. Add properties to `ExportObject.Data.Markings`. Marking type-specific properties should be nullable.
+.. Add properties to `ExportObject.Data.Markings`. Marking class-specific properties should be nullable.
 .. Add the new properties to the `getReducedMarkings` function.
 
 . Adjust Load Markings from File Logic in `loadMarkingsDataWithDialog.ts`

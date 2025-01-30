@@ -1,20 +1,18 @@
 /* eslint-disable no-underscore-dangle */
 
 import { useApp } from "@pixi/react";
-import { ReactNode, forwardRef } from "react";
+import { forwardRef, ReactNode } from "react";
 import { Viewport as PixiViewport } from "pixi-viewport";
 import { CanvasUpdater } from "@/lib/stores/CanvasUpdater";
 import { CachedViewportStore } from "@/lib/stores/CachedViewport";
 import { MarkingsStore } from "@/lib/stores/Markings";
+// import { SelectionModePlugin } from "@/components/pixi/viewport/plugins/customDragPlugin";
+import { MarkingModePlugin } from "@/components/pixi/viewport/plugins/markingModePlugin";
 import { ReactPixiViewport } from "./react-pixi-viewport";
 import { CanvasMetadata } from "../canvas/hooks/useCanvasContext";
 import { ViewportHandlerParams } from "./event-handlers/utils";
-import {
-    handleRMBDown,
-    handleMove,
-    handleOppositeMove,
-    handleZoom,
-} from "./event-handlers";
+import { handleMove, handleOppositeMove, handleZoom } from "./event-handlers";
+import { SelectionModePlugin } from "./plugins/selectionModePlugin";
 
 export type ViewportProps = {
     children?: ReactNode;
@@ -41,10 +39,6 @@ export const Viewport = forwardRef<PixiViewport, ViewportProps>(
                 }}
                 sideEffects={viewport => {
                     viewport
-                        .drag({
-                            wheel: true,
-                            mouseButtons: "left",
-                        })
                         .wheel({
                             percent: 0,
                             interrupt: true,
@@ -56,14 +50,6 @@ export const Viewport = forwardRef<PixiViewport, ViewportProps>(
                             maxScale: 100,
                         });
 
-                    viewport.on("childAdded", updateViewport);
-                    viewport.on("childRemoved", updateViewport);
-                    viewport.on("frame-end", updateViewport);
-
-                    setTimeout(() => {
-                        viewport.off("frame-end", updateViewport);
-                    }, app.ticker.deltaMS * 2);
-
                     const handlerParams: ViewportHandlerParams = {
                         viewport,
                         id,
@@ -71,6 +57,29 @@ export const Viewport = forwardRef<PixiViewport, ViewportProps>(
                         cachedViewportStore: CachedViewportStore(id),
                         markingsStore: MarkingsStore(id),
                     };
+
+                    // Remove default drag plugin
+                    viewport.plugins.remove("drag");
+
+                    // Handle operations in marking mode
+                    viewport.plugins.add(
+                        "markingMode",
+                        new MarkingModePlugin(viewport, handlerParams)
+                    );
+
+                    // Handle operations in selection mode
+                    viewport.plugins.add(
+                        "selectionMode",
+                        new SelectionModePlugin(viewport)
+                    );
+
+                    viewport.on("childAdded", updateViewport);
+                    viewport.on("childRemoved", updateViewport);
+                    viewport.on("frame-end", updateViewport);
+
+                    setTimeout(() => {
+                        viewport.off("frame-end", updateViewport);
+                    }, app.ticker.deltaMS * 2);
 
                     viewport.on("drag-start", () =>
                         CachedViewportStore(id).actions.viewport.setIsDragging(
@@ -94,10 +103,6 @@ export const Viewport = forwardRef<PixiViewport, ViewportProps>(
 
                     viewport.on("zoomed", e => {
                         handleZoom(e, handlerParams);
-                    });
-
-                    viewport.on("rightdown", e => {
-                        handleRMBDown(e, handlerParams);
                     });
 
                     // eslint-disable-next-line no-param-reassign
