@@ -108,38 +108,21 @@ export class MarkingModePlugin extends Plugin {
                 workingMode
             );
 
-        switch (markingClass) {
-            case MARKING_CLASS.POINT:
-                this.currentHandler = new PointMarkingHandler(
-                    this,
-                    characteristicId,
-                    e
-                );
-                break;
-            case MARKING_CLASS.RAY:
-                this.currentHandler = new RayMarkingHandler(
-                    this,
-                    characteristicId,
-                    e
-                );
-                break;
-            case MARKING_CLASS.LINE_SEGMENT:
-                this.currentHandler = new LineSegmentMarkingHandler(
-                    this,
-                    characteristicId,
-                    e
-                );
-                break;
-            case MARKING_CLASS.BOUNDING_BOX:
-                this.currentHandler = new BoundingBoxMarkingHandler(
-                    this,
-                    characteristicId,
-                    e
-                );
-                break;
-            default:
-                throw new Error(`Unsupported marking class: ${markingClass}`);
+        const MARKING_HANDLERS = {
+            [MARKING_CLASS.POINT]: PointMarkingHandler,
+            [MARKING_CLASS.RAY]: RayMarkingHandler,
+            [MARKING_CLASS.LINE_SEGMENT]: LineSegmentMarkingHandler,
+            [MARKING_CLASS.BOUNDING_BOX]: BoundingBoxMarkingHandler,
+        };
+
+        // eslint-disable-next-line security/detect-object-injection
+        const MarkingHandler = MARKING_HANDLERS[markingClass];
+
+        if (!MarkingHandler) {
+            throw new Error(`Unsupported marking class: ${markingClass}`);
         }
+
+        this.currentHandler = new MarkingHandler(this, characteristicId, e);
 
         this.addEventListeners();
     }

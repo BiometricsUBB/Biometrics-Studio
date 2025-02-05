@@ -1,12 +1,10 @@
 /* eslint-disable no-underscore-dangle */
-
 import { useApp } from "@pixi/react";
 import { forwardRef, ReactNode } from "react";
 import { Viewport as PixiViewport } from "pixi-viewport";
 import { CanvasUpdater } from "@/lib/stores/CanvasUpdater";
 import { CachedViewportStore } from "@/lib/stores/CachedViewport";
 import { MarkingsStore } from "@/lib/stores/Markings";
-// import { SelectionModePlugin } from "@/components/pixi/viewport/plugins/customDragPlugin";
 import { MarkingModePlugin } from "@/components/pixi/viewport/plugins/markingModePlugin";
 import { ReactPixiViewport } from "./react-pixi-viewport";
 import { CanvasMetadata } from "../canvas/hooks/useCanvasContext";
