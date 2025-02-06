@@ -18,6 +18,7 @@ import { DashboardToolbarStore } from "@/lib/stores/DashboardToolbar";
 import { t } from "i18next";
 import { loadMarkingsData } from "@/lib/utils/viewport/loadMarkingsData";
 import { exists } from "@tauri-apps/plugin-fs";
+import { Sprite } from "pixi.js";
 import { loadSprite } from "./loadSprite";
 import { normalizeSpriteSize } from "./normalizeSpriteSize";
 
@@ -48,9 +49,19 @@ export async function loadImage(filePath: string, viewport: Viewport) {
         if (!confirmed) return;
     }
 
-    if (viewport.children.length !== 0) viewport.removeChildren();
+    // Destroy current image sprite
+    viewport.children
+        .find(x => x instanceof Sprite)
+        ?.destroy({
+            children: true,
+            texture: true,
+            baseTexture: true,
+        });
+
+    // Load new image sprite
     const sprite = await loadSprite(filePath);
-    viewport.addChild(normalizeSpriteSize(viewport, sprite));
+    const normalizedSprite = normalizeSpriteSize(viewport, sprite);
+    viewport.addChild(normalizedSprite);
 
     ShallowViewportStore(canvasId).state.reset();
     CanvasToolbarStore(canvasId).state.reset();
