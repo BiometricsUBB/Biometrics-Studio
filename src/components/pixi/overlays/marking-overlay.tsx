@@ -14,6 +14,7 @@ export function MarkingOverlay({ canvasMetadata }: MarkingOverlayProps) {
     const { id: canvasId } = canvasMetadata;
     const viewport = useGlobalViewport(canvasId, { autoUpdate: true });
     const app = useGlobalApp(canvasId);
+
     const { markings } = MarkingsStore(canvasId).use(
         state => ({
             markings: state.markings,
@@ -35,13 +36,7 @@ export function MarkingOverlay({ canvasMetadata }: MarkingOverlayProps) {
 
     return (
         <Container position={getViewportPosition(viewport)}>
-            <Markings
-                canvasId={canvasId}
-                // Don't draw the marking that is being replaced
-                markings={markings.filter(
-                    x => x.label !== temporaryMarking?.label
-                )}
-            />
+            <Markings canvasId={canvasId} markings={markings} />
             {/* If a marking is being created, display it on top of the other markings */}
             {temporaryMarking && (
                 <Markings
