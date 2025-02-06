@@ -5,7 +5,7 @@ import { LineSegmentMarking } from "@/lib/markings/LineSegmentMarking";
 import { MarkingCharacteristic } from "@/lib/markings/MarkingCharacteristic";
 import { WORKING_MODE } from "@/views/selectMode";
 import { BoundingBoxMarking } from "@/lib/markings/BoundingBoxMarking";
-import { PRERENDER_RADIUS_OPTIONS, THEMES } from "../stores/GlobalSettings";
+import { THEMES } from "../stores/GlobalSettings";
 
 type Recordify<T> = { [K in Extract<T, string> as `${K}`]: string };
 
@@ -16,7 +16,6 @@ export type i18nKeywords = Recordify<
     | "Markings"
     | "Debug"
     | "Theme"
-    | "Rendering"
     | "Characteristics"
     | "Remove"
     | "Add"
@@ -51,10 +50,6 @@ export type i18nObject = {
     MarkingCharacteristic: {
         Name: string;
         Keys: Recordify<keyof MarkingCharacteristic>;
-    };
-    PrerenderingRadius: {
-        Name: string;
-        Keys: Recordify<PRERENDER_RADIUS_OPTIONS>;
     };
     Theme: {
         Name: string;
@@ -91,5 +86,3 @@ export type i18nDialog = Recordify<
     | "Please select your working mode"
     | "You are trying to load marking characteristics for a non-existing working mode."
 >;
-
-export type i18nDescription = Recordify<"Prerendering radius">;
