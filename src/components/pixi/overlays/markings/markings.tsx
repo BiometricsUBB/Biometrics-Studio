@@ -5,7 +5,6 @@ import { Graphics as PixiGraphics, Application, ICanvas } from "pixi.js";
 import { memo, useCallback } from "react";
 import { MarkingsStore } from "@/lib/stores/Markings";
 import { MarkingBase } from "@/lib/markings/MarkingBase";
-import { ShallowViewportStore } from "@/lib/stores/ShallowViewport";
 import { CanvasToolbarStore } from "@/lib/stores/CanvasToolbar";
 import { Viewport } from "pixi-viewport";
 import { MarkingCharacteristicsStore } from "@/lib/stores/MarkingCharacteristics/MarkingCharacteristics";
@@ -27,24 +26,6 @@ export const Markings = memo(({ canvasId, markings, alpha }: MarkingsProps) => {
         state => state.settings.markings.showLabels
     );
 
-    // oblicz proporcje viewportu do świata tylko na evencie zoomed, dla lepszej wydajności (nie ma sensu liczyć tego na każdym renderze
-    // bo przy samym ruchu nie zmieniają się proporcje viewportu do świata, tylko przy zoomie)
-    const { viewportWidthRatio, viewportHeightRatio } = ShallowViewportStore(
-        canvasId
-    ).use(
-        ({
-            size: {
-                screenWorldWidth,
-                screenWorldHeight,
-                worldWidth,
-                worldHeight,
-            },
-        }) => ({
-            viewportWidthRatio: screenWorldWidth / worldWidth,
-            viewportHeightRatio: screenWorldHeight / worldHeight,
-        })
-    );
-
     const selectedMarkingLabel = MarkingsStore(canvasId).use(
         state => state.selectedMarkingLabel
     );
@@ -63,8 +44,8 @@ export const Markings = memo(({ canvasId, markings, alpha }: MarkingsProps) => {
                     x.isVisible(
                         app.screen,
                         { x: viewport.x, y: viewport.y },
-                        viewportWidthRatio,
-                        viewportHeightRatio
+                        viewport.scale.x,
+                        viewport.scale.y
                     )
                 )
                 .forEach(marking => {
@@ -75,8 +56,8 @@ export const Markings = memo(({ canvasId, markings, alpha }: MarkingsProps) => {
                         markingCharacteristics.find(
                             x => x.id === marking.characteristicId
                         )!,
-                        viewportWidthRatio,
-                        viewportHeightRatio,
+                        viewport.scale.x,
+                        viewport.scale.y,
                         showMarkingLabels
                     );
                 });
@@ -89,8 +70,8 @@ export const Markings = memo(({ canvasId, markings, alpha }: MarkingsProps) => {
             app.screen,
             viewport.x,
             viewport.y,
-            viewportHeightRatio,
-            viewportWidthRatio,
+            viewport.scale.y,
+            viewport.scale.x,
             markings,
             selectedMarkingLabel,
             showMarkingLabels,

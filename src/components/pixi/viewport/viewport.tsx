@@ -9,7 +9,7 @@ import { MarkingModePlugin } from "@/components/pixi/viewport/plugins/markingMod
 import { ReactPixiViewport } from "./react-pixi-viewport";
 import { CanvasMetadata } from "../canvas/hooks/useCanvasContext";
 import { ViewportHandlerParams } from "./event-handlers/utils";
-import { handleMove, handleOppositeMove, handleZoom } from "./event-handlers";
+import { handleMove, handleOppositeMove } from "./event-handlers";
 import { SelectionModePlugin } from "./plugins/selectionModePlugin";
 
 export type ViewportProps = {
@@ -97,10 +97,6 @@ export const Viewport = forwardRef<PixiViewport, ViewportProps>(
 
                     viewport.on("opposite-moved", (e, delta) => {
                         handleOppositeMove(e, handlerParams, delta);
-                    });
-
-                    viewport.on("zoomed", e => {
-                        handleZoom(e, handlerParams);
                     });
 
                     // eslint-disable-next-line no-param-reassign

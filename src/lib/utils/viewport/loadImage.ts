@@ -10,7 +10,6 @@ import {
     emitFitEvents,
     fitWorld,
 } from "@/components/pixi/canvas/utils/fit-viewport";
-import { ShallowViewportStore } from "@/lib/stores/ShallowViewport";
 import { CanvasToolbarStore } from "@/lib/stores/CanvasToolbar";
 import { CachedViewportStore } from "@/lib/stores/CachedViewport";
 import { getOppositeCanvasId } from "@/components/pixi/canvas/utils/get-opposite-canvas-id";
@@ -52,7 +51,6 @@ export async function loadImage(filePath: string, viewport: Viewport) {
     const sprite = await loadSprite(filePath);
     viewport.addChild(normalizeSpriteSize(viewport, sprite));
 
-    ShallowViewportStore(canvasId).state.reset();
     CanvasToolbarStore(canvasId).state.reset();
     CachedViewportStore(canvasId).state.reset();
     fitWorld(viewport);
