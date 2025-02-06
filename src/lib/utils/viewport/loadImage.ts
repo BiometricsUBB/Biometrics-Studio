@@ -18,7 +18,6 @@ import { t } from "i18next";
 import { loadMarkingsData } from "@/lib/utils/viewport/loadMarkingsData";
 import { exists } from "@tauri-apps/plugin-fs";
 import { loadSprite } from "./loadSprite";
-import { normalizeSpriteSize } from "./normalizeSpriteSize";
 
 export async function loadImage(filePath: string, viewport: Viewport) {
     DashboardToolbarStore.actions.settings.viewport.setLockScaleSync(false);
@@ -49,7 +48,7 @@ export async function loadImage(filePath: string, viewport: Viewport) {
 
     if (viewport.children.length !== 0) viewport.removeChildren();
     const sprite = await loadSprite(filePath);
-    viewport.addChild(normalizeSpriteSize(viewport, sprite));
+    viewport.addChild(sprite);
 
     CanvasToolbarStore(canvasId).state.reset();
     CachedViewportStore(canvasId).state.reset();
