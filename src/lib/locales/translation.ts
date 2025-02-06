@@ -39,7 +39,6 @@ export type i18nObject = {
                 | keyof BoundingBoxMarking
             >,
             | "markingClass"
-            | "isVisible"
             | "calculateOriginViewportPosition"
             | "calculateEndpointViewportPosition"
         > & {
