@@ -13,6 +13,7 @@
         "windows": [
             {
                 "title": "Biometrics Studio",
+                "label": "main",
                 "width": 1280,
                 "height": 720,
                 "minWidth": 640,
@@ -20,6 +21,7 @@
                 "resizable": true,
                 "fullscreen": false,
                 "alwaysOnTop": false,
+                "center": true,
                 "decorations": false,
                 "transparent": true,
                 "visible": false
