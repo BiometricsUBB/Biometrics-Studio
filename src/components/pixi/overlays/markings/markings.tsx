@@ -6,8 +6,6 @@ import { MarkingBase } from "@/lib/markings/MarkingBase";
 import { ShallowViewportStore } from "@/lib/stores/ShallowViewport";
 import { CanvasToolbarStore } from "@/lib/stores/CanvasToolbar";
 import { MarkingCharacteristicsStore } from "@/lib/stores/MarkingCharacteristics/MarkingCharacteristics";
-import { Viewport } from "pixi-viewport";
-import { useGlobalViewport } from "@/components/pixi/viewport/hooks/useGlobalViewport";
 import { CANVAS_ID } from "../../canvas/hooks/useCanvasContext";
 import { drawMarking } from "./marking.utils";
 
@@ -18,7 +16,6 @@ export type MarkingsProps = {
 };
 
 export const Markings = memo(({ canvasId, markings, alpha }: MarkingsProps) => {
-    const viewport = useGlobalViewport(canvasId) as Viewport;
     const showMarkingLabels = CanvasToolbarStore(canvasId).use(
         state => state.settings.markings.showLabels
     );
@@ -82,8 +79,6 @@ export const Markings = memo(({ canvasId, markings, alpha }: MarkingsProps) => {
         },
         [
             alpha,
-            viewport.x,
-            viewport.y,
             viewportHeightRatio,
             viewportWidthRatio,
             markings,
