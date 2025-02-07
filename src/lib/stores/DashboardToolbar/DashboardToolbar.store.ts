@@ -1,4 +1,4 @@
-import { createStore, Store } from "@tauri-apps/plugin-store";
+import { LazyStore } from "@tauri-apps/plugin-store";
 import { create } from "zustand";
 import { createJSONStorage, devtools, persist } from "zustand/middleware";
 import { MARKING_CLASS } from "@/lib/markings/MarkingBase";
@@ -6,7 +6,7 @@ import { Immer, produceCallback } from "../immer.helpers";
 import { tauriStorage } from "../tauri-storage-adapter.helpers";
 
 const STORE_NAME = "toolbar-settings";
-const STORE_FILE: Store = await createStore(`${STORE_NAME}.dat`);
+const STORE_FILE = new LazyStore(`${STORE_NAME}.dat`);
 
 export const enum CURSOR_MODES {
     SELECTION = "selection",

@@ -70,7 +70,7 @@ const MenubarCheckboxItem = React.forwardRef<
     <MenubarPrimitive.CheckboxItem
         ref={ref}
         className={cn(
-            "flex space-x-2 items-center justify-between px-1.5 py-0.5 select-none hover:bg-accent hover:text-accent-foreground focus:outline-none",
+            "flex space-x-2 items-center justify-between px-1.5 py-0.5 select-none cursor-pointer hover:bg-accent hover:text-accent-foreground focus:outline-none",
             className
         )}
         {...props}

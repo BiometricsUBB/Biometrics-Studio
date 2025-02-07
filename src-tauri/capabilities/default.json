@@ -4,6 +4,7 @@
     "description": "Capability for the main window",
     "windows": ["main"],
     "permissions": [
+        "core:default",
         "core:path:default",
         "core:event:default",
         "core:window:default",
@@ -29,12 +30,13 @@
         "store:allow-set",
         "store:allow-get",
         "store:allow-save",
+        "store:allow-load",
         "store:allow-delete",
         "dialog:allow-open",
         "dialog:allow-save",
-        "dialog:allow-message",
         "dialog:allow-ask",
         "dialog:allow-confirm",
+        "dialog:allow-message",
         "store:default",
         "dialog:default",
         "fs:default"

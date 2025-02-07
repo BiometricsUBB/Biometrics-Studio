@@ -1,12 +1,12 @@
+import { LazyStore } from "@tauri-apps/plugin-store";
 import { createJSONStorage, devtools, persist } from "zustand/middleware";
 import { MarkingCharacteristic } from "@/lib/markings/MarkingCharacteristic";
 import { create } from "zustand";
 import { tauriStorage } from "@/lib/stores/tauri-storage-adapter.helpers";
-import { createStore, Store } from "@tauri-apps/plugin-store";
 import { Immer, produceCallback } from "../immer.helpers";
 
 const STORE_NAME = "characteristics";
-const STORE_FILE: Store = await createStore(`${STORE_NAME}.dat`);
+const STORE_FILE = new LazyStore(`${STORE_NAME}.dat`);
 
 type State = {
     activeCharacteristics: MarkingCharacteristic[];
