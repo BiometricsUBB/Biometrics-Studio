@@ -34,14 +34,6 @@ class StoreClass {
         });
     }
 
-    private setVideoSettings(
-        callback: ActionProduceCallback<State["settings"]["video"], State>
-    ) {
-        this.state.set(draft => {
-            draft.settings.video = callback(draft.settings.video, draft);
-        });
-    }
-
     readonly actions = {
         settings: {
             language: {
@@ -64,17 +56,6 @@ class StoreClass {
                     this.setInterfaceSettings(
                         produce(settings => {
                             settings.theme = newTheme;
-                        })
-                    );
-                },
-            },
-            video: {
-                setPrerenderRadius: (
-                    newRadius: State["settings"]["video"]["rendering"]["prerenderRadius"]
-                ) => {
-                    this.setVideoSettings(
-                        produce(settings => {
-                            settings.rendering.prerenderRadius = newRadius;
                         })
                     );
                 },

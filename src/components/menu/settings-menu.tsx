@@ -11,7 +11,6 @@ import {
 import {
     GlobalSettingsStore,
     LANGUAGES,
-    PRERENDER_RADIUS_OPTIONS,
     THEMES,
 } from "@/lib/stores/GlobalSettings";
 import i18n from "@/lib/locales/i18n";
@@ -27,8 +26,6 @@ export function SettingsMenu() {
     const { setTheme: setStoreTheme } =
         GlobalSettingsStore.actions.settings.interface;
 
-    const { video } = GlobalSettingsStore.use(state => state.settings);
-
     useEffect(() => {
         setStoreTheme(resolvedTheme as THEMES);
     }, [resolvedTheme, setStoreTheme]);
@@ -40,40 +37,6 @@ export function SettingsMenu() {
             </MenubarTrigger>
             <MenubarPortal>
                 <MenubarContent>
-                    <MenubarSub>
-                        <MenubarSubTrigger>
-                            {t("PrerenderingRadius.Name", { ns: "object" })}
-                        </MenubarSubTrigger>
-                        <MenubarSubContent>
-                            {(
-                                Object.keys(
-                                    PRERENDER_RADIUS_OPTIONS
-                                ) as (keyof typeof PRERENDER_RADIUS_OPTIONS)[]
-                            ).map(key => {
-                                // eslint-disable-next-line security/detect-object-injection
-                                const value = PRERENDER_RADIUS_OPTIONS[key];
-                                return (
-                                    <MenubarCheckboxItem
-                                        key={key}
-                                        checked={
-                                            video.rendering.prerenderRadius ===
-                                            value
-                                        }
-                                        onCheckedChange={() =>
-                                            GlobalSettingsStore.actions.settings.video.setPrerenderRadius(
-                                                value
-                                            )
-                                        }
-                                    >
-                                        {t(`PrerenderingRadius.Keys.${value}`, {
-                                            ns: "object",
-                                        })}
-                                    </MenubarCheckboxItem>
-                                );
-                            })}
-                        </MenubarSubContent>
-                    </MenubarSub>
-
                     <MenubarSub>
                         <MenubarSubTrigger>{t("Language")}</MenubarSubTrigger>
                         <MenubarSubContent>
