@@ -13,15 +13,6 @@ export enum THEMES {
     DARK = "dark",
 }
 
-export enum PRERENDER_RADIUS_OPTIONS {
-    AUTO = "auto",
-    NONE = "none",
-    LOW = "low",
-    MEDIUM = "medium",
-    HIGH = "high",
-    VERY_HIGH = "very high",
-}
-
 export enum LANGUAGES {
     ENGLISH = "en",
     POLISH = "pl",
@@ -31,11 +22,6 @@ type Settings = {
     language: LANGUAGES;
     interface: {
         theme: THEMES;
-    };
-    video: {
-        rendering: {
-            prerenderRadius: PRERENDER_RADIUS_OPTIONS;
-        };
     };
 };
 
@@ -48,11 +34,6 @@ const INITIAL_STATE: State = {
         language: LANGUAGES.POLISH,
         interface: {
             theme: THEMES.SYSTEM,
-        },
-        video: {
-            rendering: {
-                prerenderRadius: PRERENDER_RADIUS_OPTIONS.AUTO,
-            },
         },
     },
 };

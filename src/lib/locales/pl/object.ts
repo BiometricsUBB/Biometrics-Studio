@@ -34,17 +34,6 @@ const d: Dictionary = {
             size: "Rozmiar",
         },
     },
-    PrerenderingRadius: {
-        Name: "Promień pre-renderowania",
-        Keys: {
-            "very high": "Bardzo wysoki",
-            high: "Wysoki",
-            auto: "Auto (domyślny)",
-            low: "Niski",
-            medium: "Średni",
-            none: "Brak",
-        },
-    },
     Theme: {
         Name: "Motyw",
         Keys: {
