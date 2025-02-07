@@ -10,7 +10,6 @@ import {
     emitFitEvents,
     fitWorld,
 } from "@/components/pixi/canvas/utils/fit-viewport";
-import { ShallowViewportStore } from "@/lib/stores/ShallowViewport";
 import { CanvasToolbarStore } from "@/lib/stores/CanvasToolbar";
 import { CachedViewportStore } from "@/lib/stores/CachedViewport";
 import { getOppositeCanvasId } from "@/components/pixi/canvas/utils/get-opposite-canvas-id";
@@ -20,7 +19,6 @@ import { loadMarkingsData } from "@/lib/utils/viewport/loadMarkingsData";
 import { exists } from "@tauri-apps/plugin-fs";
 import { Sprite } from "pixi.js";
 import { loadSprite } from "./loadSprite";
-import { normalizeSpriteSize } from "./normalizeSpriteSize";
 
 export async function loadImage(filePath: string, viewport: Viewport) {
     DashboardToolbarStore.actions.settings.viewport.setLockScaleSync(false);
@@ -60,10 +58,8 @@ export async function loadImage(filePath: string, viewport: Viewport) {
 
     // Load new image sprite
     const sprite = await loadSprite(filePath);
-    const normalizedSprite = normalizeSpriteSize(viewport, sprite);
-    viewport.addChild(normalizedSprite);
+    viewport.addChild(sprite);
 
-    ShallowViewportStore(canvasId).state.reset();
     CanvasToolbarStore(canvasId).state.reset();
     CachedViewportStore(canvasId).state.reset();
     fitWorld(viewport);
