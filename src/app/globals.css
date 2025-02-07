@@ -83,4 +83,16 @@
         -ms-overflow-style: none;  /* IE and Edge */
         scrollbar-width: none;  /* Firefox */
     }
+
+    @keyframes shake {
+        0%, 100% { transform: translate(-50%, -50%); }
+        10%, 90% { transform: translate(calc(-50% - 1px), -50%); }
+        20%, 80% { transform: translate(calc(-50% + 2px), -50%); }
+        30%, 50%, 70% { transform: translate(calc(-50% - 4px), -50%); }
+        40%, 60% { transform: translate(calc(-50% + 4px), -50%); }
+    }
+
+    .shake-animation {
+        animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both;
+    }
 }

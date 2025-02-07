@@ -9,6 +9,7 @@ import { ICON, IS_DEV_ENVIRONMENT } from "@/lib/utils/const";
 import { Toggle } from "@/components/ui/toggle";
 import { CANVAS_ID } from "@/components/pixi/canvas/hooks/useCanvasContext";
 import { WorkingModeStore } from "@/lib/stores/WorkingMode";
+import KeyCaptureDialog from "@/components/ui/key-capture-dialog";
 
 function MarkingCharacteristicsTable() {
     const characteristics = MarkingCharacteristicsStore.use(state =>
@@ -63,6 +64,9 @@ function MarkingCharacteristicsTable() {
                             {t(`MarkingCharacteristic.Keys.size`, {
                                 ns: "object",
                             })}
+                        </TableHead>
+                        <TableHead className="text-center text-card-foreground">
+                            Keybinding
                         </TableHead>
                         {IS_DEV_ENVIRONMENT && <TableHead />}
                     </TableRow>
@@ -158,6 +162,9 @@ function MarkingCharacteristicsTable() {
                                         });
                                     }}
                                 />
+                            </TableCell>
+                            <TableCell>
+                                <KeyCaptureDialog />
                             </TableCell>
                             {/*  The option to delete characteristics in the UI has been disabled for users. 
                             However, this functionality remains unchanged and available in the developer version. 
