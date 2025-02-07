@@ -48,12 +48,20 @@ export const Markings = memo(({ canvasId, markings, alpha }: MarkingsProps) => {
 
     const drawMarkings = useCallback(
         (g: PixiGraphics) => {
-            // wyrenderuj wszystkie markingi jako jedna grafika dla lepszej wydajności
-            g.clear();
-            g.removeChildren();
+            g.children
+                .find(x => x.name === "markingsContainer")
+                ?.destroy({
+                    children: true,
+                    texture: true,
+                    baseTexture: true,
+                });
+
+            const markingsContainer = new PixiGraphics();
+            markingsContainer.name = "markingsContainer";
+            g.addChild(markingsContainer);
             markings.forEach(marking => {
                 drawMarking(
-                    g,
+                    markingsContainer as PixiGraphics,
                     selectedMarkingLabel === marking.label,
                     marking,
                     markingCharacteristics.find(
