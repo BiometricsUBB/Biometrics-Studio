@@ -255,8 +255,8 @@ importers:
         specifier: 3.2.5
         version: 3.2.5
       selenium-webdriver:
-        specifier: 4.18.1
-        version: 4.18.1
+        specifier: 4.24.1
+        version: 4.24.1
       tailwindcss:
         specifier: 3.4.1
         version: 3.4.1(ts-node@10.9.2(@types/node@20.11.30)(typescript@5.6.3))
@@ -504,6 +504,9 @@ packages:
   '@babel/types@7.26.7':
     resolution: {integrity: sha512-t8kDRGrKXyp6+tjUh7hw2RLyclsW4TRoRvRHtSyAX9Bb5ldlFh+90YAYY6awRXrlB4G5G2izNeGySpATlFzmOg==}
     engines: {node: '>=6.9.0'}
+
+  '@bazel/runfiles@5.8.1':
+    resolution: {integrity: sha512-NDdfpdQ6rZlylgv++iMn5FkObC/QlBQvipinGLSOguTYpRywmieOyJ29XHvUilspwTFSILWpoE9CqMGkHXug1g==}
 
   '@bcoe/v8-coverage@0.2.3':
     resolution: {integrity: sha512-0hYQ8SB4Db5zvZB4axdMHGwEaQjkZzFjQiN9LVYvIFB2nSUHW9tYpxWriPrWDASIxiaXax83REcLxuSdnGPZtw==}
@@ -5330,9 +5333,9 @@ packages:
   scheduler@0.23.2:
     resolution: {integrity: sha512-UOShsPwz7NrMUqhR6t0hWjFduvOzbtv7toDH1/hIrfRNIDBnnBWd0CwJTGvTpngVlmwGCdP9/Zl/tVrDqcuYzQ==}
 
-  selenium-webdriver@4.18.1:
-    resolution: {integrity: sha512-uP4OJ5wR4+VjdTi5oi/k8oieV2fIhVdVuaOPrklKghgS59w7Zz3nGa5gcG73VcU9EBRv5IZEBRhPr7qFJAj5mQ==}
-    engines: {node: '>= 14.20.0'}
+  selenium-webdriver@4.24.1:
+    resolution: {integrity: sha512-fcK5BTI/54cSqIhiVtrd9li1YL6LW109yIwuVw6V+FlVE6y4riGiX2qdZxVzHq+sm2TJyps+D2sjzXrpDZe1Og==}
+    engines: {node: '>= 14.21.0'}
 
   semver@5.7.2:
     resolution: {integrity: sha512-cBznnQ9KjJqU67B52RMC65CMarK2600WFnbkcaiwWq3xy/5haFJlshgnpjovMVJ+Hff49d8GEn0b87C5pDQ10g==}
@@ -6335,6 +6338,8 @@ snapshots:
     dependencies:
       '@babel/helper-string-parser': 7.25.9
       '@babel/helper-validator-identifier': 7.25.9
+
+  '@bazel/runfiles@5.8.1': {}
 
   '@bcoe/v8-coverage@0.2.3': {}
 
@@ -11802,8 +11807,9 @@ snapshots:
     dependencies:
       loose-envify: 1.4.0
 
-  selenium-webdriver@4.18.1:
+  selenium-webdriver@4.24.1:
     dependencies:
+      '@bazel/runfiles': 5.8.1
       jszip: 3.10.1
       tmp: 0.2.3
       ws: 8.18.0
