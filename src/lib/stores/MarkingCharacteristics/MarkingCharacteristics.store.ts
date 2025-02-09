@@ -9,12 +9,12 @@ const STORE_NAME = "characteristics";
 const STORE_FILE: Store = await createStore(`${STORE_NAME}.dat`);
 
 type State = {
-    activeCharacteristics: MarkingCharacteristic[];
+    selectedCharacteristicId: MarkingCharacteristic["id"] | null;
     characteristics: MarkingCharacteristic[];
 };
 
 const INITIAL_STATE: State = {
-    activeCharacteristics: [],
+    selectedCharacteristicId: null,
     characteristics: [],
 };
 
@@ -28,6 +28,10 @@ const useStore = create<Immer<State>>()(
         {
             name: STORE_NAME,
             storage: createJSONStorage(() => tauriStorage(STORE_FILE)),
+            partialize: state => ({
+                characteristics: state.characteristics,
+                // selectedCharacteristicId is intentionally omitted
+            }),
         }
     )
 );

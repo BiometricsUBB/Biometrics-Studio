@@ -6,7 +6,6 @@ import {
     DashboardToolbarStore,
 } from "@/lib/stores/DashboardToolbar";
 import { MARKING_CLASS } from "@/lib/markings/MarkingBase";
-import { WorkingModeStore } from "@/lib/stores/WorkingMode";
 import { MarkingCharacteristicsStore } from "@/lib/stores/MarkingCharacteristics/MarkingCharacteristics";
 import { CUSTOM_GLOBAL_EVENTS, IS_DEV_ENVIRONMENT } from "@/lib/utils/const";
 import {
@@ -100,13 +99,9 @@ export class MarkingModePlugin extends Plugin {
             this.handleInterrupt
         );
 
-        const { markingClass } = DashboardToolbarStore.state.settings.marking;
-        const workingMode = WorkingModeStore.state.workingMode!;
-        const { id: characteristicId } =
-            MarkingCharacteristicsStore.actions.activeCharacteristics.getActiveCharacteristicByMarkingClass(
-                markingClass,
-                workingMode
-            );
+        const characteristic =
+            MarkingCharacteristicsStore.actions.selectedCharacteristic.get();
+        if (!characteristic) return;
 
         const MARKING_HANDLERS = {
             [MARKING_CLASS.POINT]: PointMarkingHandler,
@@ -116,13 +111,15 @@ export class MarkingModePlugin extends Plugin {
         };
 
         // eslint-disable-next-line security/detect-object-injection
-        const MarkingHandler = MARKING_HANDLERS[markingClass];
+        const MarkingHandler = MARKING_HANDLERS[characteristic.markingClass];
 
         if (!MarkingHandler) {
-            throw new Error(`Unsupported marking class: ${markingClass}`);
+            throw new Error(
+                `Unsupported marking class: ${characteristic.markingClass}`
+            );
         }
 
-        this.currentHandler = new MarkingHandler(this, characteristicId, e);
+        this.currentHandler = new MarkingHandler(this, characteristic.id, e);
 
         this.addEventListeners();
     }

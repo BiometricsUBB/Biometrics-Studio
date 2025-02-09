@@ -9,7 +9,7 @@ import { ICON, IS_DEV_ENVIRONMENT } from "@/lib/utils/const";
 import { Toggle } from "@/components/ui/toggle";
 import { CANVAS_ID } from "@/components/pixi/canvas/hooks/useCanvasContext";
 import { WorkingModeStore } from "@/lib/stores/WorkingMode";
-import KeyCaptureDialog from "@/components/ui/key-capture-dialog";
+import CharacteristicsKeyCaptureDialog from "@/components/ui/characteristics-key-capture-dialog";
 import { KeybindingsStore } from "@/lib/stores/Keybindings";
 
 function MarkingCharacteristicsTable() {
@@ -29,7 +29,9 @@ function MarkingCharacteristicsTable() {
     );
 
     const keybindings = KeybindingsStore.use(state =>
-        state.keybindings.filter(k => k.workingMode === workingMode)
+        state.characteristicsKeybindings.filter(
+            k => k.workingMode === workingMode
+        )
     );
 
     return (
@@ -169,7 +171,7 @@ function MarkingCharacteristicsTable() {
                                 />
                             </TableCell>
                             <TableCell>
-                                <KeyCaptureDialog
+                                <CharacteristicsKeyCaptureDialog
                                     boundKey={
                                         keybindings.find(
                                             k => k.characteristicId === item.id
@@ -203,6 +205,11 @@ function MarkingCharacteristicsTable() {
                                         onClickCapture={() => {
                                             MarkingCharacteristicsStore.actions.characteristics.removeById(
                                                 item.id
+                                            );
+
+                                            KeybindingsStore.actions.characteristicsKeybindings.remove(
+                                                item.id,
+                                                workingMode
                                             );
                                         }}
                                     >

@@ -1,7 +1,6 @@
 import { KeybindingsStore } from "@/lib/stores/Keybindings";
 import { useWorkingModeStore } from "@/lib/stores/WorkingMode";
 import { MarkingCharacteristicsStore } from "@/lib/stores/MarkingCharacteristics/MarkingCharacteristics";
-import { MARKING_CLASS } from "@/lib/markings/MarkingBase";
 import {
     CURSOR_MODES,
     DashboardToolbarStore,
@@ -16,9 +15,6 @@ export const useKeyboardShortcuts = () => {
 
     const workingMode = useWorkingModeStore(state => state.workingMode);
     const keybindings = KeybindingsStore.use(state => state.keybindings);
-
-    const { setActiveCharacteristicByMarkingClass } =
-        MarkingCharacteristicsStore.actions.activeCharacteristics;
 
     const { setCursorMode } = cursorActions;
     const { toggleLockedViewport, toggleLockScaleSync } = viewportActions;
@@ -43,27 +39,20 @@ export const useKeyboardShortcuts = () => {
                 binding.boundKey === key && binding.workingMode === workingMode
         )?.characteristicId;
         if (characteristicId && workingMode) {
-            const markingCharacteristicExists =
-                MarkingCharacteristicsStore.state.activeCharacteristics.some(
-                    characteristic =>
-                        characteristic.category === workingMode &&
-                        characteristic.id === characteristicId
-                );
-            if (!markingCharacteristicExists) {
-                KeybindingsStore.actions.removeKeybinding(
-                    characteristicId,
-                    workingMode
-                );
-            }
-
-            setActiveCharacteristicByMarkingClass(
-                MarkingCharacteristicsStore.state.characteristics.find(
+            const characteristicExists =
+                MarkingCharacteristicsStore.state.characteristics.some(
                     characteristic =>
                         characteristic.id === characteristicId &&
                         characteristic.category === workingMode
-                )?.markingClass as MARKING_CLASS,
-                characteristicId,
-                workingMode
+                );
+
+            if (!characteristicExists) {
+                KeybindingsStore.actions.remove(characteristicId, workingMode);
+                return;
+            }
+
+            MarkingCharacteristicsStore.actions.selectedCharacteristic.set(
+                characteristicId
             );
         }
     };

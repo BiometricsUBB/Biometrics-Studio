@@ -18,7 +18,7 @@ interface KeyCaptureDialogProps {
     characteristicId: MarkingCharacteristic["id"];
 }
 
-function KeyCaptureDialog({
+function CharacteristicsKeyCaptureDialog({
     mode,
     boundKey,
     characteristicId,
@@ -26,14 +26,14 @@ function KeyCaptureDialog({
     const [isOpen, setIsOpen] = useState(false);
     const [error, setError] = useState("");
     const [isShaking, setIsShaking] = useState(false);
-    const { addKeybinding, removeKeybinding } = KeybindingsStore.actions;
+    const { add, remove } = KeybindingsStore.actions.characteristicsKeybindings;
 
     const handleKeyPress = (event: React.KeyboardEvent<HTMLDivElement>) => {
         const { key } = event;
         if (/^[0-9]$/.test(key)) {
             setIsOpen(false);
             setError("");
-            addKeybinding({
+            add({
                 workingMode: mode,
                 boundKey: key,
                 characteristicId,
@@ -41,7 +41,7 @@ function KeyCaptureDialog({
         } else if (key === "Delete") {
             setIsOpen(false);
             setError("");
-            removeKeybinding(characteristicId, mode);
+            remove(characteristicId, mode);
         } else {
             setError(`'${key}' is not a digit`);
             setIsShaking(true);
@@ -92,4 +92,4 @@ function KeyCaptureDialog({
     );
 }
 
-export default KeyCaptureDialog;
+export default CharacteristicsKeyCaptureDialog;

@@ -9,18 +9,18 @@ import { Immer, produceCallback } from "../immer.helpers";
 const STORE_NAME = "keybindings";
 const STORE_FILE: Store = await createStore(`${STORE_NAME}.dat`);
 
-export type Keybinding = {
+export type CharacteristicKeybinding = {
     workingMode: WORKING_MODE;
     boundKey: string;
     characteristicId: MarkingCharacteristic["id"];
 };
 
 type State = {
-    keybindings: Keybinding[];
+    characteristicsKeybindings: CharacteristicKeybinding[];
 };
 
 const INITIAL_STATE: State = {
-    keybindings: [],
+    characteristicsKeybindings: [],
 };
 
 const useStore = create<Immer<State>>()(
@@ -37,4 +37,4 @@ const useStore = create<Immer<State>>()(
     )
 );
 
-export { useStore as _useKeybindingStore, type State as KeybindingsState };
+export { useStore as _useKeybindingsStore, type State as KeybindingsState };
