@@ -10,10 +10,10 @@ export class LineSegmentMarkingHandler extends MarkingHandler {
 
     constructor(
         plugin: MarkingModePlugin,
-        characteristicId: string,
+        typeId: string,
         startEvent: FederatedPointerEvent
     ) {
-        super(plugin, characteristicId, startEvent);
+        super(plugin, typeId, startEvent);
         this.initFirstStage(startEvent);
     }
 
@@ -23,7 +23,7 @@ export class LineSegmentMarkingHandler extends MarkingHandler {
             new LineSegmentMarking(
                 markingsStore.actions.labelGenerator.getLabel(),
                 getNormalizedMousePosition(e, viewport),
-                this.characteristicId,
+                this.typeId,
                 getNormalizedMousePosition(e, viewport)
             )
         );

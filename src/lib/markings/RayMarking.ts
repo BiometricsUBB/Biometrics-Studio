@@ -1,16 +1,16 @@
-// eslint-disable-next-line import/no-cycle
-import { MarkingBase, MARKING_CLASS, Point } from "@/lib/markings/MarkingBase";
+import { MarkingClass } from "@/lib/markings/MarkingClass";
+import { MARKING_CLASS } from "@/lib/markings/MARKING_CLASS";
 
-export class RayMarking extends MarkingBase {
+export class RayMarking extends MarkingClass {
     readonly markingClass = MARKING_CLASS.RAY;
 
     constructor(
-        label: number,
-        origin: Point,
-        characteristicId: string,
+        label: MarkingClass["label"],
+        origin: MarkingClass["origin"],
+        typeId: MarkingClass["typeId"],
         public angleRad: number
     ) {
-        super(label, origin, characteristicId);
+        super(label, origin, typeId);
         this.angleRad = angleRad;
     }
 }

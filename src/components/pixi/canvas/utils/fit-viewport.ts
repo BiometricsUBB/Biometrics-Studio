@@ -1,5 +1,6 @@
 import { Viewport } from "pixi-viewport";
-import { Point } from "@/lib/markings/MarkingBase";
+
+import { Point } from "@/lib/markings/Point";
 
 export type FitEvent = {
     viewport: Viewport;

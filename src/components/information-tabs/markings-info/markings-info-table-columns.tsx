@@ -4,19 +4,19 @@ import { Trash2 } from "lucide-react";
 import { Toggle } from "@/components/ui/toggle";
 import { CanvasMetadata } from "@/components/pixi/canvas/hooks/useCanvasContext";
 import { MarkingsStore } from "@/lib/stores/Markings";
-import { MarkingBase } from "@/lib/markings/MarkingBase";
+import { MarkingClass } from "@/lib/markings/MarkingClass";
 import { useTranslation } from "react-i18next";
 import { useMemo } from "react";
-import { MarkingCharacteristicsStore } from "@/lib/stores/MarkingCharacteristics/MarkingCharacteristics";
+import { MarkingTypesStore } from "@/lib/stores/MarkingTypes/MarkingTypes";
 
 export type EmptyMarking = {
-    label: MarkingBase["label"];
+    label: MarkingClass["label"];
 };
-export type EmptyableMarking = MarkingBase | EmptyMarking;
+export type EmptyableMarking = MarkingClass | EmptyMarking;
 type EmptyableCellContext = CellContext<EmptyableMarking, unknown>;
-type DataCellContext = CellContext<MarkingBase, unknown>;
+type DataCellContext = CellContext<MarkingClass, unknown>;
 
-export function isMarkingBase(cell: EmptyableMarking): cell is MarkingBase {
+export function isMarkingBase(cell: EmptyableMarking): cell is MarkingClass {
     return "id" in cell;
 }
 
@@ -94,14 +94,14 @@ export const useColumns = (
                         )),
                 },
                 {
-                    accessorKey: "characteristic",
-                    header: t("MarkingCharacteristic.Keys.characteristicName", {
+                    accessorKey: "type",
+                    header: t("MarkingType.Keys.name", {
                         ns: "object",
                     }),
                     cell: info =>
                         formatCell(info, ({ row }) => {
-                            const marking = row.original.characteristicId;
-                            return `${MarkingCharacteristicsStore.use().characteristics.find(e => e.id === marking)?.displayName}`;
+                            const marking = row.original.typeId;
+                            return `${MarkingTypesStore.use().types.find(e => e.id === marking)?.displayName}`;
                         }),
                 },
                 {

@@ -1,7 +1,7 @@
 import { createStore, Store } from "@tauri-apps/plugin-store";
 import { create } from "zustand";
 import { createJSONStorage, devtools, persist } from "zustand/middleware";
-import { MARKING_CLASS } from "@/lib/markings/MarkingBase";
+import { MARKING_CLASS } from "@/lib/markings/MARKING_CLASS";
 import { Immer, produceCallback } from "../immer.helpers";
 import { tauriStorage } from "../tauri-storage-adapter.helpers";
 

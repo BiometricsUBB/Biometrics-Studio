@@ -4,7 +4,7 @@ import { cn } from "@/lib/utils/shadcn";
 import { ICON } from "@/lib/utils/const";
 import { ModeMenu } from "@/components/menu/mode-menu";
 import { Dialog, DialogTrigger } from "@/components/ui/dialog";
-import MarkingCharacteristicsDialogPortal from "@/components/dialogs/marking-characteristics/marking-characteristics-dialog-portal";
+import MarkingTypesDialogPortal from "@/components/dialogs/marking-types/marking-types-dialog-portal";
 import { WindowControls } from "@/components/menu/window-controls";
 import { useTranslation } from "react-i18next";
 import { WorkingModeStore } from "@/lib/stores/WorkingMode";
@@ -34,10 +34,8 @@ export function Menu() {
                         <ModeMenu />
                         <span className="mx-2 !h-auto">•</span>
                         <Dialog>
-                            <DialogTrigger>
-                                {t("Characteristics")}
-                            </DialogTrigger>
-                            <MarkingCharacteristicsDialogPortal />
+                            <DialogTrigger>{t("Types")}</DialogTrigger>
+                            <MarkingTypesDialogPortal />
                         </Dialog>
                     </div>
                 )}

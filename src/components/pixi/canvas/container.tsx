@@ -8,7 +8,7 @@ import { useTranslation } from "react-i18next";
 import { CanvasToolbarStore } from "@/lib/stores/CanvasToolbar";
 import { listen } from "@tauri-apps/api/event";
 import { showErrorDialog } from "@/lib/errors/showErrorDialog";
-import { Point } from "@/lib/markings/MarkingBase";
+import { Point } from "@/lib/markings/Point";
 import { useCanvasContext } from "./hooks/useCanvasContext";
 import { CanvasToolbar } from "./canvas-toolbar";
 import { Canvas } from "./canvas";

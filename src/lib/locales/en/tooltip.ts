@@ -12,8 +12,8 @@ const d: Dictionary = {
     "Toggle marking labels": "Toggle marking labels",
     "Toggle viewport information": "Toggle viewport information",
     "Toggle scale mode": "Toggle scale mode",
-    "Export marking characteristics": "Export marking characteristics",
-    "Import marking characteristics": "Import marking characteristics",
+    "Export marking types": "Export marking types",
+    "Import marking types": "Import marking types",
 };
 
 export default d;

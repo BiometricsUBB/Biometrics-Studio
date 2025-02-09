@@ -1,24 +1,24 @@
 import React from "react";
 import { KeybindingsStore } from "@/lib/stores/Keybindings";
-import { MarkingCharacteristic } from "@/lib/markings/MarkingCharacteristic";
+import { MarkingType } from "@/lib/markings/MarkingType";
 import { WORKING_MODE } from "@/views/selectMode";
 import KeyCaptureDialog from "@/components/ui/key-capture-dialog";
 import { useTranslation } from "react-i18next";
 
-interface CharacteristicsKeyCaptureDialogProps {
-    mode: WORKING_MODE;
+interface TypesKeyCaptureDialogProps {
+    workingMode: WORKING_MODE;
     boundKey: string | undefined;
-    characteristicId: MarkingCharacteristic["id"];
+    typeId: MarkingType["id"];
 }
 
-function CharacteristicsKeybinding({
-    mode,
+function MarkingTypeKeybinding({
+    workingMode,
     boundKey,
-    characteristicId,
-}: CharacteristicsKeyCaptureDialogProps) {
+    typeId,
+}: TypesKeyCaptureDialogProps) {
     const { t } = useTranslation();
 
-    const { add, remove } = KeybindingsStore.actions.characteristicsKeybindings;
+    const { add, remove } = KeybindingsStore.actions.typesKeybindings;
 
     const validateKey = (key: string) => {
         if (!/^[0-9]$/.test(key)) {
@@ -32,14 +32,14 @@ function CharacteristicsKeybinding({
 
     const handleKeyBind = (key: string) => {
         add({
-            workingMode: mode,
+            workingMode,
             boundKey: key,
-            characteristicId,
+            typeId,
         });
     };
 
     const handleKeyUnbind = () => {
-        remove(characteristicId, mode);
+        remove(typeId, workingMode);
     };
 
     return (
@@ -65,4 +65,4 @@ function CharacteristicsKeybinding({
     );
 }
 
-export default CharacteristicsKeybinding;
+export default MarkingTypeKeybinding;

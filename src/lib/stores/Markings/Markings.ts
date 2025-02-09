@@ -9,7 +9,7 @@ import {
 import { getOppositeCanvasId } from "@/components/pixi/canvas/utils/get-opposite-canvas-id";
 import { arrayMax } from "@/lib/utils/array/minmax";
 // eslint-disable-next-line import/no-cycle
-import { MarkingBase } from "@/lib/markings/MarkingBase";
+import { MarkingClass } from "@/lib/markings/MarkingClass";
 import { LineSegmentMarking } from "@/lib/markings/LineSegmentMarking";
 import { RayMarking } from "@/lib/markings/RayMarking";
 import { PointMarking } from "@/lib/markings/PointMarking";
@@ -136,7 +136,7 @@ class StoreClass {
             reset: () => {
                 this.setMarkingsAndUpdateHash(() => []);
             },
-            addOne: (marking: MarkingBase) => {
+            addOne: (marking: MarkingClass) => {
                 if (this.state.markings.find(m => m.label === marking.label)) {
                     this.setMarkingsAndUpdateHash(markings =>
                         markings.filter(m => m.label !== marking.label)
@@ -150,13 +150,13 @@ class StoreClass {
                 );
                 this.setSelectedMarkingLabel(() => null);
             },
-            addMany: (markings: MarkingBase[]) =>
+            addMany: (markings: MarkingClass[]) =>
                 this.setMarkingsAndUpdateHash(
                     produce(state => {
                         state.push(...markings);
                     })
                 ),
-            removeOneByLabel: (label: MarkingBase["label"]) => {
+            removeOneByLabel: (label: MarkingClass["label"]) => {
                 if (this.state.selectedMarkingLabel === label) {
                     this.setSelectedMarkingLabel(() => null);
                 }
@@ -171,7 +171,7 @@ class StoreClass {
             },
         },
         temporaryMarking: {
-            setTemporaryMarking: (marking: MarkingBase | null) =>
+            setTemporaryMarking: (marking: MarkingClass | null) =>
                 this.setTemporaryMarking(produce(() => marking)),
             updateTemporaryMarking: (
                 props: Partial<
@@ -190,7 +190,7 @@ class StoreClass {
                 ),
         },
         selectedMarkingLabel: {
-            setSelectedMarkingLabel: (label: MarkingBase["label"] | null) =>
+            setSelectedMarkingLabel: (label: MarkingClass["label"] | null) =>
                 this.setSelectedMarkingLabel(() => label),
         },
     };

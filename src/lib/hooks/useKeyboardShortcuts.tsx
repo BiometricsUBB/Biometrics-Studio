@@ -1,6 +1,6 @@
 import { KeybindingsStore } from "@/lib/stores/Keybindings";
 import { useWorkingModeStore } from "@/lib/stores/WorkingMode";
-import { MarkingCharacteristicsStore } from "@/lib/stores/MarkingCharacteristics/MarkingCharacteristics";
+import { MarkingTypesStore } from "@/lib/stores/MarkingTypes/MarkingTypes";
 import {
     CURSOR_MODES,
     DashboardToolbarStore,
@@ -14,9 +14,7 @@ export const useKeyboardShortcuts = () => {
         actions.settings;
 
     const workingMode = useWorkingModeStore(state => state.workingMode);
-    const keybindings = KeybindingsStore.use(
-        state => state.characteristicsKeybindings
-    );
+    const keybindings = KeybindingsStore.use(state => state.typesKeybindings);
 
     const { setCursorMode } = cursorActions;
     const { toggleLockedViewport, toggleLockScaleSync } = viewportActions;
@@ -36,31 +34,26 @@ export const useKeyboardShortcuts = () => {
     }, ["F2"]);
 
     const handleKeyDown = (key: string) => {
-        const characteristicId = keybindings.find(
+        const typeId = keybindings.find(
             keybinding =>
                 keybinding.boundKey === key &&
                 keybinding.workingMode === workingMode
-        )?.characteristicId;
+        )?.typeId;
 
-        if (characteristicId && workingMode) {
-            const characteristicExists =
-                MarkingCharacteristicsStore.state.characteristics.some(
-                    characteristic =>
-                        characteristic.id === characteristicId &&
-                        characteristic.category === workingMode
-                );
+        if (typeId && workingMode) {
+            const typeExists = MarkingTypesStore.state.types.some(
+                type => type.id === typeId && type.category === workingMode
+            );
 
-            if (!characteristicExists) {
-                KeybindingsStore.actions.characteristicsKeybindings.remove(
-                    characteristicId,
+            if (!typeExists) {
+                KeybindingsStore.actions.typesKeybindings.remove(
+                    typeId,
                     workingMode
                 );
                 return;
             }
 
-            MarkingCharacteristicsStore.actions.selectedCharacteristic.set(
-                characteristicId
-            );
+            MarkingTypesStore.actions.selectedType.set(typeId);
         }
     };
 

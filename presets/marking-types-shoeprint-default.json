@@ -6,10 +6,10 @@
         }
     },
     "data": {
-        "markingCharacteristics": [
+        "markingTypes": [
             {
                 "id": "8c99a981-3e03-4846-ada3-1293bb383251",
-                "characteristicName": "Mark",
+                "name": "Mark",
                 "displayName": "Odcisk buta",
                 "markingClass": "bounding_box",
                 "backgroundColor": "#51d259",
@@ -19,7 +19,7 @@
             },
             {
                 "id": "aae66e2a-6418-4467-a5e9-212bf62298b1",
-                "characteristicName": "UniqueFeature",
+                "name": "UniqueFeature",
                 "displayName": "Unikalna cecha",
                 "markingClass": "bounding_box",
                 "backgroundColor": "#bd61a0",
@@ -29,7 +29,7 @@
             },
             {
                 "id": "01f6acd5-67a5-4922-b784-1ae110167fe7",
-                "characteristicName": "Heel",
+                "name": "Heel",
                 "displayName": "Pięta",
                 "markingClass": "bounding_box",
                 "backgroundColor": "#dfcf68",
@@ -39,7 +39,7 @@
             },
             {
                 "id": "5e5ea9ea-7302-480d-a5fe-c3284e48b51d",
-                "characteristicName": "LongitudinalAxis",
+                "name": "LongitudinalAxis",
                 "displayName": "Oś podłużna",
                 "markingClass": "line_segment",
                 "backgroundColor": "#6042f5",
