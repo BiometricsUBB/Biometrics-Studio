@@ -1,5 +1,5 @@
-import { MARKING_CLASS } from "@/lib/markings/MarkingBase";
-import { WorkingModeStore } from "@/lib/stores/WorkingMode";
+import { KeybindingsStore } from "@/lib/stores/Keybindings";
+import { useWorkingModeStore } from "@/lib/stores/WorkingMode";
 import { MarkingCharacteristicsStore } from "@/lib/stores/MarkingCharacteristics/MarkingCharacteristics";
 import {
     CURSOR_MODES,
@@ -10,26 +10,16 @@ import { useKeyDown } from "./useKeyDown";
 
 export const useKeyboardShortcuts = () => {
     const { actions } = DashboardToolbarStore;
-    const {
-        cursor: cursorActions,
-        marking: markingActions,
-        viewport: viewportActions,
-    } = actions.settings;
+    const { cursor: cursorActions, viewport: viewportActions } =
+        actions.settings;
 
-    const { setSelectedMarkingClass } = markingActions;
+    const workingMode = useWorkingModeStore(state => state.workingMode);
+    const keybindings = KeybindingsStore.use(
+        state => state.characteristicsKeybindings
+    );
+
     const { setCursorMode } = cursorActions;
     const { toggleLockedViewport, toggleLockScaleSync } = viewportActions;
-    const { workingMode } = WorkingModeStore.state;
-
-    function isMarkingClassAvailable(markingClass: MARKING_CLASS) {
-        return (
-            MarkingCharacteristicsStore.state.characteristics.filter(
-                characteristic =>
-                    characteristic.category === workingMode &&
-                    characteristic.markingClass === markingClass
-            ).length > 0
-        );
-    }
 
     useKeyDown(() => {
         document.dispatchEvent(
@@ -45,25 +35,45 @@ export const useKeyboardShortcuts = () => {
         setCursorMode(CURSOR_MODES.MARKING);
     }, ["F2"]);
 
-    useKeyDown(() => {
-        if (!isMarkingClassAvailable(MARKING_CLASS.POINT)) return;
-        setSelectedMarkingClass(MARKING_CLASS.POINT);
-    }, ["1"]);
+    const handleKeyDown = (key: string) => {
+        const characteristicId = keybindings.find(
+            keybinding =>
+                keybinding.boundKey === key &&
+                keybinding.workingMode === workingMode
+        )?.characteristicId;
 
-    useKeyDown(() => {
-        if (!isMarkingClassAvailable(MARKING_CLASS.RAY)) return;
-        setSelectedMarkingClass(MARKING_CLASS.RAY);
-    }, ["2"]);
+        if (characteristicId && workingMode) {
+            const characteristicExists =
+                MarkingCharacteristicsStore.state.characteristics.some(
+                    characteristic =>
+                        characteristic.id === characteristicId &&
+                        characteristic.category === workingMode
+                );
 
-    useKeyDown(() => {
-        if (!isMarkingClassAvailable(MARKING_CLASS.LINE_SEGMENT)) return;
-        setSelectedMarkingClass(MARKING_CLASS.LINE_SEGMENT);
-    }, ["3"]);
+            if (!characteristicExists) {
+                KeybindingsStore.actions.characteristicsKeybindings.remove(
+                    characteristicId,
+                    workingMode
+                );
+                return;
+            }
 
-    useKeyDown(() => {
-        if (!isMarkingClassAvailable(MARKING_CLASS.BOUNDING_BOX)) return;
-        setSelectedMarkingClass(MARKING_CLASS.BOUNDING_BOX);
-    }, ["4"]);
+            MarkingCharacteristicsStore.actions.selectedCharacteristic.set(
+                characteristicId
+            );
+        }
+    };
+
+    useKeyDown(() => handleKeyDown("0"), ["0"]);
+    useKeyDown(() => handleKeyDown("1"), ["1"]);
+    useKeyDown(() => handleKeyDown("2"), ["2"]);
+    useKeyDown(() => handleKeyDown("3"), ["3"]);
+    useKeyDown(() => handleKeyDown("4"), ["4"]);
+    useKeyDown(() => handleKeyDown("5"), ["5"]);
+    useKeyDown(() => handleKeyDown("6"), ["6"]);
+    useKeyDown(() => handleKeyDown("7"), ["7"]);
+    useKeyDown(() => handleKeyDown("8"), ["8"]);
+    useKeyDown(() => handleKeyDown("9"), ["9"]);
 
     useKeyDown(() => {
         toggleLockedViewport();
