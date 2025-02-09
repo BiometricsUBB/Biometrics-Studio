@@ -1,4 +1,4 @@
-import { KeybindingsStore } from "src/lib/stores/Keybindings";
+import { KeybindingsStore } from "@/lib/stores/Keybindings";
 import { useWorkingModeStore } from "@/lib/stores/WorkingMode";
 import { MarkingCharacteristicsStore } from "@/lib/stores/MarkingCharacteristics/MarkingCharacteristics";
 import {

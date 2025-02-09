@@ -1,5 +1,5 @@
 import React from "react";
-import { KeybindingsStore } from "src/lib/stores/Keybindings";
+import { KeybindingsStore } from "@/lib/stores/Keybindings";
 import { MarkingCharacteristic } from "@/lib/markings/MarkingCharacteristic";
 import { WORKING_MODE } from "@/views/selectMode";
 import KeyCaptureDialog from "@/components/ui/key-capture-dialog";

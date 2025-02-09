@@ -1,8 +1,8 @@
 /* eslint-disable no-param-reassign */
 import { confirm } from "@tauri-apps/plugin-dialog";
 import {
-    CharacteristicKeybinding,
     _useKeybindingsStore,
+    CharacteristicKeybinding,
 } from "./Keybindings.store";
 
 class StoreClass {
