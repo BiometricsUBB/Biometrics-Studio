@@ -14,7 +14,7 @@ import {
 } from "lucide-react";
 import { ICON } from "@/lib/utils/const";
 import { useTranslation } from "react-i18next";
-import { MarkingCharacteristicsStore } from "@/lib/stores/MarkingCharacteristics/MarkingCharacteristics";
+import { MarkingTypesStore } from "@/lib/stores/MarkingTypes/MarkingTypes";
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -39,26 +39,17 @@ export function GlobalToolbar({ className, ...props }: GlobalToolbarProps) {
     const { locked: isViewportLocked, scaleSync: isViewportScaleSync } =
         DashboardToolbarStore.use(state => state.settings.viewport);
 
-    const availableMarkingCharacteristicsForWorkingMode =
-        MarkingCharacteristicsStore.use(state =>
-            state.characteristics.filter(
-                characteristic => characteristic.category === workingMode
-            )
-        );
-
-    const selectedCharacteristic = MarkingCharacteristicsStore.use(state =>
-        state.characteristics.find(
-            characteristic =>
-                characteristic.id === state.selectedCharacteristicId
-        )
+    const availableMarkingTypesForWorkingMode = MarkingTypesStore.use(state =>
+        state.types.filter(t => t.category === workingMode)
     );
 
-    if (
-        !selectedCharacteristic &&
-        availableMarkingCharacteristicsForWorkingMode.length
-    ) {
-        MarkingCharacteristicsStore.actions.selectedCharacteristic.set(
-            availableMarkingCharacteristicsForWorkingMode[0]!.id
+    const selectedMarkingType = MarkingTypesStore.use(state =>
+        state.types.find(t => t.id === state.selectedTypeId)
+    );
+
+    if (!selectedMarkingType && availableMarkingTypesForWorkingMode.length) {
+        MarkingTypesStore.actions.selectedType.set(
+            availableMarkingTypesForWorkingMode[0]!.id
         );
     }
 
@@ -113,36 +104,32 @@ export function GlobalToolbar({ className, ...props }: GlobalToolbarProps) {
             <Separator />
 
             <ToolbarGroup>
-                {/* Selected characteristic and dropdown menu with existing characteristics */}
+                {/* Selected type and dropdown menu with existing types */}
                 <DropdownMenu>
                     <DropdownMenuTrigger
                         className={cn(
                             "w-36 mr-2 overflow-hidden text-ellipsis whitespace-nowrap",
                             className
                         )}
-                        disabled={
-                            !availableMarkingCharacteristicsForWorkingMode.length
-                        }
+                        disabled={!availableMarkingTypesForWorkingMode.length}
                     >
-                        {selectedCharacteristic?.displayName ??
+                        {selectedMarkingType?.displayName ??
                             t("None", { ns: "keybindings" })}
                     </DropdownMenuTrigger>
                     <DropdownMenuPortal>
                         <DropdownMenuContent>
-                            {availableMarkingCharacteristicsForWorkingMode.map(
-                                characteristic => (
-                                    <DropdownMenuItem
-                                        key={characteristic.id}
-                                        onClick={() => {
-                                            MarkingCharacteristicsStore.actions.selectedCharacteristic.set(
-                                                characteristic.id
-                                            );
-                                        }}
-                                    >
-                                        {characteristic.displayName}
-                                    </DropdownMenuItem>
-                                )
-                            )}
+                            {availableMarkingTypesForWorkingMode.map(type => (
+                                <DropdownMenuItem
+                                    key={type.id}
+                                    onClick={() => {
+                                        MarkingTypesStore.actions.selectedType.set(
+                                            type.id
+                                        );
+                                    }}
+                                >
+                                    {type.displayName}
+                                </DropdownMenuItem>
+                            ))}
                         </DropdownMenuContent>
                     </DropdownMenuPortal>
                 </DropdownMenu>

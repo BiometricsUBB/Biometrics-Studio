@@ -9,16 +9,15 @@ import {
 import { cn } from "@/lib/utils/shadcn";
 import { VisuallyHidden } from "@/components/ui/visually-hidden";
 import { Toggle } from "@/components/ui/toggle";
-import { MarkingCharacteristicsStore } from "@/lib/stores/MarkingCharacteristics/MarkingCharacteristics";
+import { MarkingTypesStore } from "@/lib/stores/MarkingTypes/MarkingTypes";
 import {
     defaultBackgroundColor,
     defaultSize,
     defaultTextColor,
-} from "@/lib/markings/MarkingCharacteristic";
+} from "@/lib/markings/MarkingType";
 import { Download, Plus, Upload, X } from "lucide-react";
 import { ICON } from "@/lib/utils/const";
-import MarkingCharacteristicsTable from "@/components/dialogs/marking-characteristics/marking-characteristics-table";
-import { MARKING_CLASS } from "@/lib/markings/MarkingBase";
+import MarkingTypesTable from "@/components/dialogs/marking-types/marking-types-table";
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -26,12 +25,13 @@ import {
     DropdownMenuPortal,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { exportMarkingCharacteristicsWithDialog } from "@/components/dialogs/marking-characteristics/exportMarkingCharacteristicsWithDialog";
-import { importMarkingCharacteristicsWithDialog } from "@/components/dialogs/marking-characteristics/importMarkingCharacteristicsWithDialog";
+import { exportMarkingTypesWithDialog } from "@/components/dialogs/marking-types/exportMarkingTypesWithDialog";
+import { importMarkingTypesWithDialog } from "@/components/dialogs/marking-types/importMarkingTypesWithDialog";
 import { useTranslation } from "react-i18next";
 import { WorkingModeStore } from "@/lib/stores/WorkingMode";
+import { MARKING_CLASS } from "@/lib/markings/MARKING_CLASS";
 
-function MarkingCharacteristicsDialogPortal() {
+function MarkingTypesDialogPortal() {
     const { t } = useTranslation();
 
     const workingMode = WorkingModeStore.use(state => state.workingMode);
@@ -42,14 +42,14 @@ function MarkingCharacteristicsDialogPortal() {
             <DialogContent className={cn("")}>
                 <VisuallyHidden asChild>
                     <DialogTitle className={cn("text-2xl")}>
-                        {t("Characteristics")}
+                        {t("Types")}
                     </DialogTitle>
                 </VisuallyHidden>
 
                 {/* Toolbar */}
                 <div className="flex justify-between pb-1">
                     <div className="flex flex-row gap-1">
-                        {/* Add new characteristic */}
+                        {/* Add new type */}
                         <DropdownMenu>
                             <DropdownMenuTrigger
                                 title={t("Add")}
@@ -72,16 +72,15 @@ function MarkingCharacteristicsDialogPortal() {
                                             <DropdownMenuItem
                                                 key={key}
                                                 onClick={() =>
-                                                    MarkingCharacteristicsStore.actions.characteristics.add(
+                                                    MarkingTypesStore.actions.types.add(
                                                         {
                                                             id: crypto.randomUUID(),
-                                                            characteristicName:
-                                                                t(
-                                                                    `Marking.Keys.markingClass.Keys.${MARKING_CLASS[key]}`,
-                                                                    {
-                                                                        ns: "object",
-                                                                    }
-                                                                ),
+                                                            name: t(
+                                                                `Marking.Keys.markingClass.Keys.${MARKING_CLASS[key]}`,
+                                                                {
+                                                                    ns: "object",
+                                                                }
+                                                            ),
                                                             displayName: t(
                                                                 `Marking.Keys.markingClass.Keys.${MARKING_CLASS[key]}`,
                                                                 {
@@ -114,16 +113,16 @@ function MarkingCharacteristicsDialogPortal() {
                             </DropdownMenuPortal>
                         </DropdownMenu>
 
-                        {/* Import characteristics from file */}
+                        {/* Import types from file */}
                         <Toggle
-                            title={t("Import marking characteristics", {
+                            title={t("Import marking types", {
                                 ns: "tooltip",
                             })}
                             size="icon"
                             variant="outline"
                             pressed={false}
                             onClickCapture={() =>
-                                importMarkingCharacteristicsWithDialog()
+                                importMarkingTypesWithDialog()
                             }
                         >
                             <Download
@@ -132,16 +131,16 @@ function MarkingCharacteristicsDialogPortal() {
                             />
                         </Toggle>
 
-                        {/* Export characteristics to json */}
+                        {/* Export types to json */}
                         <Toggle
-                            title={t("Export marking characteristics", {
+                            title={t("Export marking types", {
                                 ns: "tooltip",
                             })}
                             size="icon"
                             variant="outline"
                             pressed={false}
                             onClickCapture={() =>
-                                exportMarkingCharacteristicsWithDialog()
+                                exportMarkingTypesWithDialog()
                             }
                         >
                             <Upload
@@ -169,7 +168,7 @@ function MarkingCharacteristicsDialogPortal() {
                     </div>
                 </div>
 
-                <MarkingCharacteristicsTable />
+                <MarkingTypesTable />
 
                 <DialogDescription />
             </DialogContent>
@@ -177,4 +176,4 @@ function MarkingCharacteristicsDialogPortal() {
     );
 }
 
-export default MarkingCharacteristicsDialogPortal;
+export default MarkingTypesDialogPortal;

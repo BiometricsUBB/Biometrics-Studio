@@ -89,7 +89,7 @@ function KeyCaptureDialog({
     return (
         <Dialog open={isOpen} onOpenChange={setIsOpen}>
             <DialogTrigger
-                title="Keybinding"
+                title={t("Keybinding", { ns: "keybindings" })}
                 className={cn("m-auto", triggerClassName)}
                 onClick={() => {
                     setIsOpen(true);

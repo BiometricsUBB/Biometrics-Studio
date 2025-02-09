@@ -5,8 +5,7 @@ import {
     CURSOR_MODES,
     DashboardToolbarStore,
 } from "@/lib/stores/DashboardToolbar";
-import { MARKING_CLASS } from "@/lib/markings/MarkingBase";
-import { MarkingCharacteristicsStore } from "@/lib/stores/MarkingCharacteristics/MarkingCharacteristics";
+import { MarkingTypesStore } from "@/lib/stores/MarkingTypes/MarkingTypes";
 import { CUSTOM_GLOBAL_EVENTS, IS_DEV_ENVIRONMENT } from "@/lib/utils/const";
 import {
     MarkingHandler,
@@ -15,6 +14,7 @@ import {
     LineSegmentMarkingHandler,
     BoundingBoxMarkingHandler,
 } from "@/components/pixi/viewport/marking-handlers";
+import { MARKING_CLASS } from "@/lib/markings/MARKING_CLASS";
 import { ViewportHandlerParams } from "../event-handlers/utils";
 
 export class MarkingModePlugin extends Plugin {
@@ -99,9 +99,8 @@ export class MarkingModePlugin extends Plugin {
             this.handleInterrupt
         );
 
-        const characteristic =
-            MarkingCharacteristicsStore.actions.selectedCharacteristic.get();
-        if (!characteristic) return;
+        const type = MarkingTypesStore.actions.selectedType.get();
+        if (!type) return;
 
         const MARKING_HANDLERS = {
             [MARKING_CLASS.POINT]: PointMarkingHandler,
@@ -111,15 +110,13 @@ export class MarkingModePlugin extends Plugin {
         };
 
         // eslint-disable-next-line security/detect-object-injection
-        const MarkingHandler = MARKING_HANDLERS[characteristic.markingClass];
+        const MarkingHandler = MARKING_HANDLERS[type.markingClass];
 
         if (!MarkingHandler) {
-            throw new Error(
-                `Unsupported marking class: ${characteristic.markingClass}`
-            );
+            throw new Error(`Unsupported marking class: ${type.markingClass}`);
         }
 
-        this.currentHandler = new MarkingHandler(this, characteristic.id, e);
+        this.currentHandler = new MarkingHandler(this, type.id, e);
 
         this.addEventListeners();
     }

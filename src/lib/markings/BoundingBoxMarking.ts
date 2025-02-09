@@ -1,17 +1,17 @@
-// eslint-disable-next-line import/no-cycle
-import { MarkingBase, MARKING_CLASS, Point } from "@/lib/markings/MarkingBase";
+import { MarkingClass } from "@/lib/markings/MarkingClass";
+import { MARKING_CLASS } from "@/lib/markings/MARKING_CLASS";
+import { Point } from "@/lib/markings/Point";
 
-export class BoundingBoxMarking extends MarkingBase {
+export class BoundingBoxMarking extends MarkingClass {
     readonly markingClass = MARKING_CLASS.BOUNDING_BOX;
 
     constructor(
-        label: number,
-        origin: Point,
-        characteristicId: string,
+        label: MarkingClass["label"],
+        origin: MarkingClass["origin"],
+        typeId: MarkingClass["typeId"],
         public endpoint: Point
     ) {
-        super(label, origin, characteristicId);
-        this.endpoint = endpoint;
+        super(label, origin, typeId);
     }
 
     public calculateEndpointViewportPosition(

@@ -1,21 +1,21 @@
 import { createJSONStorage, devtools, persist } from "zustand/middleware";
-import { MarkingCharacteristic } from "@/lib/markings/MarkingCharacteristic";
+import { MarkingType } from "@/lib/markings/MarkingType";
 import { create } from "zustand";
 import { tauriStorage } from "@/lib/stores/tauri-storage-adapter.helpers";
 import { createStore, Store } from "@tauri-apps/plugin-store";
 import { Immer, produceCallback } from "../immer.helpers";
 
-const STORE_NAME = "characteristics";
+const STORE_NAME = "types";
 const STORE_FILE: Store = await createStore(`${STORE_NAME}.dat`);
 
 type State = {
-    selectedCharacteristicId: MarkingCharacteristic["id"] | null;
-    characteristics: MarkingCharacteristic[];
+    selectedTypeId: MarkingType["id"] | null;
+    types: MarkingType[];
 };
 
 const INITIAL_STATE: State = {
-    selectedCharacteristicId: null,
-    characteristics: [],
+    selectedTypeId: null,
+    types: [],
 };
 
 const useStore = create<Immer<State>>()(
@@ -29,14 +29,11 @@ const useStore = create<Immer<State>>()(
             name: STORE_NAME,
             storage: createJSONStorage(() => tauriStorage(STORE_FILE)),
             partialize: state => ({
-                characteristics: state.characteristics,
-                // selectedCharacteristicId is intentionally omitted
+                types: state.types,
+                // selectedTypeId is intentionally omitted
             }),
         }
     )
 );
 
-export {
-    useStore as _useMarkingCharacteristicsStore,
-    type State as MarkingCharacteristicsState,
-};
+export { useStore as _useMarkingTypesStore, type State as MarkingTypesState };

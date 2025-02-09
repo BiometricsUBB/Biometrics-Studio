@@ -18,15 +18,15 @@ const d: Dictionary = {
                     bounding_box: "Prostokąt",
                 },
             },
-            characteristicId: "ID charakterystyki",
+            typeId: "ID typu",
         },
     },
-    MarkingCharacteristic: {
-        Name: "Cecha adnotacji",
+    MarkingType: {
+        Name: "Typ adnotacji",
         Keys: {
             id: "ID",
             displayName: "Nazwa lokalna",
-            characteristicName: "Cecha",
+            name: "Nazwa",
             markingClass: "Klasa adnotacji",
             category: "Kategoria",
             backgroundColor: "Kolor tła",

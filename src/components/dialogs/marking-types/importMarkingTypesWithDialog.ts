@@ -7,17 +7,17 @@ import {
 } from "@tauri-apps/plugin-dialog";
 import { t } from "i18next";
 import { readTextFile } from "@tauri-apps/plugin-fs";
-import { MarkingCharacteristicsStore } from "@/lib/stores/MarkingCharacteristics/MarkingCharacteristics";
-import { MarkingCharacteristicsExportObject } from "@/components/dialogs/marking-characteristics/exportMarkingCharacteristicsWithDialog";
+import { MarkingTypesStore } from "@/lib/stores/MarkingTypes/MarkingTypes";
 import { validateFileData } from "@/lib/utils/viewport/loadMarkingsData";
 import { WORKING_MODE } from "@/views/selectMode";
 import { WorkingModeStore } from "@/lib/stores/WorkingMode";
+import { MarkingTypesExportObject } from "@/components/dialogs/marking-types/exportMarkingTypesWithDialog";
 
-export async function loadMarkingCharacteristicsData(filePath: string) {
+export async function loadMarkingTypesData(filePath: string) {
     const fileContentString = await readTextFile(filePath);
     const fileContentJson = JSON.parse(
         fileContentString
-    ) as MarkingCharacteristicsExportObject;
+    ) as MarkingTypesExportObject;
     if (!validateFileData(fileContentJson)) {
         showErrorDialog("Invalid markings data file");
         return;
@@ -28,7 +28,7 @@ export async function loadMarkingCharacteristicsData(filePath: string) {
     if (fileContentJson.metadata.software.version !== appVersion) {
         const confirmed = await confirmFileSelectionDialog(
             t(
-                "Marking characteristics were exported from a different version of the application ({{version}}). Loading it might not work.\n\nAre you sure you want to load it?",
+                "Marking types were exported from a different version of the application ({{version}}). Loading it might not work.\n\nAre you sure you want to load it?",
                 {
                     ns: "dialog",
                     version: fileContentJson.metadata.software.version,
@@ -46,7 +46,7 @@ export async function loadMarkingCharacteristicsData(filePath: string) {
     const workingModesFromData =
         Array.from(
             new Set(
-                fileContentJson.data.markingCharacteristics
+                fileContentJson.data.markingTypes
                     ?.map(item => item.category)
                     .flat()
             )
@@ -60,29 +60,29 @@ export async function loadMarkingCharacteristicsData(filePath: string) {
     ) {
         showErrorDialog(
             t(
-                "You are trying to load marking characteristics for a non-existing working mode.",
+                "You are trying to load marking types for a non-existing working mode.",
                 { ns: "dialog" }
             )
         );
         return;
     }
 
-    const characteristics = fileContentJson.data.markingCharacteristics;
+    const types = fileContentJson.data.markingTypes;
 
-    const conflicts = MarkingCharacteristicsStore.actions.characteristics
-        .getConflicts(characteristics)
-        .map(conflict => conflict.characteristicName)
+    const conflicts = MarkingTypesStore.actions.types
+        .getConflicts(types)
+        .map(conflict => conflict.name)
         .join(", ");
 
     if (conflicts.length > 0) {
         const confirmed = await confirmFileSelectionDialog(
             t(
-                "The imported marking characteristics have conflicts with the existing ones:\n{{conflicts}}\n\nDo you want to overwrite them?",
+                "The imported marking types have conflicts with the existing ones:\n{{conflicts}}\n\nDo you want to overwrite them?",
                 { ns: "dialog", conflicts }
             ),
             {
                 kind: "warning",
-                title: t("Overwrite marking characteristics?", {
+                title: t("Overwrite marking types?", {
                     ns: "dialog",
                 }),
             }
@@ -94,18 +94,16 @@ export async function loadMarkingCharacteristicsData(filePath: string) {
         WorkingModeStore.actions.setWorkingMode(workingModesFromData[0]);
     }
 
-    MarkingCharacteristicsStore.actions.characteristics.addMany(
-        characteristics
-    );
+    MarkingTypesStore.actions.types.addMany(types);
 }
 
-export async function importMarkingCharacteristicsWithDialog() {
+export async function importMarkingTypesWithDialog() {
     try {
         const appInstallDir = await resourceDir();
         const presetsPath = `${appInstallDir}/presets/`;
 
         const filePath = await openFileSelectionDialog({
-            title: t("Import marking characteristics", {
+            title: t("Import marking types", {
                 ns: "tooltip",
             }),
             filters: [
@@ -122,7 +120,7 @@ export async function importMarkingCharacteristicsWithDialog() {
 
         if (filePath === null) return;
 
-        await loadMarkingCharacteristicsData(filePath);
+        await loadMarkingTypesData(filePath);
     } catch (error) {
         showErrorDialog(error);
     }

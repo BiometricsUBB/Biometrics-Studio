@@ -18,15 +18,15 @@ const d: Dictionary = {
                     bounding_box: "Bounding box",
                 },
             },
-            characteristicId: "Characteristic ID",
+            typeId: "Type ID",
         },
     },
-    MarkingCharacteristic: {
-        Name: "Marking characteristic",
+    MarkingType: {
+        Name: "Marking type",
         Keys: {
             id: "ID",
             displayName: "Local name",
-            characteristicName: "Characteristic",
+            name: "Type",
             markingClass: "Marking class",
             category: "Category",
             backgroundColor: "Background color",

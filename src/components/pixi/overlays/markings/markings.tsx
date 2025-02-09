@@ -2,15 +2,15 @@ import { Graphics } from "@pixi/react";
 import { Graphics as PixiGraphics } from "pixi.js";
 import { memo, useCallback } from "react";
 import { MarkingsStore } from "@/lib/stores/Markings";
-import { MarkingBase } from "@/lib/markings/MarkingBase";
+import { MarkingClass } from "@/lib/markings/MarkingClass";
 import { ShallowViewportStore } from "@/lib/stores/ShallowViewport";
 import { CanvasToolbarStore } from "@/lib/stores/CanvasToolbar";
-import { MarkingCharacteristicsStore } from "@/lib/stores/MarkingCharacteristics/MarkingCharacteristics";
+import { MarkingTypesStore } from "@/lib/stores/MarkingTypes/MarkingTypes";
 import { CANVAS_ID } from "../../canvas/hooks/useCanvasContext";
 import { drawMarking } from "./marking.utils";
 
 export type MarkingsProps = {
-    markings: MarkingBase[];
+    markings: MarkingClass[];
     canvasId: CANVAS_ID;
     alpha?: number;
 };
@@ -42,9 +42,7 @@ export const Markings = memo(({ canvasId, markings, alpha }: MarkingsProps) => {
         state => state.selectedMarkingLabel
     );
 
-    const markingCharacteristics = MarkingCharacteristicsStore.use(
-        state => state.characteristics
-    );
+    const markingTypes = MarkingTypesStore.use(state => state.types);
 
     const drawMarkings = useCallback(
         (g: PixiGraphics) => {
@@ -64,9 +62,7 @@ export const Markings = memo(({ canvasId, markings, alpha }: MarkingsProps) => {
                     markingsContainer as PixiGraphics,
                     selectedMarkingLabel === marking.label,
                     marking,
-                    markingCharacteristics.find(
-                        x => x.id === marking.characteristicId
-                    )!,
+                    markingTypes.find(t => t.id === marking.typeId)!,
                     viewportWidthRatio,
                     viewportHeightRatio,
                     showMarkingLabels
@@ -84,7 +80,7 @@ export const Markings = memo(({ canvasId, markings, alpha }: MarkingsProps) => {
             markings,
             selectedMarkingLabel,
             showMarkingLabels,
-            markingCharacteristics,
+            markingTypes,
         ]
     );
 

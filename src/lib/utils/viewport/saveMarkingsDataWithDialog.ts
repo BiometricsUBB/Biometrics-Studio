@@ -15,10 +15,10 @@ import { BaseTexture, Sprite } from "pixi.js";
 import { getOppositeCanvasId } from "@/components/pixi/canvas/utils/get-opposite-canvas-id";
 import { getCanvas } from "@/components/pixi/canvas/hooks/useCanvas";
 import { basename } from "@tauri-apps/api/path";
-import { MarkingBase } from "@/lib/markings/MarkingBase";
+import { MarkingClass } from "@/lib/markings/MarkingClass";
 import { RayMarking } from "@/lib/markings/RayMarking";
 import { LineSegmentMarking } from "@/lib/markings/LineSegmentMarking";
-import { MarkingCharacteristicsStore } from "@/lib/stores/MarkingCharacteristics/MarkingCharacteristics";
+import { MarkingTypesStore } from "@/lib/stores/MarkingTypes/MarkingTypes";
 import { WorkingModeStore } from "@/lib/stores/WorkingMode";
 import { WORKING_MODE } from "@/views/selectMode";
 import { BoundingBoxMarking } from "@/lib/markings/BoundingBoxMarking";
@@ -44,17 +44,17 @@ export type ExportObject = {
         image: ImageInfo | null;
         compared_image: ImageInfo | null;
         workingMode: WORKING_MODE;
-        characteristics: {
-            characteristicId: string;
-            characteristicName: string;
+        types: {
+            id: string;
+            name: string;
         }[];
     };
     data: {
         markings: {
-            label: MarkingBase["label"];
-            markingClass: MarkingBase["markingClass"];
-            origin: MarkingBase["origin"];
-            characteristicId: MarkingBase["characteristicId"];
+            label: MarkingClass["label"];
+            markingClass: MarkingClass["markingClass"];
+            origin: MarkingClass["origin"];
+            typeId: MarkingClass["typeId"];
             angleRad?: RayMarking["angleRad"];
             endpoint?:
                 | LineSegmentMarking["endpoint"]
@@ -105,22 +105,22 @@ async function getData(
             image: getImageData(picture),
             compared_image: getImageData(oppositePicture),
             workingMode: workingMode!,
-            characteristics: MarkingCharacteristicsStore.state.characteristics
+            types: MarkingTypesStore.state.types
                 .filter(
-                    c =>
-                        MarkingCharacteristicsStore.actions.characteristics.checkIfCharacteristicIsInUse(
-                            c.id,
+                    t =>
+                        MarkingTypesStore.actions.types.checkIfTypeIsInUse(
+                            t.id,
                             CANVAS_ID.LEFT
                         ) ||
-                        MarkingCharacteristicsStore.actions.characteristics.checkIfCharacteristicIsInUse(
-                            c.id,
+                        MarkingTypesStore.actions.types.checkIfTypeIsInUse(
+                            t.id,
                             CANVAS_ID.RIGHT
                         )
                 )
                 .map(c => {
                     return {
-                        characteristicId: c.id,
-                        characteristicName: c.characteristicName,
+                        id: c.id,
+                        name: c.name,
                     };
                 }),
         },

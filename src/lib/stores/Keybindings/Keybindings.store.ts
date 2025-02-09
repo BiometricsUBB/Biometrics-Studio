@@ -3,24 +3,24 @@ import { createJSONStorage, devtools, persist } from "zustand/middleware";
 import { WORKING_MODE } from "@/views/selectMode";
 import { createStore, Store } from "@tauri-apps/plugin-store";
 import { tauriStorage } from "@/lib/stores/tauri-storage-adapter.helpers";
-import { MarkingCharacteristic } from "@/lib/markings/MarkingCharacteristic";
+import { MarkingType } from "@/lib/markings/MarkingType";
 import { Immer, produceCallback } from "../immer.helpers";
 
 const STORE_NAME = "keybindings";
 const STORE_FILE: Store = await createStore(`${STORE_NAME}.dat`);
 
-export type CharacteristicKeybinding = {
+export type TypeKeybinding = {
     workingMode: WORKING_MODE;
     boundKey: string;
-    characteristicId: MarkingCharacteristic["id"];
+    typeId: MarkingType["id"];
 };
 
 type State = {
-    characteristicsKeybindings: CharacteristicKeybinding[];
+    typesKeybindings: TypeKeybinding[];
 };
 
 const INITIAL_STATE: State = {
-    characteristicsKeybindings: [],
+    typesKeybindings: [],
 };
 
 const useStore = create<Immer<State>>()(

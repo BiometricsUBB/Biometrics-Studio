@@ -1,9 +1,6 @@
 /* eslint-disable no-param-reassign */
 import { confirm } from "@tauri-apps/plugin-dialog";
-import {
-    _useKeybindingsStore,
-    CharacteristicKeybinding,
-} from "./Keybindings.store";
+import { _useKeybindingsStore, TypeKeybinding } from "./Keybindings.store";
 
 class StoreClass {
     readonly use = _useKeybindingsStore;
@@ -13,15 +10,14 @@ class StoreClass {
     }
 
     readonly actions = {
-        characteristicsKeybindings: {
-            add: async (keybinding: CharacteristicKeybinding) => {
+        typesKeybindings: {
+            add: async (keybinding: TypeKeybinding) => {
                 // Check if keybinding for key and working mode already exists
-                const keybindingExists =
-                    this.state.characteristicsKeybindings.some(
-                        x =>
-                            x.boundKey === keybinding.boundKey &&
-                            x.workingMode === keybinding.workingMode
-                    );
+                const keybindingExists = this.state.typesKeybindings.some(
+                    x =>
+                        x.boundKey === keybinding.boundKey &&
+                        x.workingMode === keybinding.workingMode
+                );
 
                 // If key is already bound for this working mode, confirm
                 if (keybindingExists) {
@@ -38,36 +34,31 @@ class StoreClass {
 
                 // Update the state
                 this.state.set(draft => {
-                    draft.characteristicsKeybindings =
-                        draft.characteristicsKeybindings.filter(
-                            x =>
-                                // Remove if characteristicId AND workingMode match
-                                !(
-                                    x.characteristicId ===
-                                        keybinding.characteristicId &&
-                                    x.workingMode === keybinding.workingMode
-                                ) &&
-                                // Remove if boundKey AND workingMode match
-                                !(
-                                    x.boundKey === keybinding.boundKey &&
-                                    x.workingMode === keybinding.workingMode
-                                )
-                        );
-                    draft.characteristicsKeybindings.push(keybinding);
+                    draft.typesKeybindings = draft.typesKeybindings.filter(
+                        x =>
+                            // Remove if typeId AND workingMode match
+                            !(
+                                x.typeId === keybinding.typeId &&
+                                x.workingMode === keybinding.workingMode
+                            ) &&
+                            // Remove if boundKey AND workingMode match
+                            !(
+                                x.boundKey === keybinding.boundKey &&
+                                x.workingMode === keybinding.workingMode
+                            )
+                    );
+                    draft.typesKeybindings.push(keybinding);
                 });
             },
             remove: (
-                characteristicId: CharacteristicKeybinding["characteristicId"],
-                mode: CharacteristicKeybinding["workingMode"]
+                typeId: TypeKeybinding["typeId"],
+                mode: TypeKeybinding["workingMode"]
             ) => {
                 this.state.set(draft => {
-                    // Remove all bindings for this characteristicId and mode
-                    draft.characteristicsKeybindings =
-                        draft.characteristicsKeybindings.filter(
-                            x =>
-                                x.characteristicId !== characteristicId ||
-                                x.workingMode !== mode
-                        );
+                    // Remove all bindings for this typeId and mode
+                    draft.typesKeybindings = draft.typesKeybindings.filter(
+                        x => x.typeId !== typeId || x.workingMode !== mode
+                    );
                 });
             },
         },

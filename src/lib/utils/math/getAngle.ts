@@ -1,4 +1,4 @@
-import { Point } from "@/lib/markings/MarkingBase";
+import { Point } from "@/lib/markings/Point";
 
 export const getAngle = (pos1: Point, pos2: Point) => {
     const unboundAngle =

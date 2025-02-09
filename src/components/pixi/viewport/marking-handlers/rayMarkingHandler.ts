@@ -11,10 +11,10 @@ export class RayMarkingHandler extends MarkingHandler {
 
     constructor(
         plugin: MarkingModePlugin,
-        characteristicId: string,
+        typeId: string,
         startEvent: FederatedPointerEvent
     ) {
-        super(plugin, characteristicId, startEvent);
+        super(plugin, typeId, startEvent);
         this.initFirstStage(startEvent);
     }
 
@@ -24,7 +24,7 @@ export class RayMarkingHandler extends MarkingHandler {
             new RayMarking(
                 markingsStore.actions.labelGenerator.getLabel(),
                 getNormalizedMousePosition(e, viewport),
-                this.characteristicId,
+                this.typeId,
                 0
             )
         );

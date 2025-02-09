@@ -1,20 +1,9 @@
 import { immerable } from "immer";
+import { MarkingType } from "@/lib/markings/MarkingType";
+import { MARKING_CLASS } from "@/lib/markings/MARKING_CLASS";
+import { Point } from "@/lib/markings/Point";
 
-/* eslint-disable no-param-reassign */
-
-export enum MARKING_CLASS {
-    POINT = "point",
-    RAY = "ray",
-    LINE_SEGMENT = "line_segment",
-    BOUNDING_BOX = "bounding_box",
-}
-
-export interface Point {
-    x: number;
-    y: number;
-}
-
-export abstract class MarkingBase {
+export abstract class MarkingClass {
     [immerable] = true;
 
     public abstract readonly markingClass: MARKING_CLASS;
@@ -24,11 +13,11 @@ export abstract class MarkingBase {
     protected constructor(
         public label: number,
         public origin: Point,
-        public characteristicId: string
+        public typeId: MarkingType["id"]
     ) {
         this.label = label;
         this.origin = origin;
-        this.characteristicId = characteristicId;
+        this.typeId = typeId;
     }
 
     public calculateOriginViewportPosition(
