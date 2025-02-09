@@ -8,58 +8,89 @@ import {
     DialogTrigger,
 } from "@/components/ui/dialog";
 import { cn } from "@/lib/utils/shadcn";
-import { KeybindingsStore } from "@/lib/stores/Keybindings";
-import { MarkingCharacteristic } from "@/lib/markings/MarkingCharacteristic";
-import { WORKING_MODE } from "@/views/selectMode";
 
 interface KeyCaptureDialogProps {
-    mode: WORKING_MODE;
-    boundKey: string | undefined;
-    characteristicId: MarkingCharacteristic["id"];
+    // Current bound key to display
+    boundKey?: string;
+
+    // Custom validation function that returns error message if invalid
+    validateKey?: (key: string) => string | undefined;
+
+    // Handlers for key operations
+    onKeyBind?: (key: string) => void | Promise<void>;
+    onKeyUnbind?: () => void | Promise<void>;
+
+    // Optional custom trigger and title content
+    triggerContent?: React.ReactNode;
+    dialogTitle?: React.ReactNode;
+
+    // Optional className for trigger button
+    triggerClassName?: string;
 }
 
-function CharacteristicsKeyCaptureDialog({
-    mode,
+function KeyCaptureDialog({
     boundKey,
-    characteristicId,
+    validateKey = () => undefined,
+    onKeyBind,
+    onKeyUnbind,
+    triggerContent,
+    dialogTitle,
+    triggerClassName,
 }: KeyCaptureDialogProps) {
     const [isOpen, setIsOpen] = useState(false);
     const [error, setError] = useState("");
     const [isShaking, setIsShaking] = useState(false);
-    const { add, remove } = KeybindingsStore.actions.characteristicsKeybindings;
 
-    const handleKeyPress = (event: React.KeyboardEvent<HTMLDivElement>) => {
+    const handleKeyPress = async (
+        event: React.KeyboardEvent<HTMLDivElement>
+    ) => {
         const { key } = event;
-        if (/^[0-9]$/.test(key)) {
+
+        if (key === "Delete" && onKeyUnbind) {
+            await onKeyUnbind();
             setIsOpen(false);
             setError("");
-            add({
-                workingMode: mode,
-                boundKey: key,
-                characteristicId,
-            });
-        } else if (key === "Delete") {
-            setIsOpen(false);
-            setError("");
-            remove(characteristicId, mode);
-        } else {
-            setError(`'${key}' is not a digit`);
+            return;
+        }
+
+        const validationError = validateKey(key);
+        if (validationError) {
+            setError(validationError);
             setIsShaking(true);
             setTimeout(() => setIsShaking(false), 500);
+            return;
+        }
+
+        if (onKeyBind) {
+            await onKeyBind(key);
+            setIsOpen(false);
+            setError("");
         }
     };
+
+    const defaultTitle = (
+        <>
+            <span>Press a key</span>
+            {onKeyUnbind && (
+                <>
+                    <br />
+                    <span>Press Del to remove Keybinding</span>
+                </>
+            )}
+        </>
+    );
 
     return (
         <Dialog open={isOpen} onOpenChange={setIsOpen}>
             <DialogTrigger
                 title="Keybinding"
-                className={cn("m-auto")}
+                className={cn("m-auto", triggerClassName)}
                 onClick={() => {
                     setIsOpen(true);
                     setError("");
                 }}
             >
-                {boundKey ?? "none"}
+                {triggerContent ?? boundKey ?? "none"}
             </DialogTrigger>
 
             <DialogPortal>
@@ -72,11 +103,7 @@ function CharacteristicsKeyCaptureDialog({
                     onKeyDown={handleKeyPress}
                     tabIndex={-1}
                 >
-                    <DialogTitle>
-                        <span>Press a digit (0-9)</span>
-                        <br />
-                        <span>Press Del to remove keybinding</span>
-                    </DialogTitle>
+                    <DialogTitle>{dialogTitle ?? defaultTitle}</DialogTitle>
 
                     {error && (
                         <div
@@ -92,4 +119,4 @@ function CharacteristicsKeyCaptureDialog({
     );
 }
 
-export default CharacteristicsKeyCaptureDialog;
+export default KeyCaptureDialog;

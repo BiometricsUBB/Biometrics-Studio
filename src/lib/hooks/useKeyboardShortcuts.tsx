@@ -1,4 +1,4 @@
-import { KeybindingsStore } from "@/lib/stores/Keybindings";
+import { KeybindingsStore } from "src/lib/stores/Keybindings";
 import { useWorkingModeStore } from "@/lib/stores/WorkingMode";
 import { MarkingCharacteristicsStore } from "@/lib/stores/MarkingCharacteristics/MarkingCharacteristics";
 import {
@@ -14,7 +14,9 @@ export const useKeyboardShortcuts = () => {
         actions.settings;
 
     const workingMode = useWorkingModeStore(state => state.workingMode);
-    const keybindings = KeybindingsStore.use(state => state.keybindings);
+    const keybindings = KeybindingsStore.use(
+        state => state.characteristicsKeybindings
+    );
 
     const { setCursorMode } = cursorActions;
     const { toggleLockedViewport, toggleLockScaleSync } = viewportActions;
@@ -35,9 +37,11 @@ export const useKeyboardShortcuts = () => {
 
     const handleKeyDown = (key: string) => {
         const characteristicId = keybindings.find(
-            binding =>
-                binding.boundKey === key && binding.workingMode === workingMode
+            keybinding =>
+                keybinding.boundKey === key &&
+                keybinding.workingMode === workingMode
         )?.characteristicId;
+
         if (characteristicId && workingMode) {
             const characteristicExists =
                 MarkingCharacteristicsStore.state.characteristics.some(
@@ -47,7 +51,10 @@ export const useKeyboardShortcuts = () => {
                 );
 
             if (!characteristicExists) {
-                KeybindingsStore.actions.remove(characteristicId, workingMode);
+                KeybindingsStore.actions.characteristicsKeybindings.remove(
+                    characteristicId,
+                    workingMode
+                );
                 return;
             }
 

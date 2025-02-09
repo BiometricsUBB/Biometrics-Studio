@@ -9,8 +9,8 @@ import { ICON, IS_DEV_ENVIRONMENT } from "@/lib/utils/const";
 import { Toggle } from "@/components/ui/toggle";
 import { CANVAS_ID } from "@/components/pixi/canvas/hooks/useCanvasContext";
 import { WorkingModeStore } from "@/lib/stores/WorkingMode";
-import CharacteristicsKeyCaptureDialog from "@/components/ui/characteristics-key-capture-dialog";
-import { KeybindingsStore } from "@/lib/stores/Keybindings";
+import CharacteristicsKeybinding from "@/components/dialogs/marking-characteristics/characteristics-keybinding";
+import { KeybindingsStore } from "src/lib/stores/Keybindings";
 
 function MarkingCharacteristicsTable() {
     const workingMode = WorkingModeStore.state.workingMode!;
@@ -171,7 +171,7 @@ function MarkingCharacteristicsTable() {
                                 />
                             </TableCell>
                             <TableCell>
-                                <CharacteristicsKeyCaptureDialog
+                                <CharacteristicsKeybinding
                                     boundKey={
                                         keybindings.find(
                                             k => k.characteristicId === item.id
