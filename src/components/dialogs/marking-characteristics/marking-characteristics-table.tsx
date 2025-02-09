@@ -10,12 +10,13 @@ import { Toggle } from "@/components/ui/toggle";
 import { CANVAS_ID } from "@/components/pixi/canvas/hooks/useCanvasContext";
 import { WorkingModeStore } from "@/lib/stores/WorkingMode";
 import KeyCaptureDialog from "@/components/ui/key-capture-dialog";
+import { KeybindingsStore } from "@/lib/stores/Keybindings";
 
 function MarkingCharacteristicsTable() {
+    const workingMode = WorkingModeStore.state.workingMode!;
+
     const characteristics = MarkingCharacteristicsStore.use(state =>
-        state.characteristics.filter(
-            c => c.category === WorkingModeStore.state.workingMode
-        )
+        state.characteristics.filter(c => c.category === workingMode)
     );
 
     const setCharacteristic = useDebouncedCallback(
@@ -25,6 +26,10 @@ function MarkingCharacteristicsTable() {
                 value
             ),
         10
+    );
+
+    const keybindings = KeybindingsStore.use(state =>
+        state.keybindings.filter(k => k.workingMode === workingMode)
     );
 
     return (
@@ -164,7 +169,15 @@ function MarkingCharacteristicsTable() {
                                 />
                             </TableCell>
                             <TableCell>
-                                <KeyCaptureDialog />
+                                <KeyCaptureDialog
+                                    boundKey={
+                                        keybindings.find(
+                                            k => k.characteristicId === item.id
+                                        )?.boundKey ?? undefined
+                                    }
+                                    mode={workingMode}
+                                    characteristicId={item.id}
+                                />
                             </TableCell>
                             {/*  The option to delete characteristics in the UI has been disabled for users. 
                             However, this functionality remains unchanged and available in the developer version. 

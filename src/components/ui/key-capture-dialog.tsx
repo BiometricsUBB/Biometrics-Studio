@@ -8,19 +8,40 @@ import {
     DialogTrigger,
 } from "@/components/ui/dialog";
 import { cn } from "@/lib/utils/shadcn";
+import { KeybindingsStore } from "@/lib/stores/Keybindings";
+import { MarkingCharacteristic } from "@/lib/markings/MarkingCharacteristic";
+import { WORKING_MODE } from "@/views/selectMode";
 
-function KeyCaptureDialog() {
-    const [capturedKey, setCapturedKey] = useState<string | null>(null);
+interface KeyCaptureDialogProps {
+    mode: WORKING_MODE;
+    boundKey: string | undefined;
+    characteristicId: MarkingCharacteristic["id"];
+}
+
+function KeyCaptureDialog({
+    mode,
+    boundKey,
+    characteristicId,
+}: KeyCaptureDialogProps) {
     const [isOpen, setIsOpen] = useState(false);
     const [error, setError] = useState("");
     const [isShaking, setIsShaking] = useState(false);
+    const { addKeybinding, removeKeybinding } = KeybindingsStore.actions;
 
     const handleKeyPress = (event: React.KeyboardEvent<HTMLDivElement>) => {
         const { key } = event;
         if (/^[0-9]$/.test(key)) {
-            setCapturedKey(key);
             setIsOpen(false);
             setError("");
+            addKeybinding({
+                workingMode: mode,
+                boundKey: key,
+                characteristicId,
+            });
+        } else if (key === "Delete") {
+            setIsOpen(false);
+            setError("");
+            removeKeybinding(characteristicId, mode);
         } else {
             setError(`'${key}' is not a digit`);
             setIsShaking(true);
@@ -35,11 +56,10 @@ function KeyCaptureDialog() {
                 className={cn("m-auto")}
                 onClick={() => {
                     setIsOpen(true);
-                    setCapturedKey(null);
                     setError("");
                 }}
             >
-                {capturedKey ?? "1"}
+                {boundKey ?? "none"}
             </DialogTrigger>
 
             <DialogPortal>
@@ -52,7 +72,11 @@ function KeyCaptureDialog() {
                     onKeyDown={handleKeyPress}
                     tabIndex={-1}
                 >
-                    <DialogTitle>Press a digit (0-9)</DialogTitle>
+                    <DialogTitle>
+                        <span>Press a digit (0-9)</span>
+                        <br />
+                        <span>Press Del to remove keybinding</span>
+                    </DialogTitle>
 
                     {error && (
                         <div

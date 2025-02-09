@@ -178,7 +178,7 @@ export function GlobalToolbar({ className, ...props }: GlobalToolbarProps) {
                 >
                     <ToggleGroupItem
                         value={MARKING_CLASS.POINT}
-                        title={`${t("Marking.Keys.markingClass.Keys.point", { ns: "object" })} (1)`}
+                        title={`${t("Marking.Keys.markingClass.Keys.point", { ns: "object" })}`}
                         disabled={
                             !availableMarkingCharacteristicsForWorkingMode.some(
                                 x => x.markingClass === MARKING_CLASS.POINT
@@ -198,7 +198,7 @@ export function GlobalToolbar({ className, ...props }: GlobalToolbarProps) {
                     </ToggleGroupItem>
                     <ToggleGroupItem
                         value={MARKING_CLASS.RAY}
-                        title={`${t("Marking.Keys.markingClass.Keys.ray", { ns: "object" })} (2)`}
+                        title={`${t("Marking.Keys.markingClass.Keys.ray", { ns: "object" })}`}
                         onClick={() => {
                             DashboardToolbarStore.actions.settings.marking.setSelectedMarkingClass(
                                 MARKING_CLASS.RAY
@@ -217,7 +217,7 @@ export function GlobalToolbar({ className, ...props }: GlobalToolbarProps) {
                     </ToggleGroupItem>
                     <ToggleGroupItem
                         value={MARKING_CLASS.LINE_SEGMENT}
-                        title={`${t("Marking.Keys.markingClass.Keys.line_segment", { ns: "object" })} (3)`}
+                        title={`${t("Marking.Keys.markingClass.Keys.line_segment", { ns: "object" })}`}
                         onClick={() => {
                             DashboardToolbarStore.actions.settings.marking.setSelectedMarkingClass(
                                 MARKING_CLASS.LINE_SEGMENT
@@ -238,7 +238,7 @@ export function GlobalToolbar({ className, ...props }: GlobalToolbarProps) {
                     </ToggleGroupItem>
                     <ToggleGroupItem
                         value={MARKING_CLASS.BOUNDING_BOX}
-                        title={`${t("Marking.Keys.markingClass.Keys.bounding_box", { ns: "object" })} (4)`}
+                        title={`${t("Marking.Keys.markingClass.Keys.bounding_box", { ns: "object" })}`}
                         onClick={() => {
                             DashboardToolbarStore.actions.settings.marking.setSelectedMarkingClass(
                                 MARKING_CLASS.BOUNDING_BOX
