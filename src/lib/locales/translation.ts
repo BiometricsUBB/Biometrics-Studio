@@ -86,3 +86,12 @@ export type i18nDialog = Recordify<
     | "Please select your working mode"
     | "You are trying to load marking characteristics for a non-existing working mode."
 >;
+
+export type i18nKeybindings = Recordify<
+    | "Keybinding"
+    | "None"
+    | "Press a key"
+    | "Press a numeric key (0-9)"
+    | "Press 'Del' to remove keybinding"
+    | "'{{key}}' is not a  numeric key"
+>;

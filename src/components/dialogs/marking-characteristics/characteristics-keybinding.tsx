@@ -3,6 +3,7 @@ import { KeybindingsStore } from "@/lib/stores/Keybindings";
 import { MarkingCharacteristic } from "@/lib/markings/MarkingCharacteristic";
 import { WORKING_MODE } from "@/views/selectMode";
 import KeyCaptureDialog from "@/components/ui/key-capture-dialog";
+import { useTranslation } from "react-i18next";
 
 interface CharacteristicsKeyCaptureDialogProps {
     mode: WORKING_MODE;
@@ -15,11 +16,16 @@ function CharacteristicsKeybinding({
     boundKey,
     characteristicId,
 }: CharacteristicsKeyCaptureDialogProps) {
+    const { t } = useTranslation();
+
     const { add, remove } = KeybindingsStore.actions.characteristicsKeybindings;
 
     const validateKey = (key: string) => {
         if (!/^[0-9]$/.test(key)) {
-            return `'${key}' is not a digit`;
+            return t("'{{key}}' is not a  numeric key", {
+                ns: "keybindings",
+                key,
+            });
         }
         return undefined;
     };
@@ -44,9 +50,15 @@ function CharacteristicsKeybinding({
             onKeyUnbind={handleKeyUnbind}
             dialogTitle={
                 <>
-                    <span>Press a digit (0-9)</span>
+                    <span>
+                        {t("Press a numeric key (0-9)", { ns: "keybindings" })}
+                    </span>
                     <br />
-                    <span>Press Del to remove keybinding</span>
+                    <span>
+                        {t("Press 'Del' to remove keybinding", {
+                            ns: "keybindings",
+                        })}
+                    </span>
                 </>
             }
         />

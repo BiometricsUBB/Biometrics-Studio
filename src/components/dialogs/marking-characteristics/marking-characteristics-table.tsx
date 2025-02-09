@@ -73,7 +73,7 @@ function MarkingCharacteristicsTable() {
                             })}
                         </TableHead>
                         <TableHead className="text-center text-card-foreground">
-                            Keybinding
+                            {t("Keybinding", { ns: "keybindings" })}
                         </TableHead>
                         {IS_DEV_ENVIRONMENT && <TableHead />}
                     </TableRow>
