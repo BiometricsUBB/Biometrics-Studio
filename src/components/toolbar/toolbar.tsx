@@ -53,6 +53,15 @@ export function GlobalToolbar({ className, ...props }: GlobalToolbarProps) {
         )
     );
 
+    if (
+        !selectedCharacteristic &&
+        availableMarkingCharacteristicsForWorkingMode.length
+    ) {
+        MarkingCharacteristicsStore.actions.selectedCharacteristic.set(
+            availableMarkingCharacteristicsForWorkingMode[0]!.id
+        );
+    }
+
     return (
         <div
             className={cn(
@@ -115,7 +124,8 @@ export function GlobalToolbar({ className, ...props }: GlobalToolbarProps) {
                             !availableMarkingCharacteristicsForWorkingMode.length
                         }
                     >
-                        {selectedCharacteristic?.displayName}
+                        {selectedCharacteristic?.displayName ??
+                            t("None", { ns: "keybindings" })}
                     </DropdownMenuTrigger>
                     <DropdownMenuPortal>
                         <DropdownMenuContent>

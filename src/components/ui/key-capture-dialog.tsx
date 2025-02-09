@@ -8,6 +8,7 @@ import {
     DialogTrigger,
 } from "@/components/ui/dialog";
 import { cn } from "@/lib/utils/shadcn";
+import { useTranslation } from "react-i18next";
 
 interface KeyCaptureDialogProps {
     // Current bound key to display
@@ -37,6 +38,7 @@ function KeyCaptureDialog({
     dialogTitle,
     triggerClassName,
 }: KeyCaptureDialogProps) {
+    const { t } = useTranslation();
     const [isOpen, setIsOpen] = useState(false);
     const [error, setError] = useState("");
     const [isShaking, setIsShaking] = useState(false);
@@ -70,11 +72,15 @@ function KeyCaptureDialog({
 
     const defaultTitle = (
         <>
-            <span>Press a key</span>
+            <span>{t("Press a key", { ns: "keybindings" })}</span>
             {onKeyUnbind && (
                 <>
                     <br />
-                    <span>Press Del to remove Keybinding</span>
+                    <span>
+                        {t("Press 'Del' to remove keybinding", {
+                            ns: "keybindings",
+                        })}
+                    </span>
                 </>
             )}
         </>

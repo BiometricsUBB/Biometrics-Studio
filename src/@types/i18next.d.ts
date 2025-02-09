@@ -1,5 +1,6 @@
 import {
     i18nKeywords,
+    i18nKeybindings,
     i18nCursor,
     i18nObject,
     i18nTooltip,
@@ -11,6 +12,7 @@ declare module "i18next" {
     interface CustomTypeOptions {
         defaultNS: [
             "keywords",
+            "keybindings",
             "cursor",
             "object",
             "tooltip",
@@ -20,6 +22,7 @@ declare module "i18next" {
         ];
         resources: {
             keywords: i18nKeywords;
+            keybindings: i18nKeybindings;
             cursor: i18nCursor;
             object: i18nObject;
             tooltip: i18nTooltip;
