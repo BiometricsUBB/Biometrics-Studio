@@ -8,10 +8,6 @@ repository = ""
 default-run = "biometrics-studio"
 edition = "2021"
 
-[lib]
-name = "biometrics_studio_lib_app"
-crate-type = ["staticlib", "cdylib", "rlib"]
-
 [build-dependencies]
 tauri-build = { version = "2", features = [] }
 
@@ -22,12 +18,13 @@ serde_json = "1"
 tauri-plugin-dialog = "2"
 tauri-plugin-fs = "2.2.0"
 tauri-plugin-single-instance = "=2.0.0"
-tauri-plugin-window-state = "=2.0.0"
+tauri-plugin-window-state = "2.2.1"
 tauri-plugin-store = "2.1.0"
 tauri-runtime = "=2.0.0"
 tauri-runtime-wry = "=2.0.0"
 tauri-plugin = "=2.0.0"
 tauri-build = "=2.0.0"
+tauri-plugin-os = "2"
 
 [features]
 # this feature is used for production builds or when `devPath` points to the filesystem and the built-in dev server is disabled.
