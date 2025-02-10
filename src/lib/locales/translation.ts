@@ -85,6 +85,11 @@ export type i18nDialog = Recordify<
     | "The markings data was created with a different working mode ({{mode}}). Change the working mode to ({{mode}}) to load the data."
     | "Please select your working mode"
     | "You are trying to load marking types for a non-existing working mode."
+    | "No marking types found in the file"
+    | "Marking types imported successfully"
+    | "Marking types exported successfully"
+    | "Error importing marking types"
+    | "Error exporting marking types"
 >;
 
 export type i18nKeybindings = Recordify<
