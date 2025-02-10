@@ -2,11 +2,11 @@ import { createJSONStorage, devtools, persist } from "zustand/middleware";
 import { MarkingType } from "@/lib/markings/MarkingType";
 import { create } from "zustand";
 import { tauriStorage } from "@/lib/stores/tauri-storage-adapter.helpers";
-import { createStore, Store } from "@tauri-apps/plugin-store";
+import { LazyStore } from "@tauri-apps/plugin-store";
 import { Immer, produceCallback } from "../immer.helpers";
 
 const STORE_NAME = "types";
-const STORE_FILE: Store = await createStore(`${STORE_NAME}.dat`);
+const STORE_FILE = new LazyStore(`${STORE_NAME}.dat`);
 
 type State = {
     selectedTypeId: MarkingType["id"] | null;
