@@ -6,21 +6,15 @@ import {
     DashboardToolbarStore,
 } from "@/lib/stores/DashboardToolbar";
 import {
-    CircleArrowOutUpRight,
-    CircleDot,
     Crosshair,
     Hand,
     LockKeyhole,
     LockKeyholeOpen,
     SendToBack,
-    Slash,
-    SquareDashedMousePointer,
 } from "lucide-react";
 import { ICON } from "@/lib/utils/const";
-import { MARKING_CLASS } from "@/lib/markings/MarkingBase";
 import { useTranslation } from "react-i18next";
-import { MarkingCharacteristicsStore } from "@/lib/stores/MarkingCharacteristics/MarkingCharacteristics";
-import { useDebouncedCallback } from "use-debounce";
+import { MarkingTypesStore } from "@/lib/stores/MarkingTypes/MarkingTypes";
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -28,16 +22,10 @@ import {
     DropdownMenuPortal,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import {
-    defaultBackgroundColor,
-    defaultSize,
-    defaultTextColor,
-} from "@/lib/markings/MarkingCharacteristic";
 import { WorkingModeStore } from "@/lib/stores/WorkingMode";
 import Separator from "@/components/toolbar/separator";
 import { ToolbarGroup } from "./group";
 import { ToggleGroup, ToggleGroupItem } from "../ui/toggle-group";
-import { Input } from "../ui/input";
 
 export type GlobalToolbarProps = HTMLAttributes<HTMLDivElement>;
 export function GlobalToolbar({ className, ...props }: GlobalToolbarProps) {
@@ -51,41 +39,19 @@ export function GlobalToolbar({ className, ...props }: GlobalToolbarProps) {
     const { locked: isViewportLocked, scaleSync: isViewportScaleSync } =
         DashboardToolbarStore.use(state => state.settings.viewport);
 
-    const { markingClass: selectedMarkingClass } = DashboardToolbarStore.use(
-        state => state.settings.marking
+    const availableMarkingTypesForWorkingMode = MarkingTypesStore.use(state =>
+        state.types.filter(t => t.category === workingMode)
     );
 
-    const activeCharacteristics = MarkingCharacteristicsStore.use(
-        state => state.activeCharacteristics
+    const selectedMarkingType = MarkingTypesStore.use(state =>
+        state.types.find(t => t.id === state.selectedTypeId)
     );
 
-    const selectedCharacteristic = activeCharacteristics.find(
-        characteristic =>
-            characteristic.markingClass === selectedMarkingClass &&
-            characteristic.category === workingMode
-    );
-
-    const availableMarkingCharacteristicsForWorkingMode =
-        MarkingCharacteristicsStore.use(state =>
-            state.characteristics.filter(
-                characteristic => characteristic.category === workingMode
-            )
+    if (!selectedMarkingType && availableMarkingTypesForWorkingMode.length) {
+        MarkingTypesStore.actions.selectedType.set(
+            availableMarkingTypesForWorkingMode[0]!.id
         );
-
-    const markingClassCharacteristics =
-        availableMarkingCharacteristicsForWorkingMode.filter(
-            characteristic =>
-                characteristic.markingClass === selectedMarkingClass
-        );
-
-    const setCharacteristic = useDebouncedCallback(
-        (id, value) =>
-            MarkingCharacteristicsStore.actions.characteristics.setCharacteristic(
-                id,
-                value
-            ),
-        10
-    );
+    }
 
     return (
         <div
@@ -138,176 +104,35 @@ export function GlobalToolbar({ className, ...props }: GlobalToolbarProps) {
             <Separator />
 
             <ToolbarGroup>
-                {/* Selected characteristic and dropdown menu with existing characteristics */}
+                {/* Selected type and dropdown menu with existing types */}
                 <DropdownMenu>
                     <DropdownMenuTrigger
                         className={cn(
                             "w-36 mr-2 overflow-hidden text-ellipsis whitespace-nowrap",
                             className
                         )}
-                        disabled={!markingClassCharacteristics.length}
+                        disabled={!availableMarkingTypesForWorkingMode.length}
                     >
-                        {selectedCharacteristic?.displayName}
+                        {selectedMarkingType?.displayName ??
+                            t("None", { ns: "keybindings" })}
                     </DropdownMenuTrigger>
                     <DropdownMenuPortal>
                         <DropdownMenuContent>
-                            {markingClassCharacteristics.map(characteristic => (
+                            {availableMarkingTypesForWorkingMode.map(type => (
                                 <DropdownMenuItem
-                                    key={characteristic.id}
+                                    key={type.id}
                                     onClick={() => {
-                                        MarkingCharacteristicsStore.actions.activeCharacteristics.setActiveCharacteristicByMarkingClass(
-                                            selectedMarkingClass,
-                                            characteristic.id,
-                                            workingMode!
+                                        MarkingTypesStore.actions.selectedType.set(
+                                            type.id
                                         );
                                     }}
                                 >
-                                    {characteristic.displayName}
+                                    {type.displayName}
                                 </DropdownMenuItem>
                             ))}
                         </DropdownMenuContent>
                     </DropdownMenuPortal>
                 </DropdownMenu>
-
-                {/* Selected marking class e,g. point */}
-                <ToggleGroup
-                    type="single"
-                    value={selectedCharacteristic?.markingClass ?? undefined}
-                    variant="outline"
-                    size="icon"
-                >
-                    <ToggleGroupItem
-                        value={MARKING_CLASS.POINT}
-                        title={`${t("Marking.Keys.markingClass.Keys.point", { ns: "object" })} (1)`}
-                        disabled={
-                            !availableMarkingCharacteristicsForWorkingMode.some(
-                                x => x.markingClass === MARKING_CLASS.POINT
-                            )
-                        }
-                        onClick={() => {
-                            DashboardToolbarStore.actions.settings.marking.setSelectedMarkingClass(
-                                MARKING_CLASS.POINT
-                            );
-                        }}
-                    >
-                        <CircleDot
-                            className="p-px"
-                            size={ICON.SIZE}
-                            strokeWidth={ICON.STROKE_WIDTH}
-                        />
-                    </ToggleGroupItem>
-                    <ToggleGroupItem
-                        value={MARKING_CLASS.RAY}
-                        title={`${t("Marking.Keys.markingClass.Keys.ray", { ns: "object" })} (2)`}
-                        onClick={() => {
-                            DashboardToolbarStore.actions.settings.marking.setSelectedMarkingClass(
-                                MARKING_CLASS.RAY
-                            );
-                        }}
-                        disabled={
-                            !availableMarkingCharacteristicsForWorkingMode.some(
-                                x => x.markingClass === MARKING_CLASS.RAY
-                            )
-                        }
-                    >
-                        <CircleArrowOutUpRight
-                            size={ICON.SIZE}
-                            strokeWidth={ICON.STROKE_WIDTH}
-                        />
-                    </ToggleGroupItem>
-                    <ToggleGroupItem
-                        value={MARKING_CLASS.LINE_SEGMENT}
-                        title={`${t("Marking.Keys.markingClass.Keys.line_segment", { ns: "object" })} (3)`}
-                        onClick={() => {
-                            DashboardToolbarStore.actions.settings.marking.setSelectedMarkingClass(
-                                MARKING_CLASS.LINE_SEGMENT
-                            );
-                        }}
-                        disabled={
-                            !availableMarkingCharacteristicsForWorkingMode.some(
-                                x =>
-                                    x.markingClass ===
-                                    MARKING_CLASS.LINE_SEGMENT
-                            )
-                        }
-                    >
-                        <Slash
-                            size={ICON.SIZE}
-                            strokeWidth={ICON.STROKE_WIDTH}
-                        />
-                    </ToggleGroupItem>
-                    <ToggleGroupItem
-                        value={MARKING_CLASS.BOUNDING_BOX}
-                        title={`${t("Marking.Keys.markingClass.Keys.bounding_box", { ns: "object" })} (4)`}
-                        onClick={() => {
-                            DashboardToolbarStore.actions.settings.marking.setSelectedMarkingClass(
-                                MARKING_CLASS.BOUNDING_BOX
-                            );
-                        }}
-                        disabled={
-                            !availableMarkingCharacteristicsForWorkingMode.some(
-                                x =>
-                                    x.markingClass ===
-                                    MARKING_CLASS.BOUNDING_BOX
-                            )
-                        }
-                    >
-                        <SquareDashedMousePointer
-                            size={ICON.SIZE}
-                            strokeWidth={ICON.STROKE_WIDTH}
-                        />
-                    </ToggleGroupItem>
-                </ToggleGroup>
-            </ToolbarGroup>
-
-            <Separator />
-
-            {/* Characteristics style e.g. color */}
-            <ToolbarGroup>
-                <Input
-                    className="size-6 cursor-pointer"
-                    title={`${t("MarkingCharacteristic.Keys.backgroundColor", { ns: "object" })}`}
-                    type="color"
-                    value={String(
-                        selectedCharacteristic?.backgroundColor ??
-                            defaultBackgroundColor
-                    )}
-                    disabled={!selectedCharacteristic}
-                    onChange={e => {
-                        setCharacteristic(selectedCharacteristic?.id, {
-                            backgroundColor: e.target.value,
-                        });
-                    }}
-                />
-                <Input
-                    className="size-6 cursor-pointer"
-                    title={`${t("MarkingCharacteristic.Keys.textColor", { ns: "object" })}`}
-                    type="color"
-                    value={String(
-                        selectedCharacteristic?.textColor ?? defaultTextColor
-                    )}
-                    disabled={!selectedCharacteristic}
-                    onChange={e => {
-                        setCharacteristic(selectedCharacteristic?.id, {
-                            textColor: e.target.value,
-                        });
-                    }}
-                />
-                <Input
-                    className="w-10 h-6 !p-0"
-                    min={6}
-                    max={32}
-                    title={`${t("MarkingCharacteristic.Keys.size", { ns: "object" })}`}
-                    type="number"
-                    value={selectedCharacteristic?.size ?? defaultSize}
-                    disabled={!selectedCharacteristic}
-                    variant="outline"
-                    onChange={e => {
-                        setCharacteristic(selectedCharacteristic?.id, {
-                            size: Number(e.target.value),
-                        });
-                    }}
-                />
             </ToolbarGroup>
 
             <Separator />

@@ -6,11 +6,12 @@ import {
 } from "pixi.js";
 import { RayMarking } from "@/lib/markings/RayMarking";
 import { PointMarking } from "@/lib/markings/PointMarking";
-import { MarkingBase, Point } from "@/lib/markings/MarkingBase";
+import { MarkingClass } from "@/lib/markings/MarkingClass";
 import { BitmapText } from "@pixi/text-bitmap";
 import { LineSegmentMarking } from "@/lib/markings/LineSegmentMarking";
-import { MarkingCharacteristic } from "@/lib/markings/MarkingCharacteristic";
+import { MarkingType } from "@/lib/markings/MarkingType";
 import { BoundingBoxMarking } from "@/lib/markings/BoundingBoxMarking";
+import { Point } from "@/lib/markings/Point";
 
 export const getFontName = (fontSize: number) => {
     const FONT_FAMILY_NAME = "Cousine";
@@ -56,7 +57,7 @@ const drawPointMarking = (
     g: PixiGraphics,
     selected: boolean,
     { label }: PointMarking,
-    { backgroundColor, textColor, size }: MarkingCharacteristic,
+    { backgroundColor, textColor, size }: MarkingType,
     relativeOrigin: Point,
     showMarkingLabels?: boolean
 ) => {
@@ -87,7 +88,7 @@ const drawRayMarking = (
     g: PixiGraphics,
     selected: boolean,
     { angleRad, label }: RayMarking,
-    { backgroundColor, textColor, size }: MarkingCharacteristic,
+    { backgroundColor, textColor, size }: MarkingType,
     relativeOrigin: Point,
     showMarkingLabels?: boolean
 ) => {
@@ -136,7 +137,7 @@ const drawLineSegmentMarking = (
     g: PixiGraphics,
     selected: boolean,
     { label }: LineSegmentMarking,
-    { backgroundColor, textColor, size }: MarkingCharacteristic,
+    { backgroundColor, textColor, size }: MarkingType,
     relativeOrigin: Point,
     relativeEndpoint: Point,
     showMarkingLabels?: boolean
@@ -202,7 +203,7 @@ const drawBoundingBoxMarking = (
     g: PixiGraphics,
     selected: boolean,
     { label }: BoundingBoxMarking,
-    { backgroundColor, textColor, size }: MarkingCharacteristic,
+    { backgroundColor, textColor, size }: MarkingType,
     relativeOrigin: Point,
     relativeEndpoint: Point,
     showMarkingLabels?: boolean
@@ -265,8 +266,8 @@ const drawBoundingBoxMarking = (
 export const drawMarking = (
     g: PixiGraphics,
     isSelected: boolean,
-    marking: MarkingBase,
-    markingCharacteristic: MarkingCharacteristic,
+    marking: MarkingClass,
+    markingType: MarkingType,
     viewportWidthRatio: number,
     viewportHeightRatio: number,
     showMarkingLabels?: boolean
@@ -282,7 +283,7 @@ export const drawMarking = (
             g,
             isSelected,
             marking,
-            markingCharacteristic,
+            markingType,
             markingViewportPosition,
             showMarkingLabels
         );
@@ -291,7 +292,7 @@ export const drawMarking = (
             g,
             isSelected,
             marking,
-            markingCharacteristic,
+            markingType,
             markingViewportPosition,
             showMarkingLabels
         );
@@ -300,7 +301,7 @@ export const drawMarking = (
             g,
             isSelected,
             marking,
-            markingCharacteristic,
+            markingType,
             markingViewportPosition,
             marking.calculateEndpointViewportPosition(
                 viewportWidthRatio,
@@ -313,7 +314,7 @@ export const drawMarking = (
             g,
             isSelected,
             marking,
-            markingCharacteristic,
+            markingType,
             markingViewportPosition,
             marking.calculateEndpointViewportPosition(
                 viewportWidthRatio,

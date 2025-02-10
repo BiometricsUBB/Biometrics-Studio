@@ -5,24 +5,22 @@ import {
     MenubarPortal,
     MenubarTrigger,
 } from "@/components/ui/menubar";
-import { t } from "i18next";
 import { WORKING_MODE } from "@/views/selectMode";
 import { MarkingsStore } from "@/lib/stores/Markings";
 import { CANVAS_ID } from "@/components/pixi/canvas/hooks/useCanvasContext";
 import { GlobalStateStore } from "@/lib/stores/GlobalState";
 import { WorkingModeStore } from "@/lib/stores/WorkingMode";
+import { useTranslation } from "react-i18next";
 
 export function ModeMenu() {
+    const { t } = useTranslation();
     const { workingMode, setWorkingMode } = WorkingModeStore.use();
 
     return (
         <MenubarMenu>
             <MenubarTrigger>
                 {t("Working mode")}:{" "}
-                {workingMode
-                    ? workingMode.charAt(0).toUpperCase() +
-                      workingMode.slice(1).toLowerCase()
-                    : ""}
+                {workingMode ? t(workingMode, { ns: "modes" }) : ""}
             </MenubarTrigger>
             <MenubarPortal>
                 <MenubarContent>

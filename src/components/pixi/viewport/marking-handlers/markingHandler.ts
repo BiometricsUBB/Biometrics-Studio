@@ -6,7 +6,7 @@ export abstract class MarkingHandler {
     // eslint-disable-next-line no-useless-constructor
     constructor(
         protected plugin: MarkingModePlugin,
-        protected characteristicId: string,
+        protected typeId: string,
         protected startEvent: FederatedPointerEvent
         // eslint-disable-next-line no-empty-function
     ) {}

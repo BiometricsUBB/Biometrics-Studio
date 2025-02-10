@@ -73,18 +73,6 @@ class StoreClass {
                     );
                 },
             },
-            marking: {
-                setSelectedMarkingClass: (
-                    markingClass: State["settings"]["marking"]["markingClass"]
-                ) => {
-                    this.state.set(draft => {
-                        draft.settings.marking.markingClass = markingClass;
-                    });
-                },
-                getSelectedMarkingClass: () => {
-                    return this.state.settings.marking.markingClass;
-                },
-            },
         },
     };
 

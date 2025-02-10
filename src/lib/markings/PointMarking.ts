@@ -1,11 +1,16 @@
-// eslint-disable-next-line import/no-cycle
-import { MarkingBase, MARKING_CLASS, Point } from "@/lib/markings/MarkingBase";
+import { MarkingClass } from "@/lib/markings/MarkingClass";
+import { MARKING_CLASS } from "@/lib/markings/MARKING_CLASS";
+import { MarkingType } from "@/lib/markings/MarkingType";
 
-export class PointMarking extends MarkingBase {
+export class PointMarking extends MarkingClass {
     readonly markingClass = MARKING_CLASS.POINT;
 
     // eslint-disable-next-line no-useless-constructor
-    constructor(label: number, origin: Point, characteristicId: string) {
-        super(label, origin, characteristicId);
+    constructor(
+        label: MarkingClass["label"],
+        origin: MarkingClass["origin"],
+        typeId: MarkingType["id"]
+    ) {
+        super(label, origin, typeId);
     }
 }

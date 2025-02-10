@@ -1,21 +1,26 @@
-import { LazyStore } from "@tauri-apps/plugin-store";
-import { createJSONStorage, devtools, persist } from "zustand/middleware";
-import { MarkingCharacteristic } from "@/lib/markings/MarkingCharacteristic";
 import { create } from "zustand";
+import { createJSONStorage, devtools, persist } from "zustand/middleware";
+import { LazyStore } from "@tauri-apps/plugin-store";
+import { WORKING_MODE } from "@/views/selectMode";
 import { tauriStorage } from "@/lib/stores/tauri-storage-adapter.helpers";
+import { MarkingType } from "@/lib/markings/MarkingType";
 import { Immer, produceCallback } from "../immer.helpers";
 
-const STORE_NAME = "characteristics";
+const STORE_NAME = "keybindings";
 const STORE_FILE = new LazyStore(`${STORE_NAME}.dat`);
 
+export type TypeKeybinding = {
+    workingMode: WORKING_MODE;
+    boundKey: string;
+    typeId: MarkingType["id"];
+};
+
 type State = {
-    activeCharacteristics: MarkingCharacteristic[];
-    characteristics: MarkingCharacteristic[];
+    typesKeybindings: TypeKeybinding[];
 };
 
 const INITIAL_STATE: State = {
-    activeCharacteristics: [],
-    characteristics: [],
+    typesKeybindings: [],
 };
 
 const useStore = create<Immer<State>>()(
@@ -32,7 +37,4 @@ const useStore = create<Immer<State>>()(
     )
 );
 
-export {
-    useStore as _useMarkingCharacteristicsStore,
-    type State as MarkingCharacteristicsState,
-};
+export { useStore as _useKeybindingsStore, type State as KeybindingsState };

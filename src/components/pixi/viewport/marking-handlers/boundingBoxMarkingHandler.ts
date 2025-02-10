@@ -8,10 +8,10 @@ import { MarkingModePlugin } from "@/components/pixi/viewport/plugins/markingMod
 export class BoundingBoxMarkingHandler extends MarkingHandler {
     constructor(
         plugin: MarkingModePlugin,
-        characteristicId: string,
+        typeId: string,
         startEvent: FederatedPointerEvent
     ) {
-        super(plugin, characteristicId, startEvent);
+        super(plugin, typeId, startEvent);
         this.initMarking(startEvent);
     }
 
@@ -21,7 +21,7 @@ export class BoundingBoxMarkingHandler extends MarkingHandler {
             new BoundingBoxMarking(
                 markingsStore.actions.labelGenerator.getLabel(),
                 getNormalizedMousePosition(e, viewport),
-                this.characteristicId,
+                this.typeId,
                 getNormalizedMousePosition(e, viewport)
             )
         );

@@ -4,8 +4,8 @@ import { t } from "i18next";
 import { writeTextFile } from "@tauri-apps/plugin-fs";
 import { showErrorDialog } from "@/lib/errors/showErrorDialog";
 import { desktopDir, join } from "@tauri-apps/api/path";
-import { MarkingCharacteristic } from "@/lib/markings/MarkingCharacteristic";
-import { MarkingCharacteristicsStore } from "@/lib/stores/MarkingCharacteristics/MarkingCharacteristics";
+import { MarkingType } from "@/lib/markings/MarkingType";
+import { MarkingTypesStore } from "@/lib/stores/MarkingTypes/MarkingTypes";
 import { WorkingModeStore } from "@/lib/stores/WorkingMode";
 
 type SoftwareInfo = {
@@ -13,17 +13,17 @@ type SoftwareInfo = {
     version: string;
 };
 
-export type MarkingCharacteristicsExportObject = {
+export type MarkingTypesExportObject = {
     metadata: {
         software: SoftwareInfo;
     };
     data: {
-        markingCharacteristics: MarkingCharacteristic[];
+        markingTypes: MarkingType[];
     };
 };
 
 async function getData(): Promise<string> {
-    const exportObject: MarkingCharacteristicsExportObject = {
+    const exportObject: MarkingTypesExportObject = {
         metadata: {
             software: {
                 name: "biometrics-studio",
@@ -31,20 +31,19 @@ async function getData(): Promise<string> {
             },
         },
         data: {
-            markingCharacteristics:
-                MarkingCharacteristicsStore.state.characteristics.filter(
-                    c => c.category === WorkingModeStore.state.workingMode
-                ),
+            markingTypes: MarkingTypesStore.state.types.filter(
+                c => c.category === WorkingModeStore.state.workingMode
+            ),
         },
     };
 
     return JSON.stringify(exportObject, null, 2);
 }
 
-export async function exportMarkingCharacteristicsWithDialog() {
+export async function exportMarkingTypesWithDialog() {
     try {
         const filepath = await save({
-            title: t("Export marking characteristics", {
+            title: t("Export marking types", {
                 ns: "tooltip",
             }),
             filters: [
@@ -56,7 +55,7 @@ export async function exportMarkingCharacteristicsWithDialog() {
             canCreateDirectories: true,
             defaultPath: await join(
                 await desktopDir(),
-                `marking-characteristics-${WorkingModeStore.state.workingMode?.toLowerCase()}.json`
+                `marking-types-${WorkingModeStore.state.workingMode?.toLowerCase()}.json`
             ),
         });
 

@@ -14,6 +14,7 @@ i18next
     .init({
         defaultNS: [
             "keywords",
+            "keybindings",
             "cursor",
             "object",
             "tooltip",
