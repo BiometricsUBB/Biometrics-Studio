@@ -14,6 +14,8 @@ const d: Dictionary = {
     "Toggle scale mode": "Toggle scale mode",
     "Export marking types": "Export marking types",
     "Import marking types": "Import marking types",
+    "Markings data saved": "Markings data saved",
+    "Failed to save markings data": "Failed to save markings data",
 };
 
 export default d;
