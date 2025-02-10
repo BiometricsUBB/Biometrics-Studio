@@ -71,6 +71,8 @@ export type i18nTooltip = Recordify<
     | "Toggle viewport information"
     | "Export marking types"
     | "Import marking types"
+    | "Markings data saved"
+    | "Failed to save markings data"
 >;
 
 export type i18nDialog = Recordify<
