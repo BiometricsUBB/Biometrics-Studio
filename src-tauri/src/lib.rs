@@ -28,7 +28,6 @@ async fn close_splashscreen_if_exists(window: tauri::Window) {
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
-        //.plugin(tauri_plugin_window_state::Builder::new().build())
         .plugin(tauri_plugin_store::Builder::new().build())
         .plugin(tauri_plugin_fs::init())
         .plugin(tauri_plugin_dialog::init())
@@ -39,15 +38,6 @@ pub fn run() {
                 .expect("no main window")
                 .set_focus();
         }))
-// plugin(
-// tauri_plugin_window_state::Builder::default()
-// .with_state_flags(
-// StateFlags::all()
-// & !StateFlags::VISIBLE
-// & !StateFlags::DECORATIONS,
-//)
-// .build(),
-// )
         .invoke_handler(tauri::generate_handler![
             show_main_window_if_hidden,
             close_splashscreen_if_exists,

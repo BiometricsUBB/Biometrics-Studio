@@ -35,9 +35,9 @@
             "store:allow-delete",
             "dialog:allow-open",
             "dialog:allow-save",
+            "dialog:allow-message",
             "dialog:allow-ask",
             "dialog:allow-confirm",
-            "dialog:allow-message",
             "store:default",
             "dialog:default",
             "fs:default"

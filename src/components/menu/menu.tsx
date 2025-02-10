@@ -32,7 +32,9 @@ export function Menu() {
                 {workingMode && (
                     <div className="flex flex-row items-center [&>*]:h-full">
                         <ModeMenu />
-                        <span className="mx-2 !h-auto">•</span>
+                        <span className="mx-2 !h-auto pointer-events-none">
+                            •
+                        </span>
                         <Dialog>
                             <DialogTrigger>{t("Types")}</DialogTrigger>
                             <MarkingTypesDialogPortal />
