@@ -2,11 +2,11 @@ import { save } from "@tauri-apps/plugin-dialog";
 import { getVersion } from "@tauri-apps/api/app";
 import { t } from "i18next";
 import { writeTextFile } from "@tauri-apps/plugin-fs";
-import { showErrorDialog } from "@/lib/errors/showErrorDialog";
 import { desktopDir, join } from "@tauri-apps/api/path";
 import { MarkingType } from "@/lib/markings/MarkingType";
 import { MarkingTypesStore } from "@/lib/stores/MarkingTypes/MarkingTypes";
 import { WorkingModeStore } from "@/lib/stores/WorkingMode";
+import { toast } from "sonner";
 
 type SoftwareInfo = {
     name: string;
@@ -63,7 +63,10 @@ export async function exportMarkingTypesWithDialog() {
 
         const data = await getData();
         await writeTextFile(filepath, data);
-    } catch (error) {
-        showErrorDialog(error);
+        toast.success(
+            t("Marking types exported successfully", { ns: "dialog" })
+        );
+    } catch {
+        toast.error(t("Error exporting marking types", { ns: "dialog" }));
     }
 }

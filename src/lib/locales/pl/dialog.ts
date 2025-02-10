@@ -20,6 +20,16 @@ const d: Dictionary = {
     "Please select your working mode": "Proszę wybrać tryb pracy",
     "You are trying to load marking types for a non-existing working mode.":
         "Próbujesz załadować typy dla nieistniejącego trybu pracy.",
+    "No marking types found in the file":
+        "W pliku nie znaleziono typów adnotacji",
+    "Marking types imported successfully":
+        "Typy adnotacji zaimportowano pomyślnie",
+    "Marking types exported successfully":
+        "Typy adnotacji wyeksportowano pomyślnie",
+    "Error importing marking types":
+        "Błąd podczas importowania typów adnotacji",
+    "Error exporting marking types":
+        "Błąd podczas eksportowania typów adnotacji",
 };
 
 export default d;

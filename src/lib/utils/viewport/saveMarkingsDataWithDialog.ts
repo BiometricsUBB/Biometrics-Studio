@@ -22,6 +22,7 @@ import { MarkingTypesStore } from "@/lib/stores/MarkingTypes/MarkingTypes";
 import { WorkingModeStore } from "@/lib/stores/WorkingMode";
 import { WORKING_MODE } from "@/views/selectMode";
 import { BoundingBoxMarking } from "@/lib/markings/BoundingBoxMarking";
+import { toast } from "sonner";
 
 type ImageInfo = {
     name: string | null;
@@ -198,7 +199,8 @@ export async function saveMarkingsDataWithDialog(viewport: Viewport) {
 
         const data = await getData(viewport, picture, oppositePicture);
         await writeTextFile(filepath, data);
-    } catch (error) {
-        showErrorDialog(error);
+        toast.success(t("Markings data saved", { ns: "tooltip" }));
+    } catch {
+        toast.error(t("Failed to save markings data", { ns: "tooltip" }));
     }
 }

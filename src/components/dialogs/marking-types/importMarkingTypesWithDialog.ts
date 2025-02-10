@@ -12,6 +12,7 @@ import { validateFileData } from "@/lib/utils/viewport/loadMarkingsData";
 import { WORKING_MODE } from "@/views/selectMode";
 import { WorkingModeStore } from "@/lib/stores/WorkingMode";
 import { MarkingTypesExportObject } from "@/components/dialogs/marking-types/exportMarkingTypesWithDialog";
+import { toast } from "sonner";
 
 export async function loadMarkingTypesData(filePath: string) {
     const fileContentString = await readTextFile(filePath);
@@ -68,6 +69,11 @@ export async function loadMarkingTypesData(filePath: string) {
     }
 
     const types = fileContentJson.data.markingTypes;
+    if (!types.length) {
+        toast.warning(
+            t("No marking types found in the file", { ns: "dialog" })
+        );
+    }
 
     const conflicts = MarkingTypesStore.actions.types
         .getConflicts(types)
@@ -95,6 +101,7 @@ export async function loadMarkingTypesData(filePath: string) {
     }
 
     MarkingTypesStore.actions.types.addMany(types);
+    toast.success(t("Marking types imported successfully", { ns: "dialog" }));
 }
 
 export async function importMarkingTypesWithDialog() {
@@ -121,7 +128,7 @@ export async function importMarkingTypesWithDialog() {
         if (filePath === null) return;
 
         await loadMarkingTypesData(filePath);
-    } catch (error) {
-        showErrorDialog(error);
+    } catch {
+        toast.error(t("Error importing marking types", { ns: "dialog" }));
     }
 }

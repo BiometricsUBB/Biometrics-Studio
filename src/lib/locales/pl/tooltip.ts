@@ -14,6 +14,8 @@ const d: Dictionary = {
     "Toggle scale mode": "Przełącz tryb skalowania",
     "Export marking types": "Eksportuj typy adnotacji",
     "Import marking types": "Importuj typy adnotacji",
+    "Markings data saved": "Dane adnotacji zapisano pomyślnie",
+    "Failed to save markings data": "Nie udało się zapisać danych adnotacji",
 };
 
 export default d;
