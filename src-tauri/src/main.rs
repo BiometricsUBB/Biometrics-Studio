@@ -29,7 +29,8 @@ async fn close_splashscreen_if_exists(window: tauri::Window) {
 }
 
 fn main() {
-    tauri::Builder::default()
+    let mut builder = tauri::Builder::default()
+        .plugin(tauri_plugin_os::init())
         .plugin(tauri_plugin_store::Builder::new().build())
         .plugin(tauri_plugin_fs::init())
         .plugin(tauri_plugin_dialog::init())
@@ -43,7 +44,22 @@ fn main() {
         .invoke_handler(tauri::generate_handler![
             show_main_window_if_hidden,
             close_splashscreen_if_exists,
-        ])
+        ]);
+
+    #[cfg(target_os = "windows")]
+    {
+        use tauri_plugin_window_state::{Builder as WindowStateBuilder, StateFlags};
+
+        builder = builder.plugin(
+            WindowStateBuilder::default()
+                .with_state_flags(
+                    StateFlags::all() & !StateFlags::VISIBLE & !StateFlags::DECORATIONS,
+                )
+                .build(),
+        );
+    }
+
+    builder
         .run(tauri::generate_context!())
         .expect("error while running Biometrics Studio");
 }
