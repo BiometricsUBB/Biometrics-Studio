@@ -20,6 +20,14 @@ powershell -ExecutionPolicy Bypass -File .\install.ps1
 ....
 NOTE: The above command would install dependencies onto your system. Then you can run the application by opening the `.\start.bat` file.
 
+## Instalation on macOS
+
+Since the application is not signed, you need to remove the quarantine attribute before running it. This step is required after installation, specifically after moving the application to the Applications folder. To do this, execute the following command in the terminal:
+.....
+xattr -d com.apple.quarantine /Application/biometrics-studio.app
+.....
+Make sure to use the correct path to the application.
+
 == Development
 
 === Pre-requisites

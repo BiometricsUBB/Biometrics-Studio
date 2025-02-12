@@ -20,6 +20,14 @@ powershell -ExecutionPolicy Bypass -File .\install.ps1
 ```
 UWAGA: Powyższe polecenie zainstaluje zależności w Twoim systemie. Następnie możesz uruchomić aplikację, otwierając plik `.\start.bat`.
 
+## Instalacja na macOS
+
+Ponieważ aplikacja nie jest podpisana, musisz usunąć atrybut kwarantanny przed jej uruchomieniem. Ten krok jest wymagany po instalacji, a dokładniej po przeniesieniu aplikacji do folderu Aplikacje. Aby to zrobić, wykonaj w terminalu następujące polecenie:
+```
+xattr -d com.apple.quarantine /Application/biometrics-studio.app
+```
+Upewnij się, że ścieżka do aplikacji jest poprawna.
+
 ## Rozwój
 
 ### Wymagania wstępne
