@@ -1,13 +1,13 @@
 import { create } from "zustand";
 import { createJSONStorage, devtools, persist } from "zustand/middleware";
+import { LazyStore } from "@tauri-apps/plugin-store";
 import { WORKING_MODE } from "@/views/selectMode";
-import { createStore, Store } from "@tauri-apps/plugin-store";
 import { tauriStorage } from "@/lib/stores/tauri-storage-adapter.helpers";
 import { MarkingType } from "@/lib/markings/MarkingType";
 import { Immer, produceCallback } from "../immer.helpers";
 
 const STORE_NAME = "keybindings";
-const STORE_FILE: Store = await createStore(`${STORE_NAME}.dat`);
+const STORE_FILE = new LazyStore(`${STORE_NAME}.dat`);
 
 export type TypeKeybinding = {
     workingMode: WORKING_MODE;

@@ -1,11 +1,11 @@
-import { createStore } from "@tauri-apps/plugin-store";
+import { LazyStore } from "@tauri-apps/plugin-store";
 import { create } from "zustand";
 import { createJSONStorage, devtools, persist } from "zustand/middleware";
 import { Immer, produceCallback } from "../immer.helpers";
 import { tauriStorage } from "../tauri-storage-adapter.helpers";
 
 const STORE_NAME = "global-settings";
-const STORE_FILE = await createStore(`${STORE_NAME}.dat`);
+const STORE_FILE = new LazyStore(`${STORE_NAME}.dat`);
 
 export enum THEMES {
     SYSTEM = "system",

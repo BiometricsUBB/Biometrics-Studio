@@ -5,6 +5,7 @@
         "local": true,
         "windows": ["main"],
         "permissions": [
+            "core:default",
             "core:path:default",
             "core:event:default",
             "core:window:default",
@@ -30,6 +31,7 @@
             "store:allow-set",
             "store:allow-get",
             "store:allow-save",
+            "store:allow-load",
             "store:allow-delete",
             "dialog:allow-open",
             "dialog:allow-save",
@@ -40,5 +42,12 @@
             "dialog:default",
             "fs:default"
         ]
+    },
+    "desktop-capability": {
+        "identifier": "desktop-capability",
+        "description": "",
+        "local": true,
+        "permissions": ["window-state:default"],
+        "platforms": ["macOS", "windows", "linux"]
     }
 }

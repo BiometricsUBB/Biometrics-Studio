@@ -2,7 +2,9 @@ import { useEffect } from "react";
 import { GlobalSettingsStore, THEMES } from "@/lib/stores/GlobalSettings";
 
 export const useTheme = () => {
-    const { theme } = GlobalSettingsStore.state.settings.interface;
+    const theme = GlobalSettingsStore.use(state => {
+        return state.settings.interface.theme;
+    });
 
     const setTheme = (theme: THEMES) => {
         GlobalSettingsStore.actions.settings.interface.setTheme(theme);
