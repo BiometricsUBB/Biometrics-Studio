@@ -30,8 +30,8 @@ const d: Dictionary = {
         "Błąd podczas importowania typów adnotacji",
     "Error exporting marking types":
         "Błąd podczas eksportowania typów adnotacji",
-    "This action will clear all existing forensic marks. Are you sure you want to continue?":
-        "Ta czynność spowoduje usunięcie wszystkich istniejących adnotacji śladów. Czy na pewno chcesz kontynuować?",
+    "This action will clear the current canvas. Are you sure you want to proceed?":
+        "Ta czynność spowoduje wyczyszczenie obecnego obszaru roboczego. Czy na pewno chcesz kontynuować?",
     Warning: "Ostrzeżenie",
 };
 

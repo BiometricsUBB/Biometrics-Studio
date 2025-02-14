@@ -12,22 +12,29 @@ import { GlobalStateStore } from "@/lib/stores/GlobalState";
 import { WorkingModeStore } from "@/lib/stores/WorkingMode";
 import { useTranslation } from "react-i18next";
 import { confirm } from "@tauri-apps/plugin-dialog";
+import { Sprite } from "pixi.js";
+import { useGlobalViewport } from "@/components/pixi/viewport/hooks/useGlobalViewport";
 
 export function ModeMenu() {
     const { t } = useTranslation();
     const { workingMode, setWorkingMode } = WorkingModeStore.use();
+    const viewportLeft = useGlobalViewport(CANVAS_ID.LEFT, {
+        autoUpdate: true,
+    });
+    const viewportRight = useGlobalViewport(CANVAS_ID.RIGHT, {
+        autoUpdate: true,
+    });
 
     const onCheckedChange = async (mode: WORKING_MODE) => {
         if (workingMode === mode) return;
 
-        const existingMarkings =
-            MarkingsStore(CANVAS_ID.LEFT).state.markings.length ||
-            MarkingsStore(CANVAS_ID.RIGHT).state.markings.length;
+        const isCanvasDirty =
+            viewportLeft?.children.length || viewportRight?.children.length;
 
-        if (existingMarkings) {
+        if (isCanvasDirty) {
             const confirmed = await confirm(
                 t(
-                    "This action will clear all existing forensic marks. Are you sure you want to continue?",
+                    "This action will clear the current canvas. Are you sure you want to proceed?",
                     { ns: "dialog" }
                 ),
                 {
@@ -39,13 +46,21 @@ export function ModeMenu() {
             if (!confirmed) return;
         }
 
-        setWorkingMode(mode);
+        [viewportLeft, viewportRight].forEach(viewport => {
+            viewport?.children.forEach(child => {
+                if (child instanceof Sprite) {
+                    viewport.removeChild(child);
+                }
+            });
+        });
 
         MarkingsStore(CANVAS_ID.LEFT).actions.markings.reset();
         MarkingsStore(CANVAS_ID.RIGHT).actions.markings.reset();
         MarkingsStore(CANVAS_ID.LEFT).actions.labelGenerator.reset();
         MarkingsStore(CANVAS_ID.RIGHT).actions.labelGenerator.reset();
         GlobalStateStore.actions.lastAddedMarking.setLastAddedMarking(null);
+
+        setWorkingMode(mode);
     };
 
     return (
