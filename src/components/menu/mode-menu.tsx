@@ -54,10 +54,11 @@ export function ModeMenu() {
             });
         });
 
-        MarkingsStore(CANVAS_ID.LEFT).actions.markings.reset();
-        MarkingsStore(CANVAS_ID.RIGHT).actions.markings.reset();
-        MarkingsStore(CANVAS_ID.LEFT).actions.labelGenerator.reset();
-        MarkingsStore(CANVAS_ID.RIGHT).actions.labelGenerator.reset();
+        const canvasIds = [CANVAS_ID.LEFT, CANVAS_ID.RIGHT];
+        canvasIds.forEach(id => MarkingsStore(id).actions.markings.reset());
+        canvasIds.forEach(id =>
+            MarkingsStore(id).actions.labelGenerator.reset()
+        );
         GlobalStateStore.actions.lastAddedMarking.setLastAddedMarking(null);
 
         setWorkingMode(mode);
