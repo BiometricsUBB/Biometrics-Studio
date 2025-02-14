@@ -27,6 +27,9 @@ const d: Dictionary = {
         "Marking types exported successfully",
     "Error importing marking types": "Error importing marking types",
     "Error exporting marking types": "Error exporting marking types",
+    "This action will clear all existing forensic marks. Are you sure you want to continue?":
+        "This action will clear all existing forensic marks. Are you sure you want to continue?",
+    Warning: "Warning",
 };
 
 export default d;
