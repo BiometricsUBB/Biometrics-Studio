@@ -46,26 +46,26 @@ export function ModeMenu() {
             if (!confirmed) return;
         }
 
-        [viewportLeft, viewportRight].forEach(viewport => {
-            viewport?.children.forEach(child => {
-                if (child instanceof Sprite) {
-    // Destroy current image sprite
-    viewport.children
-        .find(x => x instanceof Sprite)
-        ?.destroy({
-            children: true,
-            texture: true,
-            baseTexture: true,
-        });
-                }
+        // Destroy current image sprites
+        viewportLeft?.children
+            .find(x => x instanceof Sprite)
+            ?.destroy({
+                children: true,
+                texture: true,
+                baseTexture: true,
             });
-        });
+        viewportRight?.children
+            .find(x => x instanceof Sprite)
+            ?.destroy({
+                children: true,
+                texture: true,
+                baseTexture: true,
+            });
 
-        const canvasIds = [CANVAS_ID.LEFT, CANVAS_ID.RIGHT];
-        canvasIds.forEach(id => MarkingsStore(id).actions.markings.reset());
-        canvasIds.forEach(id =>
-            MarkingsStore(id).actions.labelGenerator.reset()
-        );
+        MarkingsStore(CANVAS_ID.LEFT).actions.markings.reset();
+        MarkingsStore(CANVAS_ID.RIGHT).actions.markings.reset();
+        MarkingsStore(CANVAS_ID.LEFT).actions.labelGenerator.reset();
+        MarkingsStore(CANVAS_ID.RIGHT).actions.labelGenerator.reset();
         GlobalStateStore.actions.lastAddedMarking.setLastAddedMarking(null);
 
         setWorkingMode(mode);
