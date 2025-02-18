@@ -49,7 +49,14 @@ export function ModeMenu() {
         [viewportLeft, viewportRight].forEach(viewport => {
             viewport?.children.forEach(child => {
                 if (child instanceof Sprite) {
-                    viewport.removeChild(child);
+    // Destroy current image sprite
+    viewport.children
+        .find(x => x instanceof Sprite)
+        ?.destroy({
+            children: true,
+            texture: true,
+            baseTexture: true,
+        });
                 }
             });
         });
