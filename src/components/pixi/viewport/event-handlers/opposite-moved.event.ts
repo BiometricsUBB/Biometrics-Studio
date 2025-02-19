@@ -3,7 +3,6 @@ import {
     CachedViewportPosition,
     CachedViewportZoom,
 } from "@/lib/stores/CachedViewport";
-import { round } from "@/lib/utils/math/round";
 import {
     FitEvent,
     fitHeight,
@@ -31,8 +30,7 @@ export const handleOppositeMove = (
         case "wheel": {
             const { value } = delta as CachedViewportZoom;
 
-            const oldScale = viewport.scaled;
-            const newScale = round(oldScale * value, 3);
+            const newScale = viewport.scaled * value;
 
             if (newScale !== store.state.oppositeScaled) {
                 viewport.setZoom(newScale, true);
