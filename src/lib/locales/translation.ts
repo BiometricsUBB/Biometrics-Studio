@@ -92,6 +92,8 @@ export type i18nDialog = Recordify<
     | "Marking types exported successfully"
     | "Error importing marking types"
     | "Error exporting marking types"
+    | "This action will clear the current canvas. Are you sure you want to proceed?"
+    | "Warning"
 >;
 
 export type i18nKeybindings = Recordify<
