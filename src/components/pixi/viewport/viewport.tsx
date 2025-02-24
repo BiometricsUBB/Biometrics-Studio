@@ -36,17 +36,12 @@ export const Viewport = forwardRef<PixiViewport, ViewportProps>(
                     allowPreserveDragOutside: true,
                 }}
                 sideEffects={viewport => {
-                    viewport
-                        .wheel({
-                            percent: 0,
-                            interrupt: true,
-                            wheelZoom: true,
-                            center: viewport.center,
-                        })
-                        .clampZoom({
-                            minScale: 1 / 4,
-                            maxScale: 100,
-                        });
+                    viewport.wheel({
+                        percent: 0,
+                        interrupt: true,
+                        wheelZoom: true,
+                        center: viewport.center,
+                    });
 
                     const handlerParams: ViewportHandlerParams = {
                         viewport,
