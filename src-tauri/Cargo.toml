@@ -1,6 +1,6 @@
 [package]
 name = "biometrics-studio"
-version = "0.5.1"
+version = "0.5.2"
 description = "Application for forensic trace comparison"
 authors = ["Cyprian Zdebski", "Konrad Boryś", "Marcel Gańczarczyk"]
 license = ""
@@ -12,7 +12,7 @@ edition = "2021"
 tauri-build = { version = "2", features = [] }
 
 [dependencies]
-tauri = { version = "2", features = ["macos-private-api"] }
+tauri = { version = "2", features = [] }
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
 tauri-plugin-dialog = "2"
