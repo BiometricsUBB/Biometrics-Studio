@@ -9,6 +9,7 @@ import { CachedViewportStore } from "@/lib/stores/CachedViewport";
 import { PixiApp } from "../app/app";
 import { DebugOverlay } from "../overlays/debug-overlay";
 import { MarkingOverlay } from "../overlays/marking-overlay";
+import { CrosshairOverlay } from "../overlays/crosshair-overlay";
 
 function range(min: number, max: number): number[] {
     const len = max - min + 1;
@@ -75,6 +76,7 @@ export function Canvas({ options, className, ...props }: CanvasProps) {
                 canvasMetadata={canvasMetadata}
             />
             <MarkingOverlay canvasMetadata={canvasMetadata} />
+            <CrosshairOverlay canvasMetadata={canvasMetadata} />
             {isDragging && (
                 <CenterMarkOverlay canvasMetadata={canvasMetadata} />
             )}
