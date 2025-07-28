@@ -23,6 +23,7 @@ export type CanvasInfoProps = HTMLAttributes<HTMLDivElement>;
 export function CanvasInfo({ className, ...props }: CanvasInfoProps) {
     const { id } = useCanvasContext();
     const viewport = useGlobalViewport(id, { autoUpdate: true });
+    const filename = viewport?.children[0]?.name;
     const ref = useRef<HTMLDivElement>(null);
 
     return (
@@ -34,6 +35,7 @@ export function CanvasInfo({ className, ...props }: CanvasInfoProps) {
             )}
             {...props}
         >
+            {filename && <Row value={filename} />}
             <Row
                 value={`(${-round(viewport?.corner?.x ?? 0)},${-round(viewport?.corner?.y ?? 0)})`}
             />
