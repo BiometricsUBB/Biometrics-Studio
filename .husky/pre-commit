@@ -1,6 +1,10 @@
 #!/usr/bin/env sh
-. "$(dirname -- "$0")/_/husky.sh"
+if [ -f "$(dirname -- "$0")/_/husky.sh" ]; then
+  . "$(dirname -- "$0")/_/husky.sh"
+elif [ -f "$(dirname "$0")/_/husky.sh" ]; then
+  . "$(dirname "$0")/_/husky.sh"
+fi
 
-pnpm tsc:check
-pnpm test:unit
-pnpm exec lint-staged
+pnpm tsc:check || exit 1
+pnpm test:unit || exit 1
+pnpm exec lint-staged || exit 1
