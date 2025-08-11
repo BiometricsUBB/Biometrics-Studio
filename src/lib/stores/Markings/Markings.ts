@@ -44,7 +44,6 @@ class StoreClass {
     private setMarkingsAndUpdateHash(
         callback: ActionProduceCallback<State["markings"], State>
     ) {
-        // Set markings
         this.state.set(draft => {
             const newMarkings = callback(draft.markings, draft);
             draft.markings = newMarkings;
@@ -57,7 +56,53 @@ class StoreClass {
                 });
         });
 
-        // Set new state hash
+        this.state.set(draft => {
+            draft.markingsHash = crypto.randomUUID();
+        });
+
+        const leftHash = Store(CANVAS_ID.LEFT).state.markingsHash;
+        const rightHash = Store(CANVAS_ID.RIGHT).state.markingsHash;
+        GlobalStateStore.actions.unsavedChanges.checkForUnsavedChanges(
+            leftHash,
+            rightHash
+        );
+    }
+
+    private setMarkingsAndUpdateHashWithoutLastAdded(
+        callback: ActionProduceCallback<State["markings"], State>
+    ) {
+        this.state.set(draft => {
+            const newMarkings = callback(draft.markings, draft);
+            draft.markings = newMarkings;
+        });
+
+        this.state.set(draft => {
+            draft.markingsHash = crypto.randomUUID();
+        });
+
+        const leftHash = Store(CANVAS_ID.LEFT).state.markingsHash;
+        const rightHash = Store(CANVAS_ID.RIGHT).state.markingsHash;
+        GlobalStateStore.actions.unsavedChanges.checkForUnsavedChanges(
+            leftHash,
+            rightHash
+        );
+    }
+
+    private setMarkingsWithoutChangeDetection(
+        callback: ActionProduceCallback<State["markings"], State>
+    ) {
+        this.state.set(draft => {
+            const newMarkings = callback(draft.markings, draft);
+            draft.markings = newMarkings;
+
+            const lastMarking = newMarkings.at(-1);
+            if (lastMarking !== undefined)
+                GlobalStateStore.actions.lastAddedMarking.setLastAddedMarking({
+                    marking: lastMarking,
+                    canvasId: this.id,
+                });
+        });
+
         this.state.set(draft => {
             draft.markingsHash = crypto.randomUUID();
         });
@@ -137,14 +182,14 @@ class StoreClass {
                 this.setMarkingsAndUpdateHash(() => []);
             },
             addOne: (marking: MarkingClass) => {
-                if (this.state.markings.find(m => m.label === marking.label)) {
-                    this.setMarkingsAndUpdateHash(markings =>
-                        markings.filter(m => m.label !== marking.label)
-                    );
-                }
-
                 this.setMarkingsAndUpdateHash(
                     produce(state => {
+                        const existingIndex = state.findIndex(
+                            m => m.label === marking.label
+                        );
+                        if (existingIndex !== -1) {
+                            state.splice(existingIndex, 1);
+                        }
                         state.push(marking);
                     })
                 );
@@ -161,14 +206,23 @@ class StoreClass {
                     this.setSelectedMarkingLabel(() => null);
                 }
 
-                this.setMarkingsAndUpdateHash(markings =>
-                    markings.filter(marking => marking.label !== label)
-                );
-
                 GlobalStateStore.actions.lastAddedMarking.setLastAddedMarking(
                     null
                 );
+
+                this.setMarkingsAndUpdateHashWithoutLastAdded(markings =>
+                    markings.filter(marking => marking.label !== label)
+                );
             },
+            resetForLoading: () => {
+                this.setMarkingsWithoutChangeDetection(() => []);
+            },
+            addManyForLoading: (markings: MarkingClass[]) =>
+                this.setMarkingsWithoutChangeDetection(
+                    produce(state => {
+                        state.push(...markings);
+                    })
+                ),
         },
         temporaryMarking: {
             setTemporaryMarking: (marking: MarkingClass | null) =>

@@ -12,10 +12,18 @@ type LastAddedMarkerState = {
 
 type State = {
     lastAddedMarking: LastAddedMarkerState;
+    hasUnsavedChanges: boolean;
+    lastSavedMarkingsHash: string | null;
+    lastSavedLeftHash: string | null;
+    lastSavedRightHash: string | null;
 };
 
 const INITIAL_STATE: State = {
     lastAddedMarking: null,
+    hasUnsavedChanges: false,
+    lastSavedMarkingsHash: null,
+    lastSavedLeftHash: null,
+    lastSavedRightHash: null,
 };
 
 const useStore = create<Immer<State>>()(

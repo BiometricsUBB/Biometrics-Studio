@@ -76,7 +76,6 @@ export type i18nTooltip = Recordify<
 >;
 
 export type i18nDialog = Recordify<
-    | "Are you sure you want to load this image?\n\nIt will remove the previously loaded image and all existing forensic marks."
     | "Are you sure you want to load markings data?\n\nIt will remove all existing forensic marks."
     | "The markings data was created with a different version of the application ({{version}}). Loading it might not work.\n\nAre you sure you want to load it?"
     | "Marking types were exported from a different version of the application ({{version}}). Loading it might not work.\n\nAre you sure you want to load it?"
@@ -93,6 +92,8 @@ export type i18nDialog = Recordify<
     | "Error importing marking types"
     | "Error exporting marking types"
     | "This action will clear the current canvas. Are you sure you want to proceed?"
+    | "You have unsaved changes!\nOpening this file will cause the loss of unsaved annotations.\nAre you sure you want to load this image?"
+    | "Unsaved Changes"
     | "Warning"
 >;
 

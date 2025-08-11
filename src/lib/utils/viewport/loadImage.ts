@@ -5,7 +5,10 @@ import {
 } from "@tauri-apps/plugin-dialog";
 import { Viewport } from "pixi-viewport";
 import { MarkingsStore } from "@/lib/stores/Markings";
-import { CanvasMetadata } from "@/components/pixi/canvas/hooks/useCanvasContext";
+import {
+    CanvasMetadata,
+    CANVAS_ID,
+} from "@/components/pixi/canvas/hooks/useCanvasContext";
 import {
     emitFitEvents,
     fitWorld,
@@ -19,6 +22,7 @@ import { t } from "i18next";
 import { loadMarkingsData } from "@/lib/utils/viewport/loadMarkingsData";
 import { exists } from "@tauri-apps/plugin-fs";
 import { Sprite } from "pixi.js";
+import { GlobalStateStore } from "@/lib/stores/GlobalState";
 import { loadSprite } from "./loadSprite";
 
 export async function loadImage(filePath: string, viewport: Viewport) {
@@ -31,18 +35,24 @@ export async function loadImage(filePath: string, viewport: Viewport) {
         return;
     }
 
-    if (
-        viewport.children.length !== 0 ||
-        MarkingsStore(canvasId).state.markings.length !== 0
-    ) {
+    const leftHash = MarkingsStore(CANVAS_ID.LEFT).state.markingsHash;
+    const rightHash = MarkingsStore(CANVAS_ID.RIGHT).state.markingsHash;
+    const hasUnsavedChangesOnThisCanvas =
+        GlobalStateStore.actions.unsavedChanges.checkForUnsavedChangesOnCanvas(
+            canvasId,
+            leftHash,
+            rightHash
+        );
+
+    if (hasUnsavedChangesOnThisCanvas) {
         const confirmed = await confirmFileSelectionDialog(
             t(
-                "Are you sure you want to load this image?\n\nIt will remove the previously loaded image and all existing forensic marks.",
+                "You have unsaved changes!\nOpening this file will cause the loss of unsaved annotations.\nAre you sure you want to load this image?",
                 { ns: "dialog" }
             ),
             {
                 kind: "warning",
-                title: filePath ?? "Are you sure?",
+                title: t("Unsaved Changes", { ns: "dialog" }),
             }
         );
         if (!confirmed) return;
@@ -77,6 +87,14 @@ export async function loadImage(filePath: string, viewport: Viewport) {
             getOppositeCanvasId(canvasId)
         ).actions.labelGenerator.reset();
     }
+
+    const newLeftHash = MarkingsStore(CANVAS_ID.LEFT).state.markingsHash;
+    const newRightHash = MarkingsStore(CANVAS_ID.RIGHT).state.markingsHash;
+    GlobalStateStore.actions.unsavedChanges.establishBaseline(
+        canvasId,
+        newLeftHash,
+        newRightHash
+    );
 }
 
 export async function loadImageWithDialog(viewport: Viewport) {

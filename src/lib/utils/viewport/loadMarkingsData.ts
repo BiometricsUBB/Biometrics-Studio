@@ -51,23 +51,18 @@ export async function loadMarkingsData(filePath: string, canvasId: CANVAS_ID) {
 
     const appVersion = await getVersion();
 
-    if (
-        fileContentJson.metadata.software.version !== appVersion ||
-        MarkingsStore(canvasId).state.markings.length !== 0
-    ) {
+    const versionMismatch =
+        fileContentJson.metadata.software.version !== appVersion;
+
+    if (versionMismatch) {
         const confirmed = await confirmFileSelectionDialog(
-            fileContentJson.metadata.software.version !== appVersion
-                ? t(
-                      "The markings data was created with a different version of the application ({{version}}). Loading it might not work.\n\nAre you sure you want to load it?",
-                      {
-                          ns: "dialog",
-                          version: fileContentJson.metadata.software.version,
-                      }
-                  )
-                : t(
-                      "Are you sure you want to load markings data?\n\nIt will remove all existing forensic marks.",
-                      { ns: "dialog" }
-                  ),
+            t(
+                "The markings data was created with a different version of the application ({{version}}). Loading it might not work.\n\nAre you sure you want to load it?",
+                {
+                    ns: "dialog",
+                    version: fileContentJson.metadata.software.version,
+                }
+            ),
             {
                 kind: "warning",
                 title: filePath ?? "Are you sure?",
@@ -193,8 +188,8 @@ export async function loadMarkingsData(filePath: string, canvasId: CANVAS_ID) {
         MarkingTypesStore.actions.types.addMany(typesToAdd);
     }
 
-    MarkingsStore(canvasId).actions.markings.reset();
-    MarkingsStore(canvasId).actions.markings.addMany(markings);
+    MarkingsStore(canvasId).actions.markings.resetForLoading();
+    MarkingsStore(canvasId).actions.markings.addManyForLoading(markings);
     MarkingsStore(canvasId).actions.labelGenerator.reset();
     MarkingsStore(getOppositeCanvasId(canvasId)).actions.labelGenerator.reset();
 }

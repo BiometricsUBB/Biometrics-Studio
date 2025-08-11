@@ -1,8 +1,6 @@
 import { i18nDialog as Dictionary } from "@/lib/locales/translation";
 
 const d: Dictionary = {
-    "Are you sure you want to load this image?\n\nIt will remove the previously loaded image and all existing forensic marks.":
-        "Czy na pewno chcesz załadować ten obraz?\n\nSpowoduje to usunięcie wcześniej załadowanego obrazu i wszystkich istniejących adnotacji śladów.",
     "Are you sure you want to load markings data?\n\nIt will remove all existing forensic marks.":
         "Czy na pewno chcesz załadować dane dotyczące adnotacji?\n\nSpowoduje to usunięcie wszystkich istniejących adnotacji śladów.",
     "The markings data was created with a different version of the application ({{version}}). Loading it might not work.\n\nAre you sure you want to load it?":
@@ -32,6 +30,9 @@ const d: Dictionary = {
         "Błąd podczas eksportowania typów adnotacji",
     "This action will clear the current canvas. Are you sure you want to proceed?":
         "Ta czynność spowoduje wyczyszczenie obecnego obszaru roboczego. Czy na pewno chcesz kontynuować?",
+    "You have unsaved changes!\nOpening this file will cause the loss of unsaved annotations.\nAre you sure you want to load this image?":
+        "Masz niezapisane zmiany!\nOtwarcie tego pliku spowoduje utratę niezapisanych adnotacji.\nCzy jesteś pewny, że chcesz załadować ten obraz?",
+    "Unsaved Changes": "Niezapisane zmiany",
     Warning: "Ostrzeżenie",
 };
 
