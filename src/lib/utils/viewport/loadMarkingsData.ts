@@ -4,7 +4,6 @@ import {
 } from "@/components/pixi/canvas/hooks/useCanvasContext";
 import { showErrorDialog } from "@/lib/errors/showErrorDialog";
 import { MarkingsStore } from "@/lib/stores/Markings";
-import { getVersion } from "@tauri-apps/api/app";
 import {
     confirm as confirmFileSelectionDialog,
     open as openFileSelectionDialog,
@@ -28,6 +27,8 @@ import { WorkingModeStore } from "@/lib/stores/WorkingMode";
 import { BoundingBoxMarking } from "@/lib/markings/BoundingBoxMarking";
 import { MARKING_CLASS } from "@/lib/markings/MARKING_CLASS";
 import { ExportObject } from "./saveMarkingsDataWithDialog";
+
+const MINIMAL_SUPPORTED_FILE_VERSION = "0.5.0";
 
 function compareVersions(version1: string, version2: string): number {
     const v1parts = version1.split(".").map(Number);
@@ -67,30 +68,28 @@ export async function loadMarkingsData(filePath: string, canvasId: CANVAS_ID) {
         return;
     }
 
-    const appVersion = await getVersion();
-
-    // Check if the file has minimalSupportedVersion and if current app version meets the requirement
-    // If no minimalSupportedVersion is present, treat as unsupported
+    // Warn if the file version is below the minimal supported version
     if (
-        !fileContentJson.metadata.software.minimalSupportedVersion ||
         compareVersions(
-            appVersion,
-            fileContentJson.metadata.software.minimalSupportedVersion
+            fileContentJson.metadata.software.version,
+            MINIMAL_SUPPORTED_FILE_VERSION
         ) < 0
     ) {
-        showErrorDialog(
+        const confirmed = await confirmFileSelectionDialog(
             t(
-                "This markings data file requires a newer version of the application (minimum {{minVersion}}). Your current version is {{currentVersion}}. Please update the application to load this file.",
+                "You are trying to load markings data with an unsupported app version for this file (minimum supported: {{minVersion}}, but you try to load: {{fileVersion}}). Loading it might not work.\n\nAre you sure you want to load it?",
                 {
                     ns: "dialog",
-                    minVersion:
-                        fileContentJson.metadata.software
-                            .minimalSupportedVersion || "unknown",
-                    currentVersion: appVersion,
+                    minVersion: MINIMAL_SUPPORTED_FILE_VERSION,
+                    fileVersion: fileContentJson.metadata.software.version,
                 }
-            )
+            ),
+            {
+                kind: "warning",
+                title: filePath ?? t("Are you sure?", { ns: "dialog" }),
+            }
         );
-        return;
+        if (!confirmed) return;
     }
 
     if (MarkingsStore(canvasId).state.markings.length !== 0) {
@@ -101,7 +100,7 @@ export async function loadMarkingsData(filePath: string, canvasId: CANVAS_ID) {
             ),
             {
                 kind: "warning",
-                title: filePath ?? "Are you sure?",
+                title: filePath ?? t("Are you sure?", { ns: "dialog" }),
             }
         );
         if (!confirmed) return;

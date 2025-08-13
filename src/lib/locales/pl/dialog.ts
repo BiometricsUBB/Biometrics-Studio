@@ -5,8 +5,8 @@ const d: Dictionary = {
         "Czy na pewno chcesz załadować ten obraz?\n\nSpowoduje to usunięcie wcześniej załadowanego obrazu i wszystkich istniejących adnotacji śladów.",
     "Are you sure you want to load markings data?\n\nIt will remove all existing forensic marks.":
         "Czy na pewno chcesz załadować dane dotyczące adnotacji?\n\nSpowoduje to usunięcie wszystkich istniejących adnotacji śladów.",
-    "The markings data was created with a different version of the application ({{version}}). Loading it might not work.\n\nAre you sure you want to load it?":
-        "Dane dotyczące adnotacji zostały utworzone za pomocą innej wersji aplikacji ({{version}}). Ich załadowanie może nie działać.\n\nCzy na pewno chcesz je załadować?",
+    "You are trying to load markings data with an unsupported app version for this file (minimum supported: {{minVersion}}, but you try to load: {{fileVersion}}). Loading it might not work.\n\nAre you sure you want to load it?":
+        "Próbujesz załadować dane adnotacji za pomocą nieobsługiwanej wersji aplikacji dla tego pliku (minimalna obsługiwana: {{minVersion}}, próbujesz załadować: {{fileVersion}}). Załadowanie może się nie udać.\n\nCzy na pewno chcesz je załadować?",
     "Marking types were exported from a different version of the application ({{version}}). Loading it might not work.\n\nAre you sure you want to load it?":
         "Typy adnotacji zostały wyeksportowane z innej wersji aplikacji ({{version}}). Ich załadowanie może nie działać.\n\nCzy na pewno chcesz je załadować?",
     "The imported marking types have conflicts with the existing ones:\n{{conflicts}}\n\nDo you want to overwrite them?":
@@ -35,6 +35,7 @@ const d: Dictionary = {
     "This markings data file requires a newer version of the application (minimum {{minVersion}}). Your current version is {{currentVersion}}. Please update the application to load this file.":
         "Ten plik danych adnotacji wymaga nowszej wersji aplikacji (minimum {{minVersion}}). Twoja aktualna wersja to {{currentVersion}}. Zaktualizuj aplikację, aby załadować ten plik.",
     Warning: "Ostrzeżenie",
+    "Are you sure?": "Czy jesteś pewny?",
 };
 
 export default d;

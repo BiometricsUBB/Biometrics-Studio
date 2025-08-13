@@ -37,7 +37,6 @@ type ImageInfo = {
 type SoftwareInfo = {
     name: string;
     version: string;
-    minimalSupportedVersion: string;
 };
 
 export type ExportObject = {
@@ -103,7 +102,6 @@ async function getData(
             software: {
                 name: "biometrics-studio",
                 version: await getVersion(),
-                minimalSupportedVersion: "0.5.0",
             },
             image: getImageData(picture),
             compared_image: getImageData(oppositePicture),
