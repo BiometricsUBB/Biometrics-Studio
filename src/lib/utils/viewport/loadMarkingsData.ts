@@ -163,11 +163,9 @@ export async function loadMarkingsData(filePath: string, canvasId: CANVAS_ID) {
         // importing names from metadata
         const metadataTypes = fileContentJson.metadata?.types;
 
-        const typesToAdd: MarkingType[] = [];
-        requiredTypes
-            .keys()
+        const typesToAdd: MarkingType[] = Array.from(requiredTypes.keys())
             .filter(id => missingtypesIds.includes(id))
-            .forEach(id => {
+            .map(id => {
                 const markingClass = requiredTypes.get(id)!;
 
                 const metadataTypeName = metadataTypes.find(
@@ -175,12 +173,7 @@ export async function loadMarkingsData(filePath: string, canvasId: CANVAS_ID) {
                 )?.name;
 
                 // set names according to metadata if non-existent use slice of id
-                /* 
-                    TODO: if typeName is not present display a warning and allow user to name it
-                    As currently if there is no typeName in the import file it will be named as the first 6 characters of the id
-                    breaking the convention of the user naming the types 
-                */
-                typesToAdd.push({
+                return {
                     id,
                     name: metadataTypeName ?? id.slice(0, 6),
                     displayName: metadataTypeName ?? id.slice(0, 6),
@@ -189,7 +182,7 @@ export async function loadMarkingsData(filePath: string, canvasId: CANVAS_ID) {
                     textColor: defaultTextColor,
                     size: defaultSize,
                     category: fileContentJson.metadata.workingMode,
-                });
+                };
             });
 
         MarkingTypesStore.actions.types.addMany(typesToAdd);
