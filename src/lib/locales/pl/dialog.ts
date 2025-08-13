@@ -38,7 +38,6 @@ const d: Dictionary = {
     "Invalid markings data file": "Nieprawidłowy plik danych adnotacji",
     "Are you sure?": "Czy jesteś pewny?",
     Warning: "Ostrzeżenie",
-    "Are you sure?": "Czy jesteś pewny?",
 };
 
 export default d;

@@ -35,7 +35,6 @@ const d: Dictionary = {
     "Invalid markings data file": "Invalid markings data file",
     "Are you sure?": "Are you sure?",
     Warning: "Warning",
-    "Are you sure?": "Are you sure?",
 };
 
 export default d;

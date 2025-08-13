@@ -98,7 +98,6 @@ export type i18nDialog = Recordify<
     | "Invalid markings data file"
     | "Are you sure?"
     | "Warning"
-    | "Are you sure?"
 >;
 
 export type i18nKeybindings = Recordify<
