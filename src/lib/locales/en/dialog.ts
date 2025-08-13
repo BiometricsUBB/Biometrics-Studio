@@ -29,8 +29,6 @@ const d: Dictionary = {
     "Error exporting marking types": "Error exporting marking types",
     "This action will clear the current canvas. Are you sure you want to proceed?":
         "This action will clear the current canvas. Are you sure you want to proceed?",
-    "This markings data file requires a newer version of the application (minimum {{minVersion}}). Your current version is {{currentVersion}}. Please update the application to load this file.":
-        "This markings data file requires a newer version of the application (minimum {{minVersion}}). Your current version is {{currentVersion}}. Please update the application to load this file.",
     Warning: "Warning",
     "Are you sure?": "Are you sure?",
 };
