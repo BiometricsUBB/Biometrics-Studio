@@ -77,7 +77,8 @@ export type i18nTooltip = Recordify<
 
 export type i18nDialog = Recordify<
     | "Are you sure you want to load markings data?\n\nIt will remove all existing forensic marks."
-    | "The markings data was created with a different version of the application ({{version}}). Loading it might not work.\n\nAre you sure you want to load it?"
+    | "You are trying to load markings data created with a newer app version (current app version: {{appVersion}}, but you try to load: {{fileVersion}}). Please update the application."
+    | "This markings data file was created with an older, unsupported version of the app ({{fileVersion}}, minimum supported: {{minVersion}}). Loading it might not work.\n\nDo you want to proceed?"
     | "Marking types were exported from a different version of the application ({{version}}). Loading it might not work.\n\nAre you sure you want to load it?"
     | "The imported marking types have conflicts with the existing ones:\n{{conflicts}}\n\nDo you want to overwrite them?"
     | "Overwrite marking types?"
@@ -97,6 +98,7 @@ export type i18nDialog = Recordify<
     | "Invalid markings data file"
     | "Are you sure?"
     | "Warning"
+    | "Are you sure?"
 >;
 
 export type i18nKeybindings = Recordify<
