@@ -5,8 +5,6 @@ const d: Dictionary = {
         "Are you sure you want to load this image?\n\nIt will remove the previously loaded image and all existing forensic marks.",
     "Are you sure you want to load markings data?\n\nIt will remove all existing forensic marks.":
         "Are you sure you want to load markings data?\n\nIt will remove all existing forensic marks.",
-    "You are trying to load markings data with an older app version (current app version: {{appVersion}}, but you try to load: {{fileVersion}}). Loading it might not work.\n\nAre you sure you want to load it?":
-        "You are trying to load markings data with an older app version (current app version: {{appVersion}}, but you try to load: {{fileVersion}}). Loading it might not work.\n\nAre you sure you want to load it?",
     "You are trying to load markings data created with a newer app version (current app version: {{appVersion}}, but you try to load: {{fileVersion}}). Please update the application.":
         "You are trying to load markings data created with a newer app version (current app version: {{appVersion}}, but you try to load: {{fileVersion}}). Please update the application.",
     "This markings data file was created with an older, unsupported version of the app ({{fileVersion}}, minimum supported: {{minVersion}}). Loading it might not work.\n\nDo you want to proceed?":
