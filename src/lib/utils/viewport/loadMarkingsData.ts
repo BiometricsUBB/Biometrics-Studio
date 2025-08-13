@@ -72,30 +72,29 @@ export async function loadMarkingsData(filePath: string, canvasId: CANVAS_ID) {
     const appVersion = await getVersion();
     const fileVersion = fileContentJson.metadata.software.version;
 
-    // Check if file version is below minimum required version - ERROR (cannot load)
-    if (compareVersions(fileVersion, MINIMUM_APP_VERSION) < 0) {
+    if (compareVersions(fileVersion, appVersion) > 0) {
+        // file_version > app_version: error
         showErrorDialog(
             t(
-                "This markings data file requires a newer version of the application (minimum {{minVersion}}). Your current version is {{currentVersion}}. Please update the application to load this file.",
+                "You are trying to load markings data created with a newer app version (current app version: {{appVersion}}, but you try to load: {{fileVersion}}). Please update the application.",
                 {
                     ns: "dialog",
-                    minVersion: MINIMUM_APP_VERSION,
-                    currentVersion: appVersion,
+                    appVersion,
+                    fileVersion,
                 }
             )
         );
         return;
     }
-
-    // Check if file version is newer than current app version - WARNING (may fail)
-    if (compareVersions(fileVersion, appVersion) > 0) {
+    if (compareVersions(fileVersion, MINIMUM_APP_VERSION) < 0) {
+        // file_version < min_version: warning
         const confirmed = await confirmFileSelectionDialog(
             t(
-                "You are trying to load markings data created with a newer app version (current app version: {{appVersion}}, but you try to load: {{fileVersion}}). Please update the application.\n\nDo you want to proceed?",
+                "This markings data file was created with an older, unsupported version of the app ({{fileVersion}}, minimum supported: {{minVersion}}). Loading it might not work.\n\nDo you want to proceed?",
                 {
                     ns: "dialog",
-                    appVersion,
                     fileVersion,
+                    minVersion: MINIMUM_APP_VERSION,
                 }
             ),
             {
