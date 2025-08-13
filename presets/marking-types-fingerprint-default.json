@@ -52,7 +52,7 @@
                 "name": "Bifurcation",
                 "displayName": "Rozwidlenie",
                 "markingClass": "ray",
-                "backgroundColor": "#6e93dd",
+                "backgroundColor": "#36d938",
                 "textColor": "#0a130a",
                 "size": 10,
                 "category": "FINGERPRINT"
@@ -68,10 +68,10 @@
                 "category": "FINGERPRINT"
             },
             {
-                "id": "bad14df7-5036-47c3-8653-9305b09cbaf5",
+                "id": "8ad7471b-d25b-4c49-92a7-08b27ac79aab",
                 "name": "Hook",
                 "displayName": "Haczyk",
-                "markingClass": "ray",
+                "markingClass": "line_segment",
                 "backgroundColor": "#68d651",
                 "textColor": "#0a130a",
                 "size": 10,
@@ -113,6 +113,76 @@
                 "displayName": "Por",
                 "markingClass": "point",
                 "backgroundColor": "#d279cf",
+                "textColor": "#0a130a",
+                "size": 10,
+                "category": "FINGERPRINT"
+            },
+            {
+                "id": "26595e0c-208b-48b3-b65c-63ac0e5f3d15",
+                "name": "Lake",
+                "displayName": "Oczko",
+                "markingClass": "line_segment",
+                "backgroundColor": "#ff5733",
+                "textColor": "#0a130a",
+                "size": 10,
+                "category": "FINGERPRINT"
+            },
+            {
+                "id": "07317d85-93a3-48a4-b96e-3ee5a2708ac0",
+                "name": "Ridge protrusion",
+                "displayName": "Wypust krawędzi",
+                "markingClass": "point",
+                "backgroundColor": "#9d4edd",
+                "textColor": "#0a130a",
+                "size": 10,
+                "category": "FINGERPRINT"
+            },
+            {
+                "id": "a71d05c4-a735-4191-88bb-9b6ddb5073d7",
+                "name": "Ridge indentation",
+                "displayName": "Wgłębienie krawędzi",
+                "markingClass": "point",
+                "backgroundColor": "#ff914d",
+                "textColor": "#0a130a",
+                "size": 10,
+                "category": "FINGERPRINT"
+            },
+            {
+                "id": "a9b5408a-97a4-45f1-85db-be33053a371c",
+                "name": "Dot",
+                "displayName": "Plamka",
+                "markingClass": "point",
+                "backgroundColor": "#f78fb3",
+                "textColor": "#0a130a",
+                "size": 10,
+                "category": "FINGERPRINT"
+            },
+            {
+                "id": "35b5d779-f12b-469f-95de-7bfc678ad0c8",
+                "name": "Incipient ridge",
+                "displayName": "Linia szczątkowa",
+                "markingClass": "line_segment",
+                "backgroundColor": "#1f7a8c",
+                "textColor": "#0a130a",
+                "size": 10,
+                "category": "FINGERPRINT"
+            },
+            {
+                "id": "23af05e0-2aaf-46fd-9f0f-16b075a1cfdb",
+                "name": "Scar",
+                "displayName": "Blizna",
+                "markingClass": "line_segment",
+                "backgroundColor": "#ffc300",
+                "textColor": "#0a130a",
+                "size": 10,
+                "category": "FINGERPRINT"
+            },
+            {
+                "id": "dcbe2774-07df-45c2-8318-a0d3b40dcc96",
+                "name": "Crease",
+                "displayName": "Pęknięcie",
+                "markingClass": "line_segment",
+                "backgroundColor": "#2d6a4f",
                 "textColor": "#0a130a",
                 "size": 10,
                 "category": "FINGERPRINT"
