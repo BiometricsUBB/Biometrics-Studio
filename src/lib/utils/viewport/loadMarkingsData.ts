@@ -26,9 +26,8 @@ import {
 import { WorkingModeStore } from "@/lib/stores/WorkingMode";
 import { BoundingBoxMarking } from "@/lib/markings/BoundingBoxMarking";
 import { MARKING_CLASS } from "@/lib/markings/MARKING_CLASS";
+import { getVersion } from "@tauri-apps/api/app";
 import { ExportObject } from "./saveMarkingsDataWithDialog";
-
-const MINIMAL_SUPPORTED_FILE_VERSION = "0.5.0";
 
 function compareVersions(version1: string, version2: string): number {
     const v1parts = version1.split(".").map(Number);
@@ -68,19 +67,19 @@ export async function loadMarkingsData(filePath: string, canvasId: CANVAS_ID) {
         return;
     }
 
-    // Warn if the file version is below the minimal supported version
+    const appVersion = await getVersion();
+
+    // Warn if the file version is below the current app version
     if (
-        compareVersions(
-            fileContentJson.metadata.software.version,
-            MINIMAL_SUPPORTED_FILE_VERSION
-        ) < 0
+        compareVersions(fileContentJson.metadata.software.version, appVersion) <
+        0
     ) {
         const confirmed = await confirmFileSelectionDialog(
             t(
-                "You are trying to load markings data with an unsupported app version for this file (minimum supported: {{minVersion}}, but you try to load: {{fileVersion}}). Loading it might not work.\n\nAre you sure you want to load it?",
+                "You are trying to load markings data with an older app version (current app version: {{appVersion}}, but you try to load: {{fileVersion}}). Loading it might not work.\n\nAre you sure you want to load it?",
                 {
                     ns: "dialog",
-                    minVersion: MINIMAL_SUPPORTED_FILE_VERSION,
+                    appVersion,
                     fileVersion: fileContentJson.metadata.software.version,
                 }
             ),
