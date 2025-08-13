@@ -93,23 +93,12 @@ export async function loadMarkingsData(filePath: string, canvasId: CANVAS_ID) {
         return;
     }
 
-    if (
-        fileContentJson.metadata.software.version !== appVersion ||
-        MarkingsStore(canvasId).state.markings.length !== 0
-    ) {
+    if (MarkingsStore(canvasId).state.markings.length !== 0) {
         const confirmed = await confirmFileSelectionDialog(
-            fileContentJson.metadata.software.version !== appVersion
-                ? t(
-                      "The markings data was created with a different version of the application ({{version}}). Loading it might not work.\n\nAre you sure you want to load it?",
-                      {
-                          ns: "dialog",
-                          version: fileContentJson.metadata.software.version,
-                      }
-                  )
-                : t(
-                      "Are you sure you want to load markings data?\n\nIt will remove all existing forensic marks.",
-                      { ns: "dialog" }
-                  ),
+            t(
+                "Are you sure you want to load markings data?\n\nIt will remove all existing forensic marks.",
+                { ns: "dialog" }
+            ),
             {
                 kind: "warning",
                 title: filePath ?? "Are you sure?",
