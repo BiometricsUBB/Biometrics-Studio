@@ -1,8 +1,6 @@
 import { i18nDialog as Dictionary } from "@/lib/locales/translation";
 
 const d: Dictionary = {
-    "Are you sure you want to load this image?\n\nIt will remove the previously loaded image and all existing forensic marks.":
-        "Are you sure you want to load this image?\n\nIt will remove the previously loaded image and all existing forensic marks.",
     "Are you sure you want to load markings data?\n\nIt will remove all existing forensic marks.":
         "Are you sure you want to load markings data?\n\nIt will remove all existing forensic marks.",
     "You are trying to load markings data created with a newer app version (current app version: {{appVersion}}, but you try to load: {{fileVersion}}). Please update the application.":
@@ -31,8 +29,12 @@ const d: Dictionary = {
     "Error exporting marking types": "Error exporting marking types",
     "This action will clear the current canvas. Are you sure you want to proceed?":
         "This action will clear the current canvas. Are you sure you want to proceed?",
-    Warning: "Warning",
+    "You have unsaved changes!\nOpening this file will cause the loss of unsaved annotations.\nAre you sure you want to load this image?":
+        "You have unsaved changes!\nOpening this file will cause the loss of unsaved annotations.\nAre you sure you want to load this image?",
+    "Unsaved Changes": "Unsaved Changes",
+    "Invalid markings data file": "Invalid markings data file",
     "Are you sure?": "Are you sure?",
+    Warning: "Warning",
 };
 
 export default d;

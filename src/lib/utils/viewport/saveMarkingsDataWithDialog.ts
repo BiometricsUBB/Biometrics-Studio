@@ -23,6 +23,7 @@ import { WorkingModeStore } from "@/lib/stores/WorkingMode";
 import { WORKING_MODE } from "@/views/selectMode";
 import { BoundingBoxMarking } from "@/lib/markings/BoundingBoxMarking";
 import { toast } from "sonner";
+import { GlobalStateStore } from "@/lib/stores/GlobalState";
 
 type ImageInfo = {
     name: string | null;
@@ -199,6 +200,16 @@ export async function saveMarkingsDataWithDialog(viewport: Viewport) {
 
         const data = await getData(viewport, picture, oppositePicture);
         await writeTextFile(filepath, data);
+
+        const canvasId = viewport.name as CanvasMetadata["id"];
+        const leftHash = MarkingsStore(CANVAS_ID.LEFT).state.markingsHash;
+        const rightHash = MarkingsStore(CANVAS_ID.RIGHT).state.markingsHash;
+        GlobalStateStore.actions.unsavedChanges.markCanvasAsSaved(
+            canvasId,
+            leftHash,
+            rightHash
+        );
+
         toast.success(t("Markings data saved", { ns: "tooltip" }));
     } catch {
         toast.error(t("Failed to save markings data", { ns: "tooltip" }));
