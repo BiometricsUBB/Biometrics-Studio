@@ -29,6 +29,24 @@ import { BoundingBoxMarking } from "@/lib/markings/BoundingBoxMarking";
 import { MARKING_CLASS } from "@/lib/markings/MARKING_CLASS";
 import { ExportObject } from "./saveMarkingsDataWithDialog";
 
+function compareVersions(version1: string, version2: string): number {
+    const v1parts = version1.split(".").map(Number);
+    const v2parts = version2.split(".").map(Number);
+
+    const maxLength = Math.max(v1parts.length, v2parts.length);
+
+    return (
+        Array.from({ length: maxLength }, (_, i) => {
+            const v1part = v1parts.at(i) ?? 0;
+            const v2part = v2parts.at(i) ?? 0;
+
+            if (v1part > v2part) return 1;
+            if (v1part < v2part) return -1;
+            return 0;
+        }).find(result => result !== 0) || 0
+    );
+}
+
 export function validateFileData(_data: unknown): _data is ExportObject {
     const fileData = _data as ExportObject;
     return (
@@ -50,6 +68,30 @@ export async function loadMarkingsData(filePath: string, canvasId: CANVAS_ID) {
     }
 
     const appVersion = await getVersion();
+
+    // Check if the file has minimalSupportedVersion and if current app version meets the requirement
+    // If no minimalSupportedVersion is present, treat as unsupported
+    if (
+        !fileContentJson.metadata.software.minimalSupportedVersion ||
+        compareVersions(
+            appVersion,
+            fileContentJson.metadata.software.minimalSupportedVersion
+        ) < 0
+    ) {
+        showErrorDialog(
+            t(
+                "This markings data file requires a newer version of the application (minimum {{minVersion}}). Your current version is {{currentVersion}}. Please update the application to load this file.",
+                {
+                    ns: "dialog",
+                    minVersion:
+                        fileContentJson.metadata.software
+                            .minimalSupportedVersion || "unknown",
+                    currentVersion: appVersion,
+                }
+            )
+        );
+        return;
+    }
 
     if (
         fileContentJson.metadata.software.version !== appVersion ||

@@ -32,6 +32,8 @@ const d: Dictionary = {
         "Błąd podczas eksportowania typów adnotacji",
     "This action will clear the current canvas. Are you sure you want to proceed?":
         "Ta czynność spowoduje wyczyszczenie obecnego obszaru roboczego. Czy na pewno chcesz kontynuować?",
+    "This markings data file requires a newer version of the application (minimum {{minVersion}}). Your current version is {{currentVersion}}. Please update the application to load this file.":
+        "Ten plik danych adnotacji wymaga nowszej wersji aplikacji (minimum {{minVersion}}). Twoja aktualna wersja to {{currentVersion}}. Zaktualizuj aplikację, aby załadować ten plik.",
     Warning: "Ostrzeżenie",
 };
 
