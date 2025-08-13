@@ -45,7 +45,7 @@ export async function loadMarkingsData(filePath: string, canvasId: CANVAS_ID) {
     const fileContentString = await readTextFile(filePath);
     const fileContentJson: unknown = JSON.parse(fileContentString);
     if (!validateFileData(fileContentJson)) {
-        showErrorDialog("Invalid markings data file");
+        showErrorDialog(t("Invalid markings data file", { ns: "dialog" }));
         return;
     }
 
@@ -65,7 +65,7 @@ export async function loadMarkingsData(filePath: string, canvasId: CANVAS_ID) {
             ),
             {
                 kind: "warning",
-                title: filePath ?? "Are you sure?",
+                title: filePath ?? t("Are you sure?", { ns: "dialog" }),
             }
         );
         if (!confirmed) return;

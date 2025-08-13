@@ -30,6 +30,8 @@ const d: Dictionary = {
     "You have unsaved changes!\nOpening this file will cause the loss of unsaved annotations.\nAre you sure you want to load this image?":
         "You have unsaved changes!\nOpening this file will cause the loss of unsaved annotations.\nAre you sure you want to load this image?",
     "Unsaved Changes": "Unsaved Changes",
+    "Invalid markings data file": "Invalid markings data file",
+    "Are you sure?": "Are you sure?",
     Warning: "Warning",
 };
 

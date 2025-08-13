@@ -33,6 +33,8 @@ const d: Dictionary = {
     "You have unsaved changes!\nOpening this file will cause the loss of unsaved annotations.\nAre you sure you want to load this image?":
         "Masz niezapisane zmiany!\nOtwarcie tego pliku spowoduje utratę niezapisanych adnotacji.\nCzy jesteś pewny, że chcesz załadować ten obraz?",
     "Unsaved Changes": "Niezapisane zmiany",
+    "Invalid markings data file": "Nieprawidłowy plik danych adnotacji",
+    "Are you sure?": "Czy jesteś pewny?",
     Warning: "Ostrzeżenie",
 };
 

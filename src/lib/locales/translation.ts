@@ -94,6 +94,8 @@ export type i18nDialog = Recordify<
     | "This action will clear the current canvas. Are you sure you want to proceed?"
     | "You have unsaved changes!\nOpening this file will cause the loss of unsaved annotations.\nAre you sure you want to load this image?"
     | "Unsaved Changes"
+    | "Invalid markings data file"
+    | "Are you sure?"
     | "Warning"
 >;
 
