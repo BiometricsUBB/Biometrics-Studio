@@ -11,6 +11,7 @@ import {
     LockKeyhole,
     LockKeyholeOpen,
     SendToBack,
+    ChevronDown,
 } from "lucide-react";
 import { ICON } from "@/lib/utils/const";
 import { useTranslation } from "react-i18next";
@@ -108,13 +109,20 @@ export function GlobalToolbar({ className, ...props }: GlobalToolbarProps) {
                 <DropdownMenu>
                     <DropdownMenuTrigger
                         className={cn(
-                            "w-36 mr-2 overflow-hidden text-ellipsis whitespace-nowrap",
+                            "w-36 mr-2 overflow-hidden text-ellipsis whitespace-nowrap flex items-row justify-between items-center px-1",
                             className
                         )}
                         disabled={!availableMarkingTypesForWorkingMode.length}
                     >
-                        {selectedMarkingType?.displayName ??
-                            t("None", { ns: "keybindings" })}
+                        <span className="overflow-hidden text-ellipsis whitespace-nowrap">
+                            {selectedMarkingType?.displayName ??
+                                t("None", { ns: "keybindings" })}
+                        </span>
+                        <ChevronDown
+                            size={16}
+                            strokeWidth={ICON.STROKE_WIDTH}
+                            className="ml-2 flex-shrink-0"
+                        />
                     </DropdownMenuTrigger>
                     <DropdownMenuPortal>
                         <DropdownMenuContent>
