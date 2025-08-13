@@ -29,6 +29,8 @@ import { MARKING_CLASS } from "@/lib/markings/MARKING_CLASS";
 import { getVersion } from "@tauri-apps/api/app";
 import { ExportObject } from "./saveMarkingsDataWithDialog";
 
+const MINIMUM_APP_VERSION = "0.5.0";
+
 function compareVersions(version1: string, version2: string): number {
     const v1parts = version1.split(".").map(Number);
     const v2parts = version2.split(".").map(Number);
@@ -68,19 +70,32 @@ export async function loadMarkingsData(filePath: string, canvasId: CANVAS_ID) {
     }
 
     const appVersion = await getVersion();
+    const fileVersion = fileContentJson.metadata.software.version;
 
-    // Warn if the file version is below the current app version
-    if (
-        compareVersions(fileContentJson.metadata.software.version, appVersion) <
-        0
-    ) {
+    // Check if file version is below minimum required version - ERROR (cannot load)
+    if (compareVersions(fileVersion, MINIMUM_APP_VERSION) < 0) {
+        showErrorDialog(
+            t(
+                "This markings data file requires a newer version of the application (minimum {{minVersion}}). Your current version is {{currentVersion}}. Please update the application to load this file.",
+                {
+                    ns: "dialog",
+                    minVersion: MINIMUM_APP_VERSION,
+                    currentVersion: appVersion,
+                }
+            )
+        );
+        return;
+    }
+
+    // Check if file version is newer than current app version - WARNING (may fail)
+    if (compareVersions(fileVersion, appVersion) > 0) {
         const confirmed = await confirmFileSelectionDialog(
             t(
-                "You are trying to load markings data with an older app version (current app version: {{appVersion}}, but you try to load: {{fileVersion}}). Loading it might not work.\n\nAre you sure you want to load it?",
+                "You are trying to load markings data created with a newer app version (current app version: {{appVersion}}, but you try to load: {{fileVersion}}). Please update the application.\n\nDo you want to proceed?",
                 {
                     ns: "dialog",
                     appVersion,
-                    fileVersion: fileContentJson.metadata.software.version,
+                    fileVersion,
                 }
             ),
             {

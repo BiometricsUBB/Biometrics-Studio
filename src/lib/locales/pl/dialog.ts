@@ -7,6 +7,10 @@ const d: Dictionary = {
         "Czy na pewno chcesz załadować dane dotyczące adnotacji?\n\nSpowoduje to usunięcie wszystkich istniejących adnotacji śladów.",
     "You are trying to load markings data with an older app version (current app version: {{appVersion}}, but you try to load: {{fileVersion}}). Loading it might not work.\n\nAre you sure you want to load it?":
         "Próbujesz załadować dane adnotacji ze starszą wersją aplikacji (aktualna wersja aplikacji: {{appVersion}}, ale próbujesz załadować: {{fileVersion}}). Załadowanie może nie działać.\n\nCzy na pewno chcesz je załadować?",
+    "You are trying to load markings data created with a newer app version (current app version: {{appVersion}}, but you try to load: {{fileVersion}}). Please update the application.\n\nDo you want to proceed?":
+        "Próbujesz załadować dane adnotacji utworzone z nowszą wersją aplikacji (aktualna wersja aplikacji: {{appVersion}}, ale próbujesz załadować: {{fileVersion}}). Zaktualizuj aplikację.\n\nCzy chcesz kontynuować?",
+    "This markings data file requires a newer version of the application (minimum {{minVersion}}). Your current version is {{currentVersion}}. Please update the application to load this file.":
+        "Ten plik danych adnotacji wymaga nowszej wersji aplikacji (minimum {{minVersion}}). Twoja aktualna wersja to {{currentVersion}}. Zaktualizuj aplikację, aby załadować ten plik.",
     "Marking types were exported from a different version of the application ({{version}}). Loading it might not work.\n\nAre you sure you want to load it?":
         "Typy adnotacji zostały wyeksportowane z innej wersji aplikacji ({{version}}). Ich załadowanie może nie działać.\n\nCzy na pewno chcesz je załadować?",
     "The imported marking types have conflicts with the existing ones:\n{{conflicts}}\n\nDo you want to overwrite them?":
