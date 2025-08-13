@@ -132,19 +132,19 @@ export async function loadMarkingsData(filePath: string, canvasId: CANVAS_ID) {
         }
     );
 
-    const existingtypes = MarkingTypesStore.state.types;
+    const existingTypes = MarkingTypesStore.state.types;
 
     const requiredTypes = new Map<MarkingType["id"], MARKING_CLASS>(
         markings.map(marking => [marking.typeId, marking.markingClass])
     );
 
-    const missingtypesIds: string[] = requiredTypes
+    const missingTypesIds: string[] = requiredTypes
         .keys()
-        .filter(id => !existingtypes.some(c => c.id === id))
+        .filter(id => !existingTypes.some(c => c.id === id))
         .toArray();
 
     // If type exists in markings but not in the store
-    if (missingtypesIds.length > 0) {
+    if (missingTypesIds.length > 0) {
         const confirmed = await confirmFileSelectionDialog(
             t(
                 "The imported markings data contains types that are not present in the application. Would you like to:\n1. Automatically create default types for the missing ones?\n2. Cancel and manually import the types from a file?",
@@ -164,7 +164,7 @@ export async function loadMarkingsData(filePath: string, canvasId: CANVAS_ID) {
         const metadataTypes = fileContentJson.metadata?.types;
 
         const typesToAdd: MarkingType[] = Array.from(requiredTypes.keys())
-            .filter(id => missingtypesIds.includes(id))
+            .filter(id => missingTypesIds.includes(id))
             .map(id => {
                 const markingClass = requiredTypes.get(id)!;
 
