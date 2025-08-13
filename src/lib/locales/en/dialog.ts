@@ -5,8 +5,10 @@ const d: Dictionary = {
         "Are you sure you want to load this image?\n\nIt will remove the previously loaded image and all existing forensic marks.",
     "Are you sure you want to load markings data?\n\nIt will remove all existing forensic marks.":
         "Are you sure you want to load markings data?\n\nIt will remove all existing forensic marks.",
-    "The markings data was created with a different version of the application ({{version}}). Loading it might not work.\n\nAre you sure you want to load it?":
-        "The markings data was created with a different version of the application ({{version}}). Loading it might not work.\n\nAre you sure you want to load it?",
+    "You are trying to load markings data created with a newer app version (current app version: {{appVersion}}, but you try to load: {{fileVersion}}). Please update the application.":
+        "You are trying to load markings data created with a newer app version (current app version: {{appVersion}}, but you try to load: {{fileVersion}}). Please update the application.",
+    "This markings data file was created with an older, unsupported version of the app ({{fileVersion}}, minimum supported: {{minVersion}}). Loading it might not work.\n\nDo you want to proceed?":
+        "This markings data file was created with an older, unsupported version of the app ({{fileVersion}}, minimum supported: {{minVersion}}). Loading it might not work.\n\nDo you want to proceed?",
     "Marking types were exported from a different version of the application ({{version}}). Loading it might not work.\n\nAre you sure you want to load it?":
         "Marking types were exported from a different version of the application ({{version}}). Loading it might not work.\n\nAre you sure you want to load it?",
     "The imported marking types have conflicts with the existing ones:\n{{conflicts}}\n\nDo you want to overwrite them?":
@@ -30,6 +32,7 @@ const d: Dictionary = {
     "This action will clear the current canvas. Are you sure you want to proceed?":
         "This action will clear the current canvas. Are you sure you want to proceed?",
     Warning: "Warning",
+    "Are you sure?": "Are you sure?",
 };
 
 export default d;

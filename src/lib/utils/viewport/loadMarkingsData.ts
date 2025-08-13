@@ -4,7 +4,6 @@ import {
 } from "@/components/pixi/canvas/hooks/useCanvasContext";
 import { showErrorDialog } from "@/lib/errors/showErrorDialog";
 import { MarkingsStore } from "@/lib/stores/Markings";
-import { getVersion } from "@tauri-apps/api/app";
 import {
     confirm as confirmFileSelectionDialog,
     open as openFileSelectionDialog,
@@ -27,7 +26,28 @@ import {
 import { WorkingModeStore } from "@/lib/stores/WorkingMode";
 import { BoundingBoxMarking } from "@/lib/markings/BoundingBoxMarking";
 import { MARKING_CLASS } from "@/lib/markings/MARKING_CLASS";
+import { getVersion } from "@tauri-apps/api/app";
 import { ExportObject } from "./saveMarkingsDataWithDialog";
+
+const MINIMUM_APP_VERSION = "0.5.0";
+
+function compareVersions(version1: string, version2: string): number {
+    const v1parts = version1.split(".").map(Number);
+    const v2parts = version2.split(".").map(Number);
+
+    const maxLength = Math.max(v1parts.length, v2parts.length);
+
+    return (
+        Array.from({ length: maxLength }, (_, i) => {
+            const v1part = v1parts.at(i) ?? 0;
+            const v2part = v2parts.at(i) ?? 0;
+
+            if (v1part > v2part) return 1;
+            if (v1part < v2part) return -1;
+            return 0;
+        }).find(result => result !== 0) || 0
+    );
+}
 
 export function validateFileData(_data: unknown): _data is ExportObject {
     const fileData = _data as ExportObject;
@@ -50,27 +70,50 @@ export async function loadMarkingsData(filePath: string, canvasId: CANVAS_ID) {
     }
 
     const appVersion = await getVersion();
+    const fileVersion = fileContentJson.metadata.software.version;
 
-    if (
-        fileContentJson.metadata.software.version !== appVersion ||
-        MarkingsStore(canvasId).state.markings.length !== 0
-    ) {
+    if (compareVersions(fileVersion, appVersion) > 0) {
+        // file_version > app_version: error
+        showErrorDialog(
+            t(
+                "You are trying to load markings data created with a newer app version (current app version: {{appVersion}}, but you try to load: {{fileVersion}}). Please update the application.",
+                {
+                    ns: "dialog",
+                    appVersion,
+                    fileVersion,
+                }
+            )
+        );
+        return;
+    }
+    if (compareVersions(fileVersion, MINIMUM_APP_VERSION) < 0) {
+        // file_version < min_version: warning
         const confirmed = await confirmFileSelectionDialog(
-            fileContentJson.metadata.software.version !== appVersion
-                ? t(
-                      "The markings data was created with a different version of the application ({{version}}). Loading it might not work.\n\nAre you sure you want to load it?",
-                      {
-                          ns: "dialog",
-                          version: fileContentJson.metadata.software.version,
-                      }
-                  )
-                : t(
-                      "Are you sure you want to load markings data?\n\nIt will remove all existing forensic marks.",
-                      { ns: "dialog" }
-                  ),
+            t(
+                "This markings data file was created with an older, unsupported version of the app ({{fileVersion}}, minimum supported: {{minVersion}}). Loading it might not work.\n\nDo you want to proceed?",
+                {
+                    ns: "dialog",
+                    fileVersion,
+                    minVersion: MINIMUM_APP_VERSION,
+                }
+            ),
             {
                 kind: "warning",
-                title: filePath ?? "Are you sure?",
+                title: filePath ?? t("Are you sure?", { ns: "dialog" }),
+            }
+        );
+        if (!confirmed) return;
+    }
+
+    if (MarkingsStore(canvasId).state.markings.length !== 0) {
+        const confirmed = await confirmFileSelectionDialog(
+            t(
+                "Are you sure you want to load markings data?\n\nIt will remove all existing forensic marks.",
+                { ns: "dialog" }
+            ),
+            {
+                kind: "warning",
+                title: filePath ?? t("Are you sure?", { ns: "dialog" }),
             }
         );
         if (!confirmed) return;

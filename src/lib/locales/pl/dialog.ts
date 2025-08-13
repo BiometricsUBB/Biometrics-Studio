@@ -5,8 +5,10 @@ const d: Dictionary = {
         "Czy na pewno chcesz załadować ten obraz?\n\nSpowoduje to usunięcie wcześniej załadowanego obrazu i wszystkich istniejących adnotacji śladów.",
     "Are you sure you want to load markings data?\n\nIt will remove all existing forensic marks.":
         "Czy na pewno chcesz załadować dane dotyczące adnotacji?\n\nSpowoduje to usunięcie wszystkich istniejących adnotacji śladów.",
-    "The markings data was created with a different version of the application ({{version}}). Loading it might not work.\n\nAre you sure you want to load it?":
-        "Dane dotyczące adnotacji zostały utworzone za pomocą innej wersji aplikacji ({{version}}). Ich załadowanie może nie działać.\n\nCzy na pewno chcesz je załadować?",
+    "You are trying to load markings data created with a newer app version (current app version: {{appVersion}}, but you try to load: {{fileVersion}}). Please update the application.":
+        "Próbujesz załadować dane adnotacji utworzone w nowszej wersji aplikacji (aktualna wersja aplikacji: {{appVersion}}, ale próbujesz załadować: {{fileVersion}}). Zaktualizuj aplikację.",
+    "This markings data file was created with an older, unsupported version of the app ({{fileVersion}}, minimum supported: {{minVersion}}). Loading it might not work.\n\nDo you want to proceed?":
+        "Plik danych adnotacji został utworzony w starszej, nieobsługiwanej wersji aplikacji ({{fileVersion}}, minimalna obsługiwana: {{minVersion}}). Załadowanie może się nie udać.\n\nCzy chcesz kontynuować?",
     "Marking types were exported from a different version of the application ({{version}}). Loading it might not work.\n\nAre you sure you want to load it?":
         "Typy adnotacji zostały wyeksportowane z innej wersji aplikacji ({{version}}). Ich załadowanie może nie działać.\n\nCzy na pewno chcesz je załadować?",
     "The imported marking types have conflicts with the existing ones:\n{{conflicts}}\n\nDo you want to overwrite them?":
@@ -33,6 +35,7 @@ const d: Dictionary = {
     "This action will clear the current canvas. Are you sure you want to proceed?":
         "Ta czynność spowoduje wyczyszczenie obecnego obszaru roboczego. Czy na pewno chcesz kontynuować?",
     Warning: "Ostrzeżenie",
+    "Are you sure?": "Czy jesteś pewny?",
 };
 
 export default d;
