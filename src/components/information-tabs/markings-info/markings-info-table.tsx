@@ -84,7 +84,6 @@ const TableRowComponent = <TData,>(rows: Row<TData>[], canvasId: CANVAS_ID) => {
                 data-state={isSelected && "selected"}
                 onClickCapture={() => {
                     if (selectedMarkingLabel === marking.label) {
-                        // odznacz
                         MarkingsStore(
                             canvasId
                         ).actions.selectedMarkingLabel.setSelectedMarkingLabel(

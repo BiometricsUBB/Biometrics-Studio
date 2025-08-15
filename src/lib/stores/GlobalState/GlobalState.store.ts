@@ -4,7 +4,6 @@ import { CanvasMetadata } from "@/components/pixi/canvas/hooks/useCanvasContext"
 // eslint-disable-next-line import/no-cycle
 import { Immer, produceCallback } from "../immer.helpers";
 
-// Nowy typ: wybór do scalenia
 export type PendingMerge = {
     canvasId: CanvasMetadata["id"];
     label: number;

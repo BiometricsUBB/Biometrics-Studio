@@ -8,10 +8,8 @@ export abstract class MarkingClass {
 
     public abstract readonly markingClass: MARKING_CLASS;
 
-    // Stabilne ID-y (mogą być scalone z wielu znaczników)
     public ids: string[];
 
-    // label: ephemeral – przydzielany dynamicznie po imporcie, NIE jest eksportowany
     public constructor(
         public label: number,
         public origin: Point,
