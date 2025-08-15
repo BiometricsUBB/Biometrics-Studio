@@ -1,8 +1,5 @@
 import { MarkingsStore } from "@/lib/stores/Markings";
-import {
-    CANVAS_ID,
-    useCanvasContext,
-} from "@/components/pixi/canvas/hooks/useCanvasContext";
+import { useCanvasContext } from "@/components/pixi/canvas/hooks/useCanvasContext";
 import { useEffect, useMemo } from "react";
 import { getOppositeCanvasId } from "@/components/pixi/canvas/utils/get-opposite-canvas-id";
 import { IS_DEV_ENVIRONMENT } from "@/lib/utils/const";
@@ -12,19 +9,9 @@ import { EmptyableMarking, useColumns } from "./markings-info-table-columns";
 import { MarkingsInfoTable } from "./markings-info-table";
 
 const fillMissingLabels = (
-    canvasId: CANVAS_ID,
     markings: EmptyableMarking[]
 ): EmptyableMarking[] => {
-    const maxLabel =
-        MarkingsStore(canvasId).actions.labelGenerator.getMaxLabel();
-    if (!maxLabel || maxLabel <= 1) return markings;
-
-    const usedLabels = new Set(markings.map(m => m.label));
-    return Array.from({ length: maxLabel }, (_, i) =>
-        usedLabels.has(i + 1)
-            ? markings.find(m => m.label === i + 1)!
-            : { label: i + 1 }
-    );
+    return markings;
 };
 
 export function MarkingsInfo({ tableHeight }: { tableHeight: number }) {
@@ -39,7 +26,6 @@ export function MarkingsInfo({ tableHeight }: { tableHeight: number }) {
             hash: state.markingsHash,
         }),
         (oldState, newState) => {
-            // re-rendering tylko wtedy, gdy zmieni się hash stanu
             return oldState.hash === newState.hash;
         }
     );
@@ -52,13 +38,11 @@ export function MarkingsInfo({ tableHeight }: { tableHeight: number }) {
             hash: state.markingsHash,
         }),
         (oldState, newState) => {
-            // re-rendering tylko wtedy, gdy zmieni się hash stanu
             return oldState.hash === newState.hash;
         }
     );
 
     useEffect(() => {
-        // sprawdzanie, czy znaczniki są unikalne
         if (IS_DEV_ENVIRONMENT) {
             const markingLabels = storeMarkings.map(m => m.label);
 
@@ -72,7 +56,7 @@ export function MarkingsInfo({ tableHeight }: { tableHeight: number }) {
     const columns = useColumns(id);
 
     const markings = useMemo(() => {
-        const thisIds = storeMarkings.map(m => m.id);
+        const thisIds = new Set(storeMarkings.flatMap(m => m.ids));
         const thisLabels = storeMarkings.map(m => m.label);
         const combinedMarkings = [
             ...storeMarkings,
@@ -80,10 +64,11 @@ export function MarkingsInfo({ tableHeight }: { tableHeight: number }) {
         ]
             .sort((a, b) => a.label - b.label)
             .map(m =>
-                thisIds.includes(m.id) ? m : { label: m.label }
+                // if any id exists on this side - show full object, otherwise placeholder
+                m.ids.some(id => thisIds.has(id)) ? m : { label: m.label }
             ) as EmptyableMarking[];
 
-        return fillMissingLabels(id, combinedMarkings);
+        return fillMissingLabels(combinedMarkings);
     }, [storeMarkings, storeOppositeMarkings, id]);
 
     return (

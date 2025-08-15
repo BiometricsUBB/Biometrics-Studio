@@ -20,9 +20,10 @@ export class RayMarkingHandler extends MarkingHandler {
 
     private initFirstStage(e: FederatedPointerEvent) {
         const { viewport, markingsStore } = this.plugin.handlerParams;
+        const label = markingsStore.actions.labelGenerator.getLabel();
         markingsStore.actions.temporaryMarking.setTemporaryMarking(
             new RayMarking(
-                markingsStore.actions.labelGenerator.getLabel(),
+                label,
                 getNormalizedMousePosition(e, viewport),
                 this.typeId,
                 0

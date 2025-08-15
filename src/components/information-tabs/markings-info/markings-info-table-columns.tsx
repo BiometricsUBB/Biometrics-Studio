@@ -1,6 +1,6 @@
 import { CellContext, ColumnDef } from "@tanstack/react-table";
 import { ICON } from "@/lib/utils/const";
-import { Trash2 } from "lucide-react";
+import { Trash2, Link2 } from "lucide-react";
 import { Toggle } from "@/components/ui/toggle";
 import { CanvasMetadata } from "@/components/pixi/canvas/hooks/useCanvasContext";
 import { MarkingsStore } from "@/lib/stores/Markings";
@@ -8,7 +8,9 @@ import { MarkingClass } from "@/lib/markings/MarkingClass";
 import { useTranslation } from "react-i18next";
 import { useMemo } from "react";
 import { MarkingTypesStore } from "@/lib/stores/MarkingTypes/MarkingTypes";
-
+import { getOppositeCanvasId } from "@/components/pixi/canvas/utils/get-opposite-canvas-id";
+import { GlobalStateStore } from "@/lib/stores/GlobalState";
+/* eslint-disable sonarjs/no-duplicated-branches */
 export type EmptyMarking = {
     label: MarkingClass["label"];
 };
@@ -17,7 +19,7 @@ type EmptyableCellContext = CellContext<EmptyableMarking, unknown>;
 type DataCellContext = CellContext<MarkingClass, unknown>;
 
 export function isMarkingBase(cell: EmptyableMarking): cell is MarkingClass {
-    return "id" in cell;
+    return "ids" in cell;
 }
 
 const formatCell = <T,>(
@@ -44,6 +46,31 @@ export const useColumns = (
 ): ColumnDef<EmptyableMarking, Element>[] => {
     const { t } = useTranslation();
 
+    const handleRemoveClick = (marking: MarkingClass) => {
+        MarkingsStore(id).actions.markings.removeOneByLabel(marking.label);
+    };
+
+    const handleMergeClick = (marking: MarkingClass) => {
+        const current = {
+            canvasId: id,
+            label: marking.label,
+        };
+        const pendingSel = GlobalStateStore.state.pendingMerge;
+
+        if (!pendingSel) {
+            GlobalStateStore.actions.merge.setPending(current);
+        } else if (pendingSel.canvasId !== id) {
+            MarkingsStore(pendingSel.canvasId).actions.markings.mergePair(
+                pendingSel.label,
+                id,
+                marking.label
+            );
+            GlobalStateStore.actions.merge.setPending(null);
+        } else {
+            GlobalStateStore.actions.merge.setPending(current);
+        }
+    };
+
     return useMemo(
         () =>
             [
@@ -51,33 +78,67 @@ export const useColumns = (
                     id: "actions",
                     cell: ({ row }) => {
                         const marking = row.original;
+                        const oppositeId = getOppositeCanvasId(id);
+                        const oppositeMarkings =
+                            MarkingsStore(oppositeId).state.markings;
+                        const hasCounterpart =
+                            isMarkingBase(marking) &&
+                            oppositeMarkings.some(om =>
+                                om.ids.some(idv =>
+                                    (marking as MarkingClass).ids.includes(idv)
+                                )
+                            );
+                        const pending = GlobalStateStore.state.pendingMerge;
+                        const isPendingHere =
+                            isMarkingBase(marking) &&
+                            pending &&
+                            pending.canvasId === id &&
+                            pending.label === marking.label;
+                        /* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions */
                         return (
-                            // eslint-disable-next-line jsx-a11y/click-events-have-key-events,jsx-a11y/no-static-element-interactions
+                            /* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions */
                             <div
                                 className="flex gap-0.5"
                                 onClick={e => {
                                     e.stopPropagation();
                                 }}
                             >
-                                {isMarkingBase(marking) && marking.id && (
-                                    <Toggle
-                                        title="Remove"
-                                        size="sm-icon"
-                                        variant="outline"
-                                        pressed={false}
-                                        onClickCapture={() => {
-                                            MarkingsStore(
-                                                id
-                                            ).actions.markings.removeOneByLabel(
-                                                marking.label
-                                            );
-                                        }}
-                                    >
-                                        <Trash2
-                                            size={ICON.SIZE}
-                                            strokeWidth={ICON.STROKE_WIDTH}
-                                        />
-                                    </Toggle>
+                                {isMarkingBase(marking) && (
+                                    <>
+                                        <Toggle
+                                            title="Remove"
+                                            size="sm-icon"
+                                            variant="outline"
+                                            pressed={false}
+                                            onClickCapture={() =>
+                                                handleRemoveClick(
+                                                    marking as MarkingClass
+                                                )
+                                            }
+                                        >
+                                            <Trash2
+                                                size={ICON.SIZE}
+                                                strokeWidth={ICON.STROKE_WIDTH}
+                                            />
+                                        </Toggle>
+                                        <Toggle
+                                            title="Merge"
+                                            size="sm-icon"
+                                            variant="outline"
+                                            pressed={!!isPendingHere}
+                                            disabled={hasCounterpart}
+                                            onClickCapture={() =>
+                                                handleMergeClick(
+                                                    marking as MarkingClass
+                                                )
+                                            }
+                                        >
+                                            <Link2
+                                                size={ICON.SIZE}
+                                                strokeWidth={ICON.STROKE_WIDTH}
+                                            />
+                                        </Toggle>
+                                    </>
                                 )}
                             </div>
                         );
@@ -95,9 +156,7 @@ export const useColumns = (
                 },
                 {
                     accessorKey: "type",
-                    header: t("MarkingType.Keys.name", {
-                        ns: "object",
-                    }),
+                    header: t("MarkingType.Keys.name", { ns: "object" }),
                     cell: info =>
                         formatCell(info, ({ row }) => {
                             const marking = row.original.typeId;

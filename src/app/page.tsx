@@ -5,7 +5,6 @@ import { GlobalToolbar } from "@/components/toolbar/toolbar";
 import { CUSTOM_GLOBAL_EVENTS } from "@/lib/utils/const";
 import { MarkingsStore } from "@/lib/stores/Markings";
 import { CANVAS_ID } from "@/components/pixi/canvas/hooks/useCanvasContext";
-import { GlobalStateStore } from "@/lib/stores/GlobalState";
 
 const enum TABS {
     HOMEPAGE = "homepage",
@@ -28,7 +27,6 @@ export default function Home() {
             );
             MarkingsStore(CANVAS_ID.LEFT).actions.labelGenerator.reset();
             MarkingsStore(CANVAS_ID.RIGHT).actions.labelGenerator.reset();
-            GlobalStateStore.actions.lastAddedMarking.setLastAddedMarking(null);
         };
 
         document.addEventListener(CUSTOM_GLOBAL_EVENTS.CLEANUP, performCleanup);

@@ -35,25 +35,17 @@ type ImageInfo = {
     };
 };
 
-type SoftwareInfo = {
-    name: string;
-    version: string;
-};
-
 export type ExportObject = {
     metadata: {
-        software: SoftwareInfo;
+        software: { name: string; version: string };
         image: ImageInfo | null;
         compared_image: ImageInfo | null;
         workingMode: WORKING_MODE;
-        types: {
-            id: string;
-            name: string;
-        }[];
+        types: { id: string; name: string }[];
     };
     data: {
         markings: {
-            label: MarkingClass["label"];
+            ids: MarkingClass["ids"];
             markingClass: MarkingClass["markingClass"];
             origin: MarkingClass["origin"];
             typeId: MarkingClass["typeId"];
@@ -119,15 +111,25 @@ async function getData(
                             CANVAS_ID.RIGHT
                         )
                 )
-                .map(c => {
-                    return {
-                        id: c.id,
-                        name: c.name,
-                    };
-                }),
+                .map(c => ({ id: c.id, name: c.name })),
         },
         data: {
-            markings,
+            markings: markings.map(m => ({
+                ids: m.ids,
+                markingClass: m.markingClass,
+                origin: m.origin,
+                typeId: m.typeId,
+                ...("angleRad" in m
+                    ? { angleRad: (m as RayMarking).angleRad }
+                    : {}),
+                ...("endpoint" in m
+                    ? {
+                          endpoint: (
+                              m as LineSegmentMarking | BoundingBoxMarking
+                          ).endpoint,
+                      }
+                    : {}),
+            })),
         },
     };
 

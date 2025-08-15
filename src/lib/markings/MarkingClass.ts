@@ -8,13 +8,18 @@ export abstract class MarkingClass {
 
     public abstract readonly markingClass: MARKING_CLASS;
 
-    public readonly id: string = crypto.randomUUID();
+    public ids: string[];
 
-    protected constructor(
+    public constructor(
         public label: number,
         public origin: Point,
-        public typeId: MarkingType["id"]
+        public typeId: MarkingType["id"],
+        ids?: string[]
     ) {
+        this.ids =
+            ids && ids.length > 0
+                ? Array.from(new Set(ids))
+                : [crypto.randomUUID()];
         this.label = label;
         this.origin = origin;
         this.typeId = typeId;

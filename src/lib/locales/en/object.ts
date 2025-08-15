@@ -4,7 +4,7 @@ const d: Dictionary = {
     Marking: {
         Name: "Marking",
         Keys: {
-            id: "ID",
+            ids: "IDs",
             label: "Label",
             angleRad: "Angle",
             origin: "Origin",
@@ -19,6 +19,12 @@ const d: Dictionary = {
                 },
             },
             typeId: "Type ID",
+        },
+        Actions: {
+            merge: {
+                enabled: "Merge markings",
+                disabled: "Cannot merge - matching IDs found",
+            },
         },
     },
     MarkingType: {

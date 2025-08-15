@@ -29,7 +29,6 @@ import { CANVAS_ID } from "@/components/pixi/canvas/hooks/useCanvasContext";
 import { CUSTOM_GLOBAL_EVENTS } from "@/lib/utils/const";
 import { triggerPostMoveFlash } from "@atlaskit/pragmatic-drag-and-drop-flourish/trigger-post-move-flash";
 import { sleep } from "@/lib/utils/misc/sleep";
-import { GlobalStateStore } from "@/lib/stores/GlobalState";
 import { EmptyableMarking } from "./markings-info-table-columns";
 
 // Original Table is wrapped with a <div> (see https://ui.shadcn.com/docs/components/table#radix-:r24:-content-manual),
@@ -46,8 +45,6 @@ const TableComponent = forwardRef<
 ));
 TableComponent.displayName = "TableComponent";
 
-let hasFlashed = false;
-
 const TableRowComponent = <TData,>(rows: Row<TData>[], canvasId: CANVAS_ID) => {
     return function useTableRow(props: HTMLAttributes<HTMLTableRowElement>) {
         // @ts-expect-error data-index is a valid attribute
@@ -62,7 +59,6 @@ const TableRowComponent = <TData,>(rows: Row<TData>[], canvasId: CANVAS_ID) => {
                     return;
                 }
                 triggerPostMoveFlash(element);
-                hasFlashed = true;
             });
         }, []);
 
@@ -74,13 +70,7 @@ const TableRowComponent = <TData,>(rows: Row<TData>[], canvasId: CANVAS_ID) => {
 
         const isSelected = selectedMarkingLabel === marking.label;
 
-        const { lastAddedMarking } = GlobalStateStore.state;
-        const isLastAdded =
-            lastAddedMarking &&
-            lastAddedMarking.canvasId === canvasId &&
-            lastAddedMarking.marking.label === marking.label;
-
-        if (isLastAdded && !hasFlashed) {
+        if (isSelected) {
             runAnimation();
         }
 
@@ -94,7 +84,6 @@ const TableRowComponent = <TData,>(rows: Row<TData>[], canvasId: CANVAS_ID) => {
                 data-state={isSelected && "selected"}
                 onClickCapture={() => {
                     if (selectedMarkingLabel === marking.label) {
-                        // odznacz
                         MarkingsStore(
                             canvasId
                         ).actions.selectedMarkingLabel.setSelectedMarkingLabel(
@@ -202,9 +191,6 @@ export const MarkingsInfoTable = function <TData, TValue>({
     }, [selectedMarking, data, rows]);
 
     useEffect(() => {
-        if (data.length > prevDataLength) {
-            hasFlashed = false;
-        }
         prevDataLength = data.length;
     }, [data.length]);
 

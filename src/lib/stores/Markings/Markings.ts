@@ -19,7 +19,7 @@ import {
     _createMarkingsStore as createStore,
     MarkingsState as State,
 } from "./Markings.store";
-import { GlobalStateStore } from "../GlobalState";
+import { GlobalStateStore } from "@/lib/stores/GlobalState";
 import { IDGenerator } from "./IdGenerator";
 
 const useLeftStore = createStore(CANVAS_ID.LEFT);
@@ -47,13 +47,6 @@ class StoreClass {
         this.state.set(draft => {
             const newMarkings = callback(draft.markings, draft);
             draft.markings = newMarkings;
-
-            const lastMarking = newMarkings.at(-1);
-            if (lastMarking !== undefined)
-                GlobalStateStore.actions.lastAddedMarking.setLastAddedMarking({
-                    marking: lastMarking,
-                    canvasId: this.id,
-                });
         });
 
         this.state.set(draft => {
@@ -130,67 +123,111 @@ class StoreClass {
     readonly actions = {
         labelGenerator: {
             getLabel: () => {
+                // If user has selected marking and wants to overwrite - use its label
                 if (this.state.selectedMarkingLabel) {
                     return this.state.selectedMarkingLabel;
                 }
-
-                // Last added marking was added to the opposite canvas and doesnt exist in this canvas yet
-                const { lastAddedMarking } = GlobalStateStore.state;
-                if (
-                    lastAddedMarking &&
-                    lastAddedMarking.canvasId !== this.id &&
-                    !this.state.markings.some(
-                        x => x.label === lastAddedMarking.marking.label
-                    )
-                ) {
-                    this.actions.labelGenerator.reset();
-                    return lastAddedMarking.marking.label;
-                }
-
-                // Markings collection for this view already contains a marking with the highest generated id
-                if (
-                    this.state.markings.some(
-                        x => x.label === this.labelGenerator.getCurrentId()
-                    )
-                ) {
-                    // Generate id for the marking
-                    return this.labelGenerator.generateId();
-                }
-
-                // Default safety case
-                return this.labelGenerator.getCurrentId();
-            },
-            getMaxLabel: () => this.labelGenerator.getCurrentId(),
-            reset: () => {
-                this.labelGenerator = new IDGenerator();
-
+                // Calculate global max label across both canvases
                 const oppositeCanvasId = getOppositeCanvasId(this.id);
                 const oppositeCanvasLabels = Store(
                     oppositeCanvasId
                 ).state.markings.map(m => m.label);
                 const thisCanvasLabels = this.state.markings.map(m => m.label);
+                const maxLabelBoth = arrayMax([
+                    ...oppositeCanvasLabels,
+                    ...thisCanvasLabels,
+                ]);
+                const target = maxLabelBoth ?? IDGenerator.initialValue; // when no markings - start from 1
 
+                this.labelGenerator.setId(target);
+
+                const isTakenHere = this.state.markings.some(
+                    x => x.label === target
+                );
+                return isTakenHere
+                    ? this.labelGenerator.generateId()
+                    : this.labelGenerator.getCurrentId();
+            },
+            getMaxLabel: () => this.labelGenerator.getCurrentId(),
+            reset: () => {
+                this.labelGenerator = new IDGenerator();
+                const oppositeCanvasId = getOppositeCanvasId(this.id);
+                const oppositeCanvasLabels = Store(
+                    oppositeCanvasId
+                ).state.markings.map(m => m.label);
+                const thisCanvasLabels = this.state.markings.map(m => m.label);
                 const maxLabel =
                     arrayMax([...oppositeCanvasLabels, ...thisCanvasLabels]) ??
                     IDGenerator.initialValue;
-
                 this.labelGenerator.setId(maxLabel);
             },
         },
         markings: {
             reset: () => {
                 this.setMarkingsAndUpdateHash(() => []);
+
+                const oppositeStore = Store(getOppositeCanvasId(this.id));
+                const bothEmpty =
+                    this.state.markings.length === 0 &&
+                    oppositeStore.state.markings.length === 0;
+
+                if (bothEmpty) {
+                    this.actions.labelGenerator.reset();
+                    oppositeStore.actions.labelGenerator.reset();
+                } else {
+                    this.actions.labelGenerator.reset();
+                }
             },
             addOne: (marking: MarkingClass) => {
+                const existingIds = this.actions.markings.findIdsByLabel(
+                    marking.label
+                );
+                const idsToUse =
+                    existingIds && existingIds.length > 0
+                        ? Array.from(new Set(existingIds))
+                        : marking.ids;
+
+                if (this.state.markings.find(m => m.label === marking.label)) {
+                    this.setMarkingsAndUpdateHash(markings =>
+                        markings.filter(m => m.label !== marking.label)
+                    );
+                }
                 this.setMarkingsAndUpdateHash(
                     produce(state => {
-                        const existingIndex = state.findIndex(
-                            m => m.label === marking.label
-                        );
-                        if (existingIndex !== -1) {
-                            state.splice(existingIndex, 1);
+                        let mToPush: MarkingClass = marking;
+                        if (marking instanceof PointMarking) {
+                            mToPush = new PointMarking(
+                                marking.label,
+                                marking.origin,
+                                marking.typeId,
+                                idsToUse
+                            );
+                        } else if (marking instanceof RayMarking) {
+                            mToPush = new RayMarking(
+                                marking.label,
+                                marking.origin,
+                                marking.typeId,
+                                (marking as RayMarking).angleRad,
+                                idsToUse
+                            );
+                        } else if (marking instanceof LineSegmentMarking) {
+                            mToPush = new LineSegmentMarking(
+                                marking.label,
+                                marking.origin,
+                                marking.typeId,
+                                (marking as LineSegmentMarking).endpoint,
+                                idsToUse
+                            );
+                        } else if (marking instanceof BoundingBoxMarking) {
+                            mToPush = new BoundingBoxMarking(
+                                marking.label,
+                                marking.origin,
+                                marking.typeId,
+                                (marking as BoundingBoxMarking).endpoint,
+                                idsToUse
+                            );
                         }
-                        state.push(marking);
+                        state.push(mToPush);
                     })
                 );
                 this.setSelectedMarkingLabel(() => null);
@@ -198,7 +235,51 @@ class StoreClass {
             addMany: (markings: MarkingClass[]) =>
                 this.setMarkingsAndUpdateHash(
                     produce(state => {
-                        state.push(...markings);
+                        const prepared = markings.map(m => {
+                            const existingIds =
+                                this.actions.markings.findIdsByLabel(m.label);
+                            const idsToUse =
+                                existingIds && existingIds.length > 0
+                                    ? Array.from(new Set(existingIds))
+                                    : m.ids;
+                            if (m instanceof PointMarking) {
+                                return new PointMarking(
+                                    m.label,
+                                    m.origin,
+                                    m.typeId,
+                                    idsToUse
+                                );
+                            }
+                            if (m instanceof RayMarking) {
+                                return new RayMarking(
+                                    m.label,
+                                    m.origin,
+                                    m.typeId,
+                                    (m as RayMarking).angleRad,
+                                    idsToUse
+                                );
+                            }
+                            if (m instanceof LineSegmentMarking) {
+                                return new LineSegmentMarking(
+                                    m.label,
+                                    m.origin,
+                                    m.typeId,
+                                    (m as LineSegmentMarking).endpoint,
+                                    idsToUse
+                                );
+                            }
+                            if (m instanceof BoundingBoxMarking) {
+                                return new BoundingBoxMarking(
+                                    m.label,
+                                    m.origin,
+                                    m.typeId,
+                                    (m as BoundingBoxMarking).endpoint,
+                                    idsToUse
+                                );
+                            }
+                            return m;
+                        });
+                        state.push(...prepared);
                     })
                 ),
             removeOneByLabel: (label: MarkingClass["label"]) => {
@@ -210,9 +291,111 @@ class StoreClass {
                     null
                 );
 
-                this.setMarkingsAndUpdateHashWithoutLastAdded(markings =>
-                    markings.filter(marking => marking.label !== label)
+                // Calculate new list after removal and apply
+                const filtered = this.state.markings.filter(
+                    marking => marking.label !== label
                 );
+                this.setMarkingsAndUpdateHashWithoutLastAdded(() => filtered);
+
+                const oppositeStore = Store(getOppositeCanvasId(this.id));
+                const existsOpposite = oppositeStore.state.markings.some(
+                    m => m.label === label
+                );
+                if (!existsOpposite) {
+                    this.actions.markings.compactLabelsAcrossBoth();
+                } else {
+                    const bothEmpty =
+                        filtered.length === 0 &&
+                        oppositeStore.state.markings.length === 0;
+
+                    if (bothEmpty) {
+                        this.actions.labelGenerator.reset();
+                        oppositeStore.actions.labelGenerator.reset();
+                    } else {
+                        this.actions.labelGenerator.reset();
+                    }
+                }
+            },
+            findIdsByLabel: (label: MarkingClass["label"]) => {
+                const own = this.state.markings.find(m => m.label === label);
+                if (own) return own.ids;
+                const opposite = Store(
+                    getOppositeCanvasId(this.id)
+                ).state.markings.find(m => m.label === label);
+                return opposite?.ids;
+            },
+            mergePair: (
+                localLabel: number,
+                otherCanvasId: CANVAS_ID,
+                otherLabel: number
+            ) => {
+                const a = this.state.markings.find(m => m.label === localLabel);
+                const otherStore = Store(otherCanvasId);
+                const b = otherStore.state.markings.find(
+                    m => m.label === otherLabel
+                );
+                if (!a || !b) return;
+
+                const unionIds = Array.from(
+                    new Set([...(a.ids ?? []), ...(b.ids ?? [])])
+                );
+
+                this.setMarkingsAndUpdateHash(markings => {
+                    const m = markings.find(x => x.label === localLabel);
+                    if (m) m.ids = unionIds;
+                    return markings;
+                });
+
+                otherStore.setMarkingsAndUpdateHash(markings => {
+                    const m = markings.find(x => x.label === otherLabel);
+                    if (m) {
+                        m.label = localLabel;
+                        m.ids = unionIds;
+                    }
+                    return markings;
+                });
+
+                // After merging - clear selection on both canvases
+                this.setSelectedMarkingLabel(() => null);
+                otherStore.actions.selectedMarkingLabel.setSelectedMarkingLabel(
+                    null
+                );
+
+                this.actions.markings.compactLabelsAcrossBoth();
+            },
+            compactLabelsAcrossBoth: () => {
+                const leftStore = Store(CANVAS_ID.LEFT);
+                const rightStore = Store(CANVAS_ID.RIGHT);
+                const all = [
+                    ...leftStore.state.markings,
+                    ...rightStore.state.markings,
+                ];
+                const uniqueSorted = Array.from(
+                    new Set(all.map(m => m.label))
+                ).sort((a, b) => a - b);
+                const mapping = new Map<number, number>();
+                uniqueSorted.forEach((lbl, idx) => mapping.set(lbl, idx + 1));
+
+                const remap = (store: StoreClass) => {
+                    store.setMarkingsAndUpdateHash(markings => {
+                        markings.forEach(m => {
+                            const newLabel = mapping.get(m.label);
+                            if (newLabel && newLabel !== m.label)
+                                m.label = newLabel;
+                        });
+                        return markings;
+                    });
+                    const sel = store.state.selectedMarkingLabel;
+                    if (sel) {
+                        const newSel = mapping.get(sel) ?? null;
+                        store.setSelectedMarkingLabel(() => newSel);
+                    }
+                    store.actions.labelGenerator.reset();
+                };
+
+                remap(leftStore);
+                remap(rightStore);
+
             },
             resetForLoading: () => {
                 this.setMarkingsWithoutChangeDetection(() => []);

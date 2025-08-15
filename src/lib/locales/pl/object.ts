@@ -4,7 +4,7 @@ const d: Dictionary = {
     Marking: {
         Name: "Adnotacja",
         Keys: {
-            id: "ID",
+            ids: "ID-y",
             label: "Znacznik",
             angleRad: "Kąt",
             origin: "Źródło",
@@ -19,6 +19,12 @@ const d: Dictionary = {
                 },
             },
             typeId: "ID typu",
+        },
+        Actions: {
+            merge: {
+                enabled: "Połącz adnotacje",
+                disabled: "Nie można połączyć - znaleziono pasujące ID",
+            },
         },
     },
     MarkingType: {
