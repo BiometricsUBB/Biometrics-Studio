@@ -135,7 +135,7 @@ export async function loadMarkingsData(filePath: string, canvasId: CANVAS_ID) {
         if (!confirmed) return;
     }
 
-    // Odtwarzanie instancji (tymczasowy placeholder label=0 – nadamy właściwe etykiety poniżej, zaczynając od 1)
+    // Recreate instances (temporary placeholder label=0 - we'll assign proper labels below, starting from 1)
     const importedMarkings: MarkingClass[] = fileContentJson.data.markings.map(
         (marking: ExportObject["data"]["markings"][0]) => {
             const baseArgs = [0, marking.origin, marking.typeId] as const; // placeholder label
@@ -143,7 +143,7 @@ export async function loadMarkingsData(filePath: string, canvasId: CANVAS_ID) {
                 ? marking.ids.filter((id): id is string => id !== undefined)
                 : (marking as { id?: string }).id
                   ? [(marking as { id?: string }).id!]
-                  : []; // kompatybilność wsteczna
+                  : [];
             switch (marking.markingClass) {
                 case MARKING_CLASS.POINT:
                     return new PointMarking(...baseArgs, ids);
@@ -173,7 +173,6 @@ export async function loadMarkingsData(filePath: string, canvasId: CANVAS_ID) {
     const oppositeMarkings = MarkingsStore(oppositeId).state.markings;
     const isFirstCanvas = oppositeMarkings.length === 0;
 
-    // Mapowanie id->label z przeciwnego canvasa do parowania (wszystkie id)
     const oppositeIdToLabel = new Map<string, number>();
     oppositeMarkings.forEach(m =>
         m.ids.forEach(id => oppositeIdToLabel.set(id, m.label))
@@ -186,7 +185,6 @@ export async function loadMarkingsData(filePath: string, canvasId: CANVAS_ID) {
     );
     let nextLabel = isFirstCanvas ? 1 : maxLabelBoth + 1;
 
-    // Mapa do przechowywania etykiet dla importowanych markingów
     const markingLabels = new Map<MarkingClass, number>();
 
     if (isFirstCanvas) {
@@ -207,7 +205,7 @@ export async function loadMarkingsData(filePath: string, canvasId: CANVAS_ID) {
         });
     }
 
-    // Przypisywanie etykiet do markingów
+    // Assign labels to markings
     importedMarkings.forEach(marking => {
         const label = markingLabels.get(marking);
         if (label !== undefined) {
@@ -215,7 +213,7 @@ export async function loadMarkingsData(filePath: string, canvasId: CANVAS_ID) {
         }
     });
 
-    // --- Typy ---
+    // --- Types ---
     const existingTypes = MarkingTypesStore.state.types;
     const requiredTypes = new Map<MarkingType["id"], MARKING_CLASS>(
         importedMarkings.map(marking => [marking.typeId, marking.markingClass])

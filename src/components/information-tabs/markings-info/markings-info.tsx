@@ -11,8 +11,6 @@ import { MarkingsInfoTable } from "./markings-info-table";
 const fillMissingLabels = (
     markings: EmptyableMarking[]
 ): EmptyableMarking[] => {
-    // Nie wypełniaj brakujących etykiet placeholderami.
-    // Wiersze wyświetlamy tylko dla labeli istniejących po którejkolwiek stronie.
     return markings;
 };
 
@@ -66,7 +64,7 @@ export function MarkingsInfo({ tableHeight }: { tableHeight: number }) {
         ]
             .sort((a, b) => a.label - b.label)
             .map(m =>
-                // jeśli którykolwiek z ids występuje po tej stronie – pokaż pełny obiekt, inaczej placeholder
+                // if any id exists on this side - show full object, otherwise placeholder
                 m.ids.some(id => thisIds.has(id)) ? m : { label: m.label }
             ) as EmptyableMarking[];
 

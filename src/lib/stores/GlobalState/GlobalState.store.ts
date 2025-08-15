@@ -11,7 +11,6 @@ export type LastAddedMarkerState = {
     canvasId: CanvasMetadata["id"];
 } | null;
 
-// Nowy typ: wybór do scalenia
 export type PendingMerge = {
     canvasId: CanvasMetadata["id"];
     label: number;

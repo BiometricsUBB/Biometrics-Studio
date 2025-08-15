@@ -45,7 +45,7 @@ export type ExportObject = {
     };
     data: {
         markings: {
-            ids: MarkingClass["ids"]; // stabilne ID-y (może być wiele)
+            ids: MarkingClass["ids"];
             markingClass: MarkingClass["markingClass"];
             origin: MarkingClass["origin"];
             typeId: MarkingClass["typeId"];

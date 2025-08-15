@@ -123,11 +123,11 @@ class StoreClass {
     readonly actions = {
         labelGenerator: {
             getLabel: () => {
-                // Jeśli użytkownik ma zaznaczony marking i chce nadpisać – użyj jego labelu.
+                // If user has selected marking and wants to overwrite - use its label
                 if (this.state.selectedMarkingLabel) {
                     return this.state.selectedMarkingLabel;
                 }
-                // Oblicz globalny maksymalny label po obu canvasach
+                // Calculate global max label across both canvases
                 const oppositeCanvasId = getOppositeCanvasId(this.id);
                 const oppositeCanvasLabels = Store(
                     oppositeCanvasId
@@ -137,12 +137,10 @@ class StoreClass {
                     ...oppositeCanvasLabels,
                     ...thisCanvasLabels,
                 ]);
-                const target = maxLabelBoth ?? IDGenerator.initialValue; // gdy brak oznaczeń – start od 1
+                const target = maxLabelBoth ?? IDGenerator.initialValue; // when no markings - start from 1
 
-                // Ustaw wewnętrzny generator, aby był zgodny z globalnym stanem
                 this.labelGenerator.setId(target);
 
-                // Jeśli „ostatni” label jest wolny po tej stronie – użyj go; w przeciwnym razie nowy (max+1)
                 const isTakenHere = this.state.markings.some(
                     x => x.label === target
                 );
@@ -166,10 +164,8 @@ class StoreClass {
         },
         markings: {
             reset: () => {
-                // Wyczyszczenie oznaczeń na tym canvasie
                 this.setMarkingsAndUpdateHash(() => []);
 
-                // Jeśli oba canvas-y są puste – zresetuj generatory do 1.
                 const oppositeStore = Store(getOppositeCanvasId(this.id));
                 const bothEmpty =
                     this.state.markings.length === 0 &&
@@ -179,13 +175,10 @@ class StoreClass {
                     this.actions.labelGenerator.reset();
                     oppositeStore.actions.labelGenerator.reset();
                 } else {
-                    // Utrzymaj generator zsynchronizowany z maksymalnym istniejącym labelem.
                     this.actions.labelGenerator.reset();
                 }
             },
             addOne: (marking: MarkingClass) => {
-                // Zadbaj o spójność ids po stronie store – jeśli istnieje marking o tym samym labelu
-                // (tu lub na przeciwnej stronie), użyj jego stabilnych ids.
                 const existingIds = this.actions.markings.findIdsByLabel(
                     marking.label
                 );
@@ -201,7 +194,6 @@ class StoreClass {
                 }
                 this.setMarkingsAndUpdateHash(
                     produce(state => {
-                        // Utwórz nową instancję odpowiadającą klasie markingu zamiast mutować istniejącą (może być zamrożona)
                         let mToPush: MarkingClass = marking;
                         if (marking instanceof PointMarking) {
                             mToPush = new PointMarking(
@@ -243,7 +235,6 @@ class StoreClass {
             addMany: (markings: MarkingClass[]) =>
                 this.setMarkingsAndUpdateHash(
                     produce(state => {
-                        // Przygotuj nowe instancje z właściwymi ids bez mutowania wejściowych obiektów
                         const prepared = markings.map(m => {
                             const existingIds =
                                 this.actions.markings.findIdsByLabel(m.label);
@@ -300,13 +291,12 @@ class StoreClass {
                     null
                 );
 
-                // Oblicz nową listę po usunięciu i zastosuj
+                // Calculate new list after removal and apply
                 const filtered = this.state.markings.filter(
                     marking => marking.label !== label
                 );
                 this.setMarkingsAndUpdateHashWithoutLastAdded(() => filtered);
 
-                // Jeśli ten label nie istnieje już po obu stronach – skompaktuj etykiety globalnie
                 const oppositeStore = Store(getOppositeCanvasId(this.id));
                 const existsOpposite = oppositeStore.state.markings.some(
                     m => m.label === label
@@ -314,7 +304,6 @@ class StoreClass {
                 if (!existsOpposite) {
                     this.actions.markings.compactLabelsAcrossBoth();
                 } else {
-                    // Po usunięciu zsynchronizuj generator etykiet.
                     const bothEmpty =
                         filtered.length === 0 &&
                         oppositeStore.state.markings.length === 0;
@@ -351,14 +340,12 @@ class StoreClass {
                     new Set([...(a.ids ?? []), ...(b.ids ?? [])])
                 );
 
-                // Zaktualizuj A (ten store) – zachowuje localLabel i instancję klasy
                 this.setMarkingsAndUpdateHash(markings => {
                     const m = markings.find(x => x.label === localLabel);
                     if (m) m.ids = unionIds;
                     return markings;
                 });
 
-                // Zaktualizuj B (drugi store) – otrzymuje label lokalny i instancję klasy
                 otherStore.setMarkingsAndUpdateHash(markings => {
                     const m = markings.find(x => x.label === otherLabel);
                     if (m) {
@@ -368,13 +355,12 @@ class StoreClass {
                     return markings;
                 });
 
-                // Po scaleniach – wyczyść zaznaczenie na obu canvasach
+                // After merging - clear selection on both canvases
                 this.setSelectedMarkingLabel(() => null);
                 otherStore.actions.selectedMarkingLabel.setSelectedMarkingLabel(
                     null
                 );
 
-                // Po scaleniach – skompaktuj globalnie (może powstać dziura po otherLabel)
                 this.actions.markings.compactLabelsAcrossBoth();
             },
             compactLabelsAcrossBoth: () => {
