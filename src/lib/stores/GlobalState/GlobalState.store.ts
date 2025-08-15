@@ -2,20 +2,20 @@ import { create } from "zustand";
 import { devtools } from "zustand/middleware";
 import { CanvasMetadata } from "@/components/pixi/canvas/hooks/useCanvasContext";
 // eslint-disable-next-line import/no-cycle
-import { MarkingClass } from "@/lib/markings/MarkingClass";
 import { Immer, produceCallback } from "../immer.helpers";
 
-type LastAddedMarkerState = {
-    marking: MarkingClass;
+// Nowy typ: wybór do scalenia
+export type PendingMerge = {
     canvasId: CanvasMetadata["id"];
+    label: number;
 } | null;
 
 type State = {
-    lastAddedMarking: LastAddedMarkerState;
+    pendingMerge: PendingMerge;
 };
 
 const INITIAL_STATE: State = {
-    lastAddedMarking: null,
+    pendingMerge: null,
 };
 
 const useStore = create<Immer<State>>()(

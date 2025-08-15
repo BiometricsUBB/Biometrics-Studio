@@ -46,6 +46,12 @@ export type i18nObject = {
                 Keys: Recordify<MARKING_CLASS>;
             };
         };
+        Actions: {
+            merge: {
+                enabled: string;
+                disabled: string;
+            };
+        };
     };
     MarkingType: {
         Name: string;

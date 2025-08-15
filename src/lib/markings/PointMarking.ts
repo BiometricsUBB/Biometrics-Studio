@@ -9,8 +9,9 @@ export class PointMarking extends MarkingClass {
     constructor(
         label: MarkingClass["label"],
         origin: MarkingClass["origin"],
-        typeId: MarkingType["id"]
+        typeId: MarkingType["id"],
+        ids?: string[]
     ) {
-        super(label, origin, typeId);
+        super(label, origin, typeId, ids);
     }
 }

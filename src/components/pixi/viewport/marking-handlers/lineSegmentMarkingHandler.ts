@@ -19,9 +19,10 @@ export class LineSegmentMarkingHandler extends MarkingHandler {
 
     private initFirstStage(e: FederatedPointerEvent) {
         const { viewport, markingsStore } = this.plugin.handlerParams;
+        const label = markingsStore.actions.labelGenerator.getLabel();
         markingsStore.actions.temporaryMarking.setTemporaryMarking(
             new LineSegmentMarking(
-                markingsStore.actions.labelGenerator.getLabel(),
+                label,
                 getNormalizedMousePosition(e, viewport),
                 this.typeId,
                 getNormalizedMousePosition(e, viewport)

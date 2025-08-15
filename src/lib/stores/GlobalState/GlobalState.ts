@@ -1,6 +1,3 @@
-/* eslint-disable security/detect-object-injection */
-/* eslint-disable no-param-reassign */
-
 import { ActionProduceCallback } from "../immer.helpers";
 import {
     GlobalState as State,
@@ -14,18 +11,20 @@ class StoreClass {
         return this.use.getState();
     }
 
-    private setLastAddedMarking(
-        callback: ActionProduceCallback<State["lastAddedMarking"], State>
+    private setPendingMerge(
+        callback: ActionProduceCallback<State["pendingMerge"], State>
     ) {
         this.state.set(draft => {
-            draft.lastAddedMarking = callback(draft.lastAddedMarking, draft);
+            const updatedValue = callback(draft.pendingMerge, draft);
+            // eslint-disable-next-line no-param-reassign
+            draft.pendingMerge = updatedValue;
         });
     }
 
     readonly actions = {
-        lastAddedMarking: {
-            setLastAddedMarking: (newMarking: State["lastAddedMarking"]) => {
-                this.setLastAddedMarking(() => newMarking);
+        merge: {
+            setPending: (pending: State["pendingMerge"]) => {
+                this.setPendingMerge(() => pending);
             },
         },
     };

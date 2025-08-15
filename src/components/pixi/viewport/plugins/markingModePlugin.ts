@@ -6,7 +6,7 @@ import {
     DashboardToolbarStore,
 } from "@/lib/stores/DashboardToolbar";
 import { MarkingTypesStore } from "@/lib/stores/MarkingTypes/MarkingTypes";
-import { CUSTOM_GLOBAL_EVENTS, IS_DEV_ENVIRONMENT } from "@/lib/utils/const";
+import { CUSTOM_GLOBAL_EVENTS } from "@/lib/utils/const";
 import {
     MarkingHandler,
     PointMarkingHandler,
@@ -35,7 +35,6 @@ export class MarkingModePlugin extends Plugin {
         this.handlerParams = handlerParams;
 
         this.viewport.on("mousedown", this.handleMouseDown);
-        this.viewport.on("rightdown", this.handleRightDown);
         window.addEventListener("keydown", this.handleKeyDown);
         window.addEventListener("keyup", this.handleKeyUp);
     }
@@ -69,12 +68,6 @@ export class MarkingModePlugin extends Plugin {
     private handleMouseDown = (e: FederatedPointerEvent): void => {
         if (this.shouldHandleMarking() && e.button === 0) {
             this.startMarking(e);
-        }
-    };
-
-    private handleRightDown = (e: FederatedPointerEvent): void => {
-        if (this.shouldHandleMarking() && IS_DEV_ENVIRONMENT) {
-            console.log(e);
         }
     };
 

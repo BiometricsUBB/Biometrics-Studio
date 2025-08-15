@@ -8,7 +8,6 @@ import {
 import { WORKING_MODE } from "@/views/selectMode";
 import { MarkingsStore } from "@/lib/stores/Markings";
 import { CANVAS_ID } from "@/components/pixi/canvas/hooks/useCanvasContext";
-import { GlobalStateStore } from "@/lib/stores/GlobalState";
 import { WorkingModeStore } from "@/lib/stores/WorkingMode";
 import { useTranslation } from "react-i18next";
 import { confirm } from "@tauri-apps/plugin-dialog";
@@ -47,26 +46,29 @@ export function ModeMenu() {
         }
 
         // Destroy current image sprites
-        viewportLeft?.children
-            .find(x => x instanceof Sprite)
-            ?.destroy({
-                children: true,
-                texture: true,
-                baseTexture: true,
-            });
-        viewportRight?.children
-            .find(x => x instanceof Sprite)
-            ?.destroy({
-                children: true,
-                texture: true,
-                baseTexture: true,
-            });
+        (
+            viewportLeft?.children.find(x => x instanceof Sprite) as
+                | Sprite
+                | undefined
+        )?.destroy({
+            children: true,
+            texture: true,
+            baseTexture: true,
+        });
+        (
+            viewportRight?.children.find(x => x instanceof Sprite) as
+                | Sprite
+                | undefined
+        )?.destroy({
+            children: true,
+            texture: true,
+            baseTexture: true,
+        });
 
         MarkingsStore(CANVAS_ID.LEFT).actions.markings.reset();
         MarkingsStore(CANVAS_ID.RIGHT).actions.markings.reset();
         MarkingsStore(CANVAS_ID.LEFT).actions.labelGenerator.reset();
         MarkingsStore(CANVAS_ID.RIGHT).actions.labelGenerator.reset();
-        GlobalStateStore.actions.lastAddedMarking.setLastAddedMarking(null);
 
         setWorkingMode(mode);
     };

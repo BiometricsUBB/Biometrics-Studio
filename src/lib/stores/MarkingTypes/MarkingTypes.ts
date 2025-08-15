@@ -20,7 +20,6 @@ class StoreClass {
                 ) {
                     return;
                 }
-
                 this.state.set(draft => {
                     draft.selectedTypeId = typeId;
                 });

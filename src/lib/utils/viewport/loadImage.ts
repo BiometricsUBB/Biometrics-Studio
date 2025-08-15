@@ -22,7 +22,7 @@ import { Sprite } from "pixi.js";
 import { loadSprite } from "./loadSprite";
 
 export async function loadImage(filePath: string, viewport: Viewport) {
-    DashboardToolbarStore.actions.settings.viewport.setLockScaleSync(false);
+    DashboardToolbarStore.actions.settings.viewport.setLockScaleSync(false); //
     DashboardToolbarStore.actions.settings.viewport.setLockedViewport(false);
 
     const canvasId = viewport.name as CanvasMetadata["id"] | null;
