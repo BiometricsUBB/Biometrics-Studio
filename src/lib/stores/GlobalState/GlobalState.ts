@@ -15,6 +15,16 @@ class StoreClass {
         return this.use.getState();
     }
 
+    private setPendingMerge(
+        callback: ActionProduceCallback<State["pendingMerge"], State>
+    ) {
+        this.state.set(draft => {
+            const updatedValue = callback(draft.pendingMerge, draft);
+            // eslint-disable-next-line no-param-reassign
+            draft.pendingMerge = updatedValue;
+        });
+    }
+
     private setLastAddedMarking(
         callback: ActionProduceCallback<State["lastAddedMarking"], State>
     ) {
@@ -62,6 +72,11 @@ class StoreClass {
     }
 
     readonly actions = {
+        merge: {
+            setPending: (pending: State["pendingMerge"]) => {
+                this.setPendingMerge(() => pending);
+            },
+        },
         lastAddedMarking: {
             setLastAddedMarking: (newMarking: State["lastAddedMarking"]) => {
                 this.setLastAddedMarking(() => newMarking);

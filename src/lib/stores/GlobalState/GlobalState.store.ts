@@ -2,15 +2,23 @@ import { create } from "zustand";
 import { devtools } from "zustand/middleware";
 import { CanvasMetadata } from "@/components/pixi/canvas/hooks/useCanvasContext";
 // eslint-disable-next-line import/no-cycle
-import { MarkingClass } from "@/lib/markings/MarkingClass";
 import { Immer, produceCallback } from "../immer.helpers";
+import { MarkingClass } from "@/lib/markings/MarkingClass";
 
-type LastAddedMarkerState = {
+// Type for the last added marking state
+export type LastAddedMarkerState = {
     marking: MarkingClass;
     canvasId: CanvasMetadata["id"];
 } | null;
 
+// Nowy typ: wybór do scalenia
+export type PendingMerge = {
+    canvasId: CanvasMetadata["id"];
+    label: number;
+} | null;
+
 type State = {
+    pendingMerge: PendingMerge;
     lastAddedMarking: LastAddedMarkerState;
     hasUnsavedChanges: boolean;
     lastSavedMarkingsHash: string | null;
@@ -19,6 +27,7 @@ type State = {
 };
 
 const INITIAL_STATE: State = {
+    pendingMerge: null,
     lastAddedMarking: null,
     hasUnsavedChanges: false,
     lastSavedMarkingsHash: null,

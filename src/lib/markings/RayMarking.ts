@@ -8,9 +8,10 @@ export class RayMarking extends MarkingClass {
         label: MarkingClass["label"],
         origin: MarkingClass["origin"],
         typeId: MarkingClass["typeId"],
-        public angleRad: number
+        public angleRad: number,
+        ids?: string[]
     ) {
-        super(label, origin, typeId);
+        super(label, origin, typeId, ids);
         this.angleRad = angleRad;
     }
 }

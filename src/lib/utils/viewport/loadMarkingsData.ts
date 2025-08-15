@@ -135,35 +135,31 @@ export async function loadMarkingsData(filePath: string, canvasId: CANVAS_ID) {
         if (!confirmed) return;
     }
 
-    const markings: MarkingClass[] = fileContentJson.data.markings.map(
-        marking => {
+    // Odtwarzanie instancji (tymczasowy placeholder label=0 – nadamy właściwe etykiety poniżej, zaczynając od 1)
+    const importedMarkings: MarkingClass[] = fileContentJson.data.markings.map(
+        (marking: ExportObject["data"]["markings"][0]) => {
+            const baseArgs = [0, marking.origin, marking.typeId] as const; // placeholder label
+            const ids: string[] = Array.isArray(marking.ids)
+                ? marking.ids.filter((id): id is string => id !== undefined)
+                : (marking as { id?: string }).id
+                  ? [(marking as { id?: string }).id!]
+                  : []; // kompatybilność wsteczna
             switch (marking.markingClass) {
                 case MARKING_CLASS.POINT:
-                    return new PointMarking(
-                        marking.label,
-                        marking.origin,
-                        marking.typeId
-                    );
+                    return new PointMarking(...baseArgs, ids);
                 case MARKING_CLASS.RAY:
-                    return new RayMarking(
-                        marking.label,
-                        marking.origin,
-                        marking.typeId,
-                        marking.angleRad!
-                    );
+                    return new RayMarking(...baseArgs, marking.angleRad!, ids);
                 case MARKING_CLASS.LINE_SEGMENT:
                     return new LineSegmentMarking(
-                        marking.label,
-                        marking.origin,
-                        marking.typeId,
-                        marking.endpoint!
+                        ...baseArgs,
+                        marking.endpoint!,
+                        ids
                     );
                 case MARKING_CLASS.BOUNDING_BOX:
                     return new BoundingBoxMarking(
-                        marking.label,
-                        marking.origin,
-                        marking.typeId,
-                        marking.endpoint!
+                        ...baseArgs,
+                        marking.endpoint!,
+                        ids
                     );
                 default:
                     throw new Error(
@@ -173,17 +169,62 @@ export async function loadMarkingsData(filePath: string, canvasId: CANVAS_ID) {
         }
     );
 
-    const existingTypes = MarkingTypesStore.state.types;
+    const oppositeId = getOppositeCanvasId(canvasId);
+    const oppositeMarkings = MarkingsStore(oppositeId).state.markings;
+    const isFirstCanvas = oppositeMarkings.length === 0;
 
-    const requiredTypes = new Map<MarkingType["id"], MARKING_CLASS>(
-        markings.map(marking => [marking.typeId, marking.markingClass])
+    // Mapowanie id->label z przeciwnego canvasa do parowania (wszystkie id)
+    const oppositeIdToLabel = new Map<string, number>();
+    oppositeMarkings.forEach(m =>
+        m.ids.forEach(id => oppositeIdToLabel.set(id, m.label))
     );
 
+    const maxLabelBoth = Math.max(
+        0,
+        ...MarkingsStore(canvasId).state.markings.map(m => m.label),
+        ...oppositeMarkings.map(m => m.label)
+    );
+    let nextLabel = isFirstCanvas ? 1 : maxLabelBoth + 1;
+
+    // Mapa do przechowywania etykiet dla importowanych markingów
+    const markingLabels = new Map<MarkingClass, number>();
+
+    if (isFirstCanvas) {
+        importedMarkings.forEach((marking, idx) => {
+            markingLabels.set(marking, idx + 1); // 1..N
+        });
+    } else {
+        importedMarkings.forEach(marking => {
+            const matchedLabel = marking.ids
+                .map((id: string) => oppositeIdToLabel.get(id))
+                .find(l => l !== undefined);
+            if (matchedLabel !== undefined) {
+                markingLabels.set(marking, matchedLabel);
+            } else {
+                markingLabels.set(marking, nextLabel);
+                nextLabel += 1;
+            }
+        });
+    }
+
+    // Przypisywanie etykiet do markingów
+    importedMarkings.forEach(marking => {
+        const label = markingLabels.get(marking);
+        if (label !== undefined) {
+            Object.assign(marking, { label });
+        }
+    });
+
+    // --- Typy ---
+    const existingTypes = MarkingTypesStore.state.types;
+    const requiredTypes = new Map<MarkingType["id"], MARKING_CLASS>(
+        importedMarkings.map(marking => [marking.typeId, marking.markingClass])
+    );
     const missingTypesIds: string[] = requiredTypes
         .keys()
         .filter(id => !existingTypes.some(c => c.id === id))
         .toArray();
-
+    
     // If type exists in markings but not in the store
     if (missingTypesIds.length > 0) {
         const confirmed = await confirmFileSelectionDialog(
@@ -193,24 +234,18 @@ export async function loadMarkingsData(filePath: string, canvasId: CANVAS_ID) {
             ),
             {
                 kind: "warning",
-                title: t("Missing marking types detected", {
-                    ns: "dialog",
-                }),
+                title: t("Missing marking types detected", { ns: "dialog" }),
             }
         );
-
         if (!confirmed) return;
-
-        // importing names from metadata
         const metadataTypes = fileContentJson.metadata?.types;
 
         const typesToAdd: MarkingType[] = Array.from(requiredTypes.keys())
             .filter(id => missingTypesIds.includes(id))
             .map(id => {
                 const markingClass = requiredTypes.get(id)!;
-
-                const metadataTypeName = metadataTypes.find(
-                    o => o.id === id
+                const metadataTypeName = metadataTypes?.find(
+                    (o: { id: string; name?: string }) => o.id === id
                 )?.name;
 
                 // set names according to metadata if non-existent use slice of id
@@ -225,42 +260,31 @@ export async function loadMarkingsData(filePath: string, canvasId: CANVAS_ID) {
                     category: fileContentJson.metadata.workingMode,
                 };
             });
-
         MarkingTypesStore.actions.types.addMany(typesToAdd);
     }
 
     MarkingsStore(canvasId).actions.markings.resetForLoading();
-    MarkingsStore(canvasId).actions.markings.addManyForLoading(markings);
+    MarkingsStore(canvasId).actions.markings.addManyForLoading(importedMarkings);
     MarkingsStore(canvasId).actions.labelGenerator.reset();
-    MarkingsStore(getOppositeCanvasId(canvasId)).actions.labelGenerator.reset();
+    MarkingsStore(oppositeId).actions.labelGenerator.reset();
 }
 
 export async function loadMarkingsDataWithDialog(viewport: Viewport) {
     try {
         const filePath = await openFileSelectionDialog({
-            title: t("Load markings data from file", {
-                ns: "tooltip",
-            }),
-            filters: [
-                {
-                    name: "Markings data file",
-                    extensions: ["json"],
-                },
-            ],
+            title: t("Load markings data from file", { ns: "tooltip" }),
+            filters: [{ name: "Markings data file", extensions: ["json"] }],
             directory: false,
             canCreateDirectories: false,
             multiple: false,
         });
-
         if (filePath === null) return;
-
         const canvasId = viewport.name as CanvasMetadata["id"] | null;
         if (canvasId === null) {
             showErrorDialog(`Canvas ID: ${canvasId} not found`);
             return;
         }
-
-        await loadMarkingsData(filePath, canvasId);
+        await loadMarkingsData(filePath, canvasId as CANVAS_ID);
     } catch (error) {
         showErrorDialog(error);
     }

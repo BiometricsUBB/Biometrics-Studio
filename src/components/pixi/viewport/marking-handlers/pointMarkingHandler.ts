@@ -17,9 +17,10 @@ export class PointMarkingHandler extends MarkingHandler {
 
     private initMarking(e: FederatedPointerEvent) {
         const { viewport, markingsStore } = this.plugin.handlerParams;
+        const label = markingsStore.actions.labelGenerator.getLabel();
         markingsStore.actions.temporaryMarking.setTemporaryMarking(
             new PointMarking(
-                markingsStore.actions.labelGenerator.getLabel(),
+                label,
                 getNormalizedMousePosition(e, viewport),
                 this.typeId
             )

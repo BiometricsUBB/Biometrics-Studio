@@ -9,9 +9,10 @@ export class LineSegmentMarking extends MarkingClass {
         label: MarkingClass["label"],
         origin: MarkingClass["origin"],
         typeId: MarkingClass["typeId"],
-        public endpoint: Point
+        public endpoint: Point,
+        ids?: string[]
     ) {
-        super(label, origin, typeId);
+        super(label, origin, typeId, ids);
     }
 
     public calculateEndpointViewportPosition(
