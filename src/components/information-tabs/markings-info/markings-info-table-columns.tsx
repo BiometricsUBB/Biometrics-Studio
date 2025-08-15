@@ -46,6 +46,31 @@ export const useColumns = (
 ): ColumnDef<EmptyableMarking, Element>[] => {
     const { t } = useTranslation();
 
+    const handleRemoveClick = (marking: MarkingClass) => {
+        MarkingsStore(id).actions.markings.removeOneByLabel(marking.label);
+    };
+
+    const handleMergeClick = (marking: MarkingClass) => {
+        const current = {
+            canvasId: id,
+            label: marking.label,
+        };
+        const pendingSel = GlobalStateStore.state.pendingMerge;
+
+        if (!pendingSel) {
+            GlobalStateStore.actions.merge.setPending(current);
+        } else if (pendingSel.canvasId !== id) {
+            MarkingsStore(pendingSel.canvasId).actions.markings.mergePair(
+                pendingSel.label,
+                id,
+                marking.label
+            );
+            GlobalStateStore.actions.merge.setPending(null);
+        } else {
+            GlobalStateStore.actions.merge.setPending(current);
+        }
+    };
+
     return useMemo(
         () =>
             [
@@ -85,14 +110,11 @@ export const useColumns = (
                                             size="sm-icon"
                                             variant="outline"
                                             pressed={false}
-                                            onClickCapture={() => {
-                                                MarkingsStore(
-                                                    id
-                                                ).actions.markings.removeOneByLabel(
-                                                    (marking as MarkingClass)
-                                                        .label
-                                                );
-                                            }}
+                                            onClickCapture={() =>
+                                                handleRemoveClick(
+                                                    marking as MarkingClass
+                                                )
+                                            }
                                         >
                                             <Trash2
                                                 size={ICON.SIZE}
@@ -105,41 +127,11 @@ export const useColumns = (
                                             variant="outline"
                                             pressed={!!isPendingHere}
                                             disabled={hasCounterpart}
-                                            onClickCapture={() => {
-                                                const current = {
-                                                    canvasId: id,
-                                                    label: (
-                                                        marking as MarkingClass
-                                                    ).label,
-                                                };
-                                                const pendingSel =
-                                                    GlobalStateStore.state
-                                                        .pendingMerge;
-                                                if (!pendingSel) {
-                                                    GlobalStateStore.actions.merge.setPending(
-                                                        current
-                                                    );
-                                                } else if (
-                                                    pendingSel.canvasId !== id
-                                                ) {
-                                                    MarkingsStore(
-                                                        pendingSel.canvasId
-                                                    ).actions.markings.mergePair(
-                                                        pendingSel.label,
-                                                        id,
-                                                        (
-                                                            marking as MarkingClass
-                                                        ).label
-                                                    );
-                                                    GlobalStateStore.actions.merge.setPending(
-                                                        null
-                                                    );
-                                                } else {
-                                                    GlobalStateStore.actions.merge.setPending(
-                                                        current
-                                                    );
-                                                }
-                                            }}
+                                            onClickCapture={() =>
+                                                handleMergeClick(
+                                                    marking as MarkingClass
+                                                )
+                                            }
                                         >
                                             <Link2
                                                 size={ICON.SIZE}
