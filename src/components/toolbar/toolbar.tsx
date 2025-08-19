@@ -125,7 +125,7 @@ export function GlobalToolbar({ className, ...props }: GlobalToolbarProps) {
                         />
                     </DropdownMenuTrigger>
                     <DropdownMenuPortal>
-                        <DropdownMenuContent>
+                        <DropdownMenuContent className="max-h-[50vh] overflow-y-auto  ">
                             {availableMarkingTypesForWorkingMode.map(type => (
                                 <DropdownMenuItem
                                     key={type.id}
