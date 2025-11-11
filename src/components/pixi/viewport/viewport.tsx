@@ -11,6 +11,7 @@ import { CanvasMetadata } from "../canvas/hooks/useCanvasContext";
 import { ViewportHandlerParams } from "./event-handlers/utils";
 import { handleMove, handleOppositeMove, handleZoom } from "./event-handlers";
 import { SelectionModePlugin } from "./plugins/selectionModePlugin";
+import { AutoRotatePlugin } from "./plugins/autoRotatePlugin";
 
 export type ViewportProps = {
     children?: ReactNode;
@@ -64,6 +65,12 @@ export const Viewport = forwardRef<PixiViewport, ViewportProps>(
                     viewport.plugins.add(
                         "selectionMode",
                         new SelectionModePlugin(viewport)
+                    );
+
+                    // Handle operations in auto rotate mode
+                    viewport.plugins.add(
+                        "autoRotate",
+                        new AutoRotatePlugin(viewport, id)
                     );
 
                     viewport.on("childAdded", updateViewport);

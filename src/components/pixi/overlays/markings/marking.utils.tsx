@@ -13,6 +13,25 @@ import { MarkingType } from "@/lib/markings/MarkingType";
 import { BoundingBoxMarking } from "@/lib/markings/BoundingBoxMarking";
 import { Point } from "@/lib/markings/Point";
 
+const transformPoint = (
+    point: Point,
+    rotation: number,
+    centerX: number,
+    centerY: number
+): Point => {
+    if (rotation === 0) return point;
+    const cos = Math.cos(rotation);
+    const sin = Math.sin(rotation);
+    const x = point.x - centerX;
+    const y = point.y - centerY;
+    const rotatedX = x * cos - y * sin;
+    const rotatedY = x * sin + y * cos;
+    return {
+        x: rotatedX + centerX,
+        y: rotatedY + centerY,
+    };
+};
+
 export const getFontName = (fontSize: number) => {
     const FONT_FAMILY_NAME = "Cousine";
     const MAX_FONT_SIZE = 32;
@@ -90,7 +109,8 @@ const drawRayMarking = (
     { angleRad, label }: RayMarking,
     { backgroundColor, textColor, size }: MarkingType,
     relativeOrigin: Point,
-    showMarkingLabels?: boolean
+    showMarkingLabels?: boolean,
+    rotation: number = 0
 ) => {
     const { x, y } = relativeOrigin;
 
@@ -102,7 +122,7 @@ const drawRayMarking = (
 
     const a = new PixiGraphics();
     a.pivot.set(x, y);
-    a.rotation = angleRad;
+    a.rotation = angleRad + rotation;
 
     a.moveTo(x, y - 3 * shadowWidth);
     a.lineStyle(lineWidth + 3 * shadowWidth, textColor);
@@ -270,12 +290,23 @@ export const drawMarking = (
     markingType: MarkingType,
     viewportWidthRatio: number,
     viewportHeightRatio: number,
-    showMarkingLabels?: boolean
+    showMarkingLabels?: boolean,
+    rotation: number = 0,
+    centerX: number = 0,
+    centerY: number = 0
 ) => {
+    if (!markingType) return;
+
     // Calculate the viewport position of the marking, based on zoom level
-    const markingViewportPosition = marking.calculateOriginViewportPosition(
+    const origin = marking.calculateOriginViewportPosition(
         viewportWidthRatio,
         viewportHeightRatio
+    );
+    const markingViewportPosition = transformPoint(
+        origin,
+        rotation,
+        centerX,
+        centerY
     );
 
     if (marking instanceof PointMarking) {
@@ -294,7 +325,8 @@ export const drawMarking = (
             marking,
             markingType,
             markingViewportPosition,
-            showMarkingLabels
+            showMarkingLabels,
+            rotation
         );
     } else if (marking instanceof LineSegmentMarking) {
         drawLineSegmentMarking(
@@ -303,9 +335,14 @@ export const drawMarking = (
             marking,
             markingType,
             markingViewportPosition,
-            marking.calculateEndpointViewportPosition(
-                viewportWidthRatio,
-                viewportHeightRatio
+            transformPoint(
+                marking.calculateEndpointViewportPosition(
+                    viewportWidthRatio,
+                    viewportHeightRatio
+                ),
+                rotation,
+                centerX,
+                centerY
             ),
             showMarkingLabels
         );
@@ -316,9 +353,14 @@ export const drawMarking = (
             marking,
             markingType,
             markingViewportPosition,
-            marking.calculateEndpointViewportPosition(
-                viewportWidthRatio,
-                viewportHeightRatio
+            transformPoint(
+                marking.calculateEndpointViewportPosition(
+                    viewportWidthRatio,
+                    viewportHeightRatio
+                ),
+                rotation,
+                centerX,
+                centerY
             ),
             showMarkingLabels
         );

@@ -36,5 +36,5 @@ export const fitWidth = (viewport: Viewport | null) => {
 
 export const fitWorld = (viewport: Viewport | null) => {
     viewport?.fitWorld();
-    viewport?.moveCorner(0, 0);
+    viewport?.moveCenter(0, 0);
 };

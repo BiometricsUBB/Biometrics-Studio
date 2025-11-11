@@ -1,5 +1,7 @@
 import { Container } from "@pixi/react";
 import { MarkingsStore } from "@/lib/stores/Markings";
+import { AutoRotateStore } from "@/lib/stores/AutoRotate/AutoRotate";
+import { RotationStore } from "@/lib/stores/Rotation/Rotation";
 import { CanvasMetadata } from "../canvas/hooks/useCanvasContext";
 import { useGlobalViewport } from "../viewport/hooks/useGlobalViewport";
 import { useGlobalApp } from "../app/hooks/useGlobalApp";
@@ -21,7 +23,6 @@ export function MarkingOverlay({ canvasMetadata }: MarkingOverlayProps) {
             hash: state.markingsHash,
         }),
         (oldState, newState) => {
-            // re-rendering tylko wtedy, gdy zmieni się hash stanu
             return oldState.hash === newState.hash;
         }
     );
@@ -30,19 +31,65 @@ export function MarkingOverlay({ canvasMetadata }: MarkingOverlayProps) {
         state => state.temporaryMarking
     );
 
+    const tempAutoRotateLine = AutoRotateStore.use(
+        // eslint-disable-next-line security/detect-object-injection
+        state => state.tempLines[canvasId]
+    );
+
+    const finishedAutoRotateLine = AutoRotateStore.use(
+        // eslint-disable-next-line security/detect-object-injection
+        state => state.finishedLines[canvasId]
+    );
+
+    const rotation = RotationStore(canvasId).use(state => state.rotation);
+
+    const centerX = 0;
+    const centerY = 0;
+
     if (viewport === null || app == null) {
         return null;
     }
 
     return (
         <Container position={getViewportPosition(viewport)}>
-            <Markings canvasId={canvasId} markings={markings} />
+            <Markings
+                canvasId={canvasId}
+                markings={markings}
+                rotation={rotation}
+                centerX={centerX}
+                centerY={centerY}
+            />
             {/* If a marking is being created, display it on top of the other markings */}
             {temporaryMarking && (
                 <Markings
                     canvasId={canvasId}
                     markings={[temporaryMarking]}
                     alpha={1}
+                    rotation={rotation}
+                    centerX={centerX}
+                    centerY={centerY}
+                />
+            )}
+            {/* If auto rotate line is being drawn, display it */}
+            {tempAutoRotateLine && (
+                <Markings
+                    canvasId={canvasId}
+                    markings={[tempAutoRotateLine]}
+                    alpha={1}
+                    rotation={rotation}
+                    centerX={centerX}
+                    centerY={centerY}
+                />
+            )}
+            {/* If finished auto rotate line exists, display it */}
+            {finishedAutoRotateLine && (
+                <Markings
+                    canvasId={canvasId}
+                    markings={[finishedAutoRotateLine]}
+                    alpha={1}
+                    rotation={rotation}
+                    centerX={centerX}
+                    centerY={centerY}
                 />
             )}
         </Container>

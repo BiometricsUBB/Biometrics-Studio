@@ -1,13 +1,11 @@
 import { Container } from "@pixi/react";
 import { ShallowViewportStore } from "@/lib/stores/ShallowViewport";
+import * as PIXI from "pixi.js";
 import { Grid } from "../app/debug/grid";
 import { CanvasMetadata } from "../canvas/hooks/useCanvasContext";
 import { useGlobalViewport } from "../viewport/hooks/useGlobalViewport";
 import { useGlobalApp } from "../app/hooks/useGlobalApp";
-import {
-    getViewportGlobalPosition,
-    getViewportPosition,
-} from "./utils/get-viewport-local-position";
+import { getViewportGlobalPosition } from "./utils/get-viewport-local-position";
 
 export type DebugOverlayProps = {
     canvasMetadata: CanvasMetadata;
@@ -27,23 +25,37 @@ export function DebugOverlay({ canvasMetadata: { id } }: DebugOverlayProps) {
         return null;
     }
 
+    const sprite = viewport.children.find(x => x instanceof PIXI.Sprite) as
+        | PIXI.Sprite
+        | undefined;
+    if (!sprite) return null;
+
+    const imageWidth = sprite.width;
+    const imageHeight = sprite.height;
+    const imageX = sprite.x - imageWidth / 2;
+    const imageY = sprite.y - imageHeight / 2;
+
     return (
         <>
-            <Container position={getViewportPosition(viewport)}>
-                <Grid
-                    width={viewport.width}
-                    height={viewport.height}
-                    color="hsla(0, 50%, 50%, 0.5)"
-                    gridLinesCount={3}
-                />
+            <Container position={getViewportGlobalPosition(viewport)}>
+                <Container position={{ x: imageX, y: imageY }}>
+                    <Grid
+                        width={viewport.width}
+                        height={viewport.height}
+                        color="hsla(0, 50%, 50%, 0.5)"
+                        gridLinesCount={3}
+                    />
+                </Container>
             </Container>
             <Container position={getViewportGlobalPosition(viewport)}>
-                <Grid
-                    width={viewport.width}
-                    height={viewport.height}
-                    color="hsla(90, 50%, 50%, 0.5)"
-                    gridLinesCount={3}
-                />
+                <Container position={{ x: imageX, y: imageY }}>
+                    <Grid
+                        width={imageWidth}
+                        height={imageHeight}
+                        color="hsla(90, 50%, 50%, 0.5)"
+                        gridLinesCount={3}
+                    />
+                </Container>
             </Container>
         </>
     );

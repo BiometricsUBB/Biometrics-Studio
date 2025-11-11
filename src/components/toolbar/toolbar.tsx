@@ -1,17 +1,21 @@
 import { Toggle } from "@/components/ui/toggle";
 import { cn } from "@/lib/utils/shadcn";
-import { HTMLAttributes } from "react";
+import { HTMLAttributes, useEffect } from "react";
+
 import {
     CURSOR_MODES,
     DashboardToolbarStore,
 } from "@/lib/stores/DashboardToolbar";
+import { CANVAS_ID } from "@/components/pixi/canvas/hooks/useCanvasContext";
 import {
-    Crosshair,
     Hand,
     LockKeyhole,
     LockKeyholeOpen,
     SendToBack,
     ChevronDown,
+    RotateCw,
+    RotateCcw,
+    Crosshair,
 } from "lucide-react";
 import { ICON } from "@/lib/utils/const";
 import { useTranslation } from "react-i18next";
@@ -24,6 +28,7 @@ import {
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { WorkingModeStore } from "@/lib/stores/WorkingMode";
+import { RotationStore } from "@/lib/stores/Rotation/Rotation";
 import Separator from "@/components/toolbar/separator";
 import { ToolbarGroup } from "./group";
 import { ToggleGroup, ToggleGroupItem } from "../ui/toggle-group";
@@ -48,11 +53,16 @@ export function GlobalToolbar({ className, ...props }: GlobalToolbarProps) {
         state.types.find(t => t.id === state.selectedTypeId)
     );
 
-    if (!selectedMarkingType && availableMarkingTypesForWorkingMode.length) {
-        MarkingTypesStore.actions.selectedType.set(
-            availableMarkingTypesForWorkingMode[0]!.id
-        );
-    }
+    useEffect(() => {
+        if (
+            !selectedMarkingType &&
+            availableMarkingTypesForWorkingMode.length
+        ) {
+            MarkingTypesStore.actions.selectedType.set(
+                availableMarkingTypesForWorkingMode[0]!.id
+            );
+        }
+    }, [selectedMarkingType, availableMarkingTypesForWorkingMode]);
 
     return (
         <div
@@ -105,7 +115,6 @@ export function GlobalToolbar({ className, ...props }: GlobalToolbarProps) {
             <Separator />
 
             <ToolbarGroup>
-                {/* Selected type and dropdown menu with existing types */}
                 <DropdownMenu>
                     <DropdownMenuTrigger
                         className={cn(
@@ -145,7 +154,6 @@ export function GlobalToolbar({ className, ...props }: GlobalToolbarProps) {
 
             <Separator />
 
-            {/* Additional tools */}
             <ToolbarGroup>
                 <Toggle
                     variant="outline"
@@ -181,6 +189,41 @@ export function GlobalToolbar({ className, ...props }: GlobalToolbarProps) {
                     }
                 >
                     <SendToBack
+                        size={ICON.SIZE}
+                        strokeWidth={ICON.STROKE_WIDTH}
+                    />
+                </Toggle>
+            </ToolbarGroup>
+
+            <Separator />
+
+            <ToolbarGroup className="ml-4">
+                <Toggle
+                    variant="outline"
+                    size="icon"
+                    value={CURSOR_MODES.AUTOROTATE}
+                    title={`${t("Auto rotate", { ns: "tooltip" })}`}
+                    onClick={() => {
+                        DashboardToolbarStore.actions.settings.cursor.setCursorMode(
+                            CURSOR_MODES.AUTOROTATE
+                        );
+                    }}
+                >
+                    <RotateCw
+                        size={ICON.SIZE}
+                        strokeWidth={ICON.STROKE_WIDTH}
+                    />
+                </Toggle>
+                <Toggle
+                    variant="outline"
+                    title={`${t("Reset rotation", { ns: "tooltip" })}`}
+                    size="icon"
+                    onClick={() => {
+                        RotationStore(CANVAS_ID.LEFT).actions.resetRotation();
+                        RotationStore(CANVAS_ID.RIGHT).actions.resetRotation();
+                    }}
+                >
+                    <RotateCcw
                         size={ICON.SIZE}
                         strokeWidth={ICON.STROKE_WIDTH}
                     />

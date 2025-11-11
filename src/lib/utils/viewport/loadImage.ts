@@ -69,6 +69,7 @@ export async function loadImage(filePath: string, viewport: Viewport) {
 
     // Load new image sprite
     const sprite = await loadSprite(filePath);
+    sprite.anchor.set(0.5);
     viewport.addChild(sprite);
 
     ShallowViewportStore(canvasId).state.reset();
