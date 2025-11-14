@@ -11,6 +11,8 @@ import { BitmapText } from "@pixi/text-bitmap";
 import { LineSegmentMarking } from "@/lib/markings/LineSegmentMarking";
 import { MarkingType } from "@/lib/markings/MarkingType";
 import { BoundingBoxMarking } from "@/lib/markings/BoundingBoxMarking";
+import { PolygonMarking } from "@/lib/markings/PolygonMarking";
+import { RectangleMarking } from "@/lib/markings/RectangleMarking";
 import { Point } from "@/lib/markings/Point";
 
 const transformPoint = (
@@ -283,6 +285,69 @@ const drawBoundingBoxMarking = (
     }
 };
 
+const drawPolygonMarking = (
+    g: PixiGraphics,
+    selected: boolean,
+    { label }: PolygonMarking | RectangleMarking,
+    { backgroundColor, textColor, size }: MarkingType,
+    relativeOrigin: Point,
+    relativePoints: Point[],
+    showMarkingLabels?: boolean
+) => {
+    if (relativePoints.length === 0) return;
+
+    if (selected) {
+        const minX = Math.min(...relativePoints.map(p => p.x));
+        const maxX = Math.max(...relativePoints.map(p => p.x));
+        const minY = Math.min(...relativePoints.map(p => p.y));
+        const maxY = Math.max(...relativePoints.map(p => p.y));
+        g.lineStyle(1, textColor);
+        g.beginFill(0x0000ff, 0.5);
+        g.drawRect(
+            minX - size - 2,
+            minY - size - 2,
+            maxX - minX + size * 2 + 4,
+            maxY - minY + size * 2 + 4
+        );
+    }
+
+    g.lineStyle(lineWidth, backgroundColor);
+    const [firstPoint, ...restPoints] = relativePoints;
+    if (firstPoint) {
+        g.moveTo(firstPoint.x, firstPoint.y);
+        restPoints.forEach(point => {
+            g.lineTo(point.x, point.y);
+        });
+        if (relativePoints.length > 2) {
+            g.lineTo(firstPoint.x, firstPoint.y);
+        }
+    }
+
+    if (relativePoints.length > 2) {
+        g.beginFill(backgroundColor, 0.3);
+        g.drawPolygon(relativePoints.map(p => [p.x, p.y]).flat());
+        g.endFill();
+    }
+
+    const firstPointForLabel = relativePoints[0];
+    if (firstPointForLabel) {
+        g.lineStyle(shadowWidth, textColor);
+        g.drawCircle(firstPointForLabel.x, firstPointForLabel.y, size);
+        g.beginFill(backgroundColor);
+        g.drawCircle(
+            firstPointForLabel.x,
+            firstPointForLabel.y,
+            size - shadowWidth
+        );
+        g.endFill();
+        drawLabel(g, String(label), firstPointForLabel, size, textColor);
+    }
+
+    if (showMarkingLabels) {
+        drawLabel(g, String(label), relativeOrigin, size, textColor);
+    }
+};
+
 export const drawMarking = (
     g: PixiGraphics,
     isSelected: boolean,
@@ -362,6 +427,24 @@ export const drawMarking = (
                 centerX,
                 centerY
             ),
+            showMarkingLabels
+        );
+    } else if (
+        marking instanceof PolygonMarking ||
+        marking instanceof RectangleMarking
+    ) {
+        drawPolygonMarking(
+            g,
+            isSelected,
+            marking,
+            markingType,
+            markingViewportPosition,
+            marking
+                .calculatePointsViewportPosition(
+                    viewportWidthRatio,
+                    viewportHeightRatio
+                )
+                .map(p => transformPoint(p, rotation, centerX, centerY)),
             showMarkingLabels
         );
     } else {

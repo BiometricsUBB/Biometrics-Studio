@@ -27,6 +27,9 @@ import {
 import { WorkingModeStore } from "@/lib/stores/WorkingMode";
 import { BoundingBoxMarking } from "@/lib/markings/BoundingBoxMarking";
 import { MARKING_CLASS } from "@/lib/markings/MARKING_CLASS";
+import { PolygonMarking } from "@/lib/markings/PolygonMarking";
+import { RectangleMarking } from "@/lib/markings/RectangleMarking";
+import { Point } from "@/lib/markings/Point";
 import { ExportObject } from "./saveMarkingsDataWithDialog";
 
 const MINIMUM_APP_VERSION = "0.5.0";
@@ -61,6 +64,105 @@ export function validateFileData(_data: unknown): _data is ExportObject {
     );
 }
 
+async function validateVersionCompatibility(
+    fileVersion: string,
+    filePath: string
+): Promise<boolean> {
+    const appVersion = await getVersion();
+
+    if (compareVersions(fileVersion, appVersion) > 0) {
+        showErrorDialog(
+            t(
+                "You are trying to load markings data created with a newer app version (current app version: {{appVersion}}, but you try to load: {{fileVersion}}). Please update the application.",
+                {
+                    ns: "dialog",
+                    appVersion,
+                    fileVersion,
+                }
+            )
+        );
+        return false;
+    }
+
+    if (compareVersions(fileVersion, MINIMUM_APP_VERSION) < 0) {
+        return confirmFileSelectionDialog(
+            t(
+                "This markings data file was created with an older, unsupported version of the app ({{fileVersion}}, minimum supported: {{minVersion}}). Loading it might not work.\n\nDo you want to proceed?",
+                {
+                    ns: "dialog",
+                    fileVersion,
+                    minVersion: MINIMUM_APP_VERSION,
+                }
+            ),
+            {
+                kind: "warning",
+                title: filePath ?? t("Are you sure?", { ns: "dialog" }),
+            }
+        );
+    }
+
+    return true;
+}
+
+function extractMarkingIds(
+    marking: ExportObject["data"]["markings"][0]
+): string[] {
+    if (Array.isArray(marking.ids)) {
+        return marking.ids.filter((id): id is string => id !== undefined);
+    }
+    const legacyId = (marking as { id?: string }).id;
+    return legacyId ? [legacyId] : [];
+}
+
+function createPolygonOrRectangleMarking(
+    baseArgs: readonly [number, Point, string],
+    marking: ExportObject["data"]["markings"][0],
+    ids: string[],
+    MarkingConstructor: typeof PolygonMarking | typeof RectangleMarking
+): MarkingClass {
+    const { points } = marking as { points?: Point[] };
+    if (!points) {
+        throw new Error(
+            `Missing points for marking class: ${marking.markingClass}`
+        );
+    }
+    return new MarkingConstructor(...baseArgs, points, ids);
+}
+
+function createMarkingFromData(
+    marking: ExportObject["data"]["markings"][0]
+): MarkingClass {
+    const baseArgs = [0, marking.origin, marking.typeId] as const;
+    const ids = extractMarkingIds(marking);
+
+    switch (marking.markingClass) {
+        case MARKING_CLASS.POINT:
+            return new PointMarking(...baseArgs, ids);
+        case MARKING_CLASS.RAY:
+            return new RayMarking(...baseArgs, marking.angleRad!, ids);
+        case MARKING_CLASS.LINE_SEGMENT:
+            return new LineSegmentMarking(...baseArgs, marking.endpoint!, ids);
+        case MARKING_CLASS.BOUNDING_BOX:
+            return new BoundingBoxMarking(...baseArgs, marking.endpoint!, ids);
+        case MARKING_CLASS.POLYGON:
+            return createPolygonOrRectangleMarking(
+                baseArgs,
+                marking,
+                ids,
+                PolygonMarking
+            );
+        case MARKING_CLASS.RECTANGLE:
+            return createPolygonOrRectangleMarking(
+                baseArgs,
+                marking,
+                ids,
+                RectangleMarking
+            );
+        default:
+            throw new Error(`Unknown marking class: ${marking.markingClass}`);
+    }
+}
+
 export async function loadMarkingsData(filePath: string, canvasId: CANVAS_ID) {
     const fileContentString = await readTextFile(filePath);
     const fileContentJson: unknown = JSON.parse(fileContentString);
@@ -85,41 +187,12 @@ export async function loadMarkingsData(filePath: string, canvasId: CANVAS_ID) {
         return;
     }
 
-    const appVersion = await getVersion();
     const fileVersion = fileContentJson.metadata.software.version;
-
-    if (compareVersions(fileVersion, appVersion) > 0) {
-        // file_version > app_version: error
-        showErrorDialog(
-            t(
-                "You are trying to load markings data created with a newer app version (current app version: {{appVersion}}, but you try to load: {{fileVersion}}). Please update the application.",
-                {
-                    ns: "dialog",
-                    appVersion,
-                    fileVersion,
-                }
-            )
-        );
-        return;
-    }
-    if (compareVersions(fileVersion, MINIMUM_APP_VERSION) < 0) {
-        // file_version < min_version: warning
-        const confirmed = await confirmFileSelectionDialog(
-            t(
-                "This markings data file was created with an older, unsupported version of the app ({{fileVersion}}, minimum supported: {{minVersion}}). Loading it might not work.\n\nDo you want to proceed?",
-                {
-                    ns: "dialog",
-                    fileVersion,
-                    minVersion: MINIMUM_APP_VERSION,
-                }
-            ),
-            {
-                kind: "warning",
-                title: filePath ?? t("Are you sure?", { ns: "dialog" }),
-            }
-        );
-        if (!confirmed) return;
-    }
+    const versionValid = await validateVersionCompatibility(
+        fileVersion,
+        filePath
+    );
+    if (!versionValid) return;
 
     if (MarkingsStore(canvasId).state.markings.length !== 0) {
         const confirmed = await confirmFileSelectionDialog(
@@ -135,38 +208,9 @@ export async function loadMarkingsData(filePath: string, canvasId: CANVAS_ID) {
         if (!confirmed) return;
     }
 
-    // Recreate instances (temporary placeholder label=0 - we'll assign proper labels below, starting from 1)
     const importedMarkings: MarkingClass[] = fileContentJson.data.markings.map(
-        (marking: ExportObject["data"]["markings"][0]) => {
-            const baseArgs = [0, marking.origin, marking.typeId] as const; // placeholder label
-            const ids: string[] = Array.isArray(marking.ids)
-                ? marking.ids.filter((id): id is string => id !== undefined)
-                : (marking as { id?: string }).id
-                  ? [(marking as { id?: string }).id!]
-                  : [];
-            switch (marking.markingClass) {
-                case MARKING_CLASS.POINT:
-                    return new PointMarking(...baseArgs, ids);
-                case MARKING_CLASS.RAY:
-                    return new RayMarking(...baseArgs, marking.angleRad!, ids);
-                case MARKING_CLASS.LINE_SEGMENT:
-                    return new LineSegmentMarking(
-                        ...baseArgs,
-                        marking.endpoint!,
-                        ids
-                    );
-                case MARKING_CLASS.BOUNDING_BOX:
-                    return new BoundingBoxMarking(
-                        ...baseArgs,
-                        marking.endpoint!,
-                        ids
-                    );
-                default:
-                    throw new Error(
-                        `Unknown marking class: ${marking.markingClass}`
-                    );
-            }
-        }
+        (marking: ExportObject["data"]["markings"][0]) =>
+            createMarkingFromData(marking)
     );
 
     const oppositeId = getOppositeCanvasId(canvasId);
@@ -222,7 +266,7 @@ export async function loadMarkingsData(filePath: string, canvasId: CANVAS_ID) {
         .keys()
         .filter(id => !existingTypes.some(c => c.id === id))
         .toArray();
-    
+
     // If type exists in markings but not in the store
     if (missingTypesIds.length > 0) {
         const confirmed = await confirmFileSelectionDialog(
@@ -262,7 +306,9 @@ export async function loadMarkingsData(filePath: string, canvasId: CANVAS_ID) {
     }
 
     MarkingsStore(canvasId).actions.markings.resetForLoading();
-    MarkingsStore(canvasId).actions.markings.addManyForLoading(importedMarkings);
+    MarkingsStore(canvasId).actions.markings.addManyForLoading(
+        importedMarkings
+    );
     MarkingsStore(canvasId).actions.labelGenerator.reset();
     MarkingsStore(oppositeId).actions.labelGenerator.reset();
 }

@@ -14,12 +14,14 @@ import { LineSegmentMarking } from "@/lib/markings/LineSegmentMarking";
 import { RayMarking } from "@/lib/markings/RayMarking";
 import { PointMarking } from "@/lib/markings/PointMarking";
 import { BoundingBoxMarking } from "@/lib/markings/BoundingBoxMarking";
+import { PolygonMarking } from "@/lib/markings/PolygonMarking";
+import { RectangleMarking } from "@/lib/markings/RectangleMarking";
+import { GlobalStateStore } from "@/lib/stores/GlobalState";
 import { ActionProduceCallback } from "../immer.helpers";
 import {
     _createMarkingsStore as createStore,
     MarkingsState as State,
 } from "./Markings.store";
-import { GlobalStateStore } from "@/lib/stores/GlobalState";
 import { IDGenerator } from "./IdGenerator";
 
 const useLeftStore = createStore(CANVAS_ID.LEFT);
@@ -41,7 +43,7 @@ class StoreClass {
         return this.use.getState();
     }
 
-    private setMarkingsAndUpdateHash(
+    private updateMarkingsAndHash(
         callback: ActionProduceCallback<State["markings"], State>
     ) {
         this.state.set(draft => {
@@ -61,24 +63,16 @@ class StoreClass {
         );
     }
 
+    private setMarkingsAndUpdateHash(
+        callback: ActionProduceCallback<State["markings"], State>
+    ) {
+        this.updateMarkingsAndHash(callback);
+    }
+
     private setMarkingsAndUpdateHashWithoutLastAdded(
         callback: ActionProduceCallback<State["markings"], State>
     ) {
-        this.state.set(draft => {
-            const newMarkings = callback(draft.markings, draft);
-            draft.markings = newMarkings;
-        });
-
-        this.state.set(draft => {
-            draft.markingsHash = crypto.randomUUID();
-        });
-
-        const leftHash = Store(CANVAS_ID.LEFT).state.markingsHash;
-        const rightHash = Store(CANVAS_ID.RIGHT).state.markingsHash;
-        GlobalStateStore.actions.unsavedChanges.checkForUnsavedChanges(
-            leftHash,
-            rightHash
-        );
+        this.updateMarkingsAndHash(callback);
     }
 
     private setMarkingsWithoutChangeDetection(
@@ -226,6 +220,22 @@ class StoreClass {
                                 (marking as BoundingBoxMarking).endpoint,
                                 idsToUse
                             );
+                        } else if (marking instanceof PolygonMarking) {
+                            mToPush = new PolygonMarking(
+                                marking.label,
+                                marking.origin,
+                                marking.typeId,
+                                (marking as PolygonMarking).points,
+                                idsToUse
+                            );
+                        } else if (marking instanceof RectangleMarking) {
+                            mToPush = new RectangleMarking(
+                                marking.label,
+                                marking.origin,
+                                marking.typeId,
+                                (marking as RectangleMarking).points,
+                                idsToUse
+                            );
                         }
                         state.push(mToPush);
                     })
@@ -274,6 +284,24 @@ class StoreClass {
                                     m.origin,
                                     m.typeId,
                                     (m as BoundingBoxMarking).endpoint,
+                                    idsToUse
+                                );
+                            }
+                            if (m instanceof PolygonMarking) {
+                                return new PolygonMarking(
+                                    m.label,
+                                    m.origin,
+                                    m.typeId,
+                                    (m as PolygonMarking).points,
+                                    idsToUse
+                                );
+                            }
+                            if (m instanceof RectangleMarking) {
+                                return new RectangleMarking(
+                                    m.label,
+                                    m.origin,
+                                    m.typeId,
+                                    (m as RectangleMarking).points,
                                     idsToUse
                                 );
                             }
@@ -395,7 +423,6 @@ class StoreClass {
 
                 remap(leftStore);
                 remap(rightStore);
-
             },
             resetForLoading: () => {
                 this.setMarkingsWithoutChangeDetection(() => []);
@@ -416,6 +443,8 @@ class StoreClass {
                     | RayMarking
                     | LineSegmentMarking
                     | BoundingBoxMarking
+                    | PolygonMarking
+                    | RectangleMarking
                 >
             ) =>
                 this.setTemporaryMarking(

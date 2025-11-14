@@ -23,10 +23,11 @@ import { loadMarkingsData } from "@/lib/utils/viewport/loadMarkingsData";
 import { exists } from "@tauri-apps/plugin-fs";
 import { Sprite } from "pixi.js";
 import { GlobalStateStore } from "@/lib/stores/GlobalState";
+import { RotationStore } from "@/lib/stores/Rotation/Rotation";
 import { loadSprite } from "./loadSprite";
 
 export async function loadImage(filePath: string, viewport: Viewport) {
-    DashboardToolbarStore.actions.settings.viewport.setLockScaleSync(false); //
+    DashboardToolbarStore.actions.settings.viewport.setLockScaleSync(false);
     DashboardToolbarStore.actions.settings.viewport.setLockedViewport(false);
 
     const canvasId = viewport.name as CanvasMetadata["id"] | null;
@@ -75,6 +76,7 @@ export async function loadImage(filePath: string, viewport: Viewport) {
     ShallowViewportStore(canvasId).state.reset();
     CanvasToolbarStore(canvasId).state.reset();
     CachedViewportStore(canvasId).state.reset();
+    RotationStore(canvasId).actions.setRotation(0);
     fitWorld(viewport);
     emitFitEvents(viewport, "fit-world");
 
