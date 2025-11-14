@@ -32,7 +32,9 @@ export function CrosshairOverlay({
 
     const ShowCrosshair =
         cursorMode === CURSOR_MODES.MARKING &&
-        selectedType?.markingClass === MARKING_CLASS.BOUNDING_BOX &&
+        (selectedType?.markingClass === MARKING_CLASS.BOUNDING_BOX ||
+            selectedType?.markingClass === MARKING_CLASS.POLYGON ||
+            selectedType?.markingClass === MARKING_CLASS.RECTANGLE) &&
         isVisible;
 
     useEffect(() => {
