@@ -11,6 +11,7 @@ const STORE_FILE = new LazyStore(`${STORE_NAME}.dat`);
 export const enum CURSOR_MODES {
     SELECTION = "selection",
     MARKING = "marking",
+    AUTOROTATE = "autorotate",
 }
 
 type Settings = {

@@ -13,6 +13,8 @@ import {
     RayMarkingHandler,
     LineSegmentMarkingHandler,
     BoundingBoxMarkingHandler,
+    PolygonMarkingHandler,
+    RectangleMarkingHandler,
 } from "@/components/pixi/viewport/marking-handlers";
 import { MARKING_CLASS } from "@/lib/markings/MARKING_CLASS";
 import { ViewportHandlerParams } from "../event-handlers/utils";
@@ -100,6 +102,8 @@ export class MarkingModePlugin extends Plugin {
             [MARKING_CLASS.RAY]: RayMarkingHandler,
             [MARKING_CLASS.LINE_SEGMENT]: LineSegmentMarkingHandler,
             [MARKING_CLASS.BOUNDING_BOX]: BoundingBoxMarkingHandler,
+            [MARKING_CLASS.POLYGON]: PolygonMarkingHandler,
+            [MARKING_CLASS.RECTANGLE]: RectangleMarkingHandler,
         };
 
         // eslint-disable-next-line security/detect-object-injection

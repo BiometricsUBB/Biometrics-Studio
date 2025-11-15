@@ -3,4 +3,6 @@ export enum MARKING_CLASS {
     RAY = "ray",
     LINE_SEGMENT = "line_segment",
     BOUNDING_BOX = "bounding_box",
+    POLYGON = "polygon",
+    RECTANGLE = "rectangle",
 }

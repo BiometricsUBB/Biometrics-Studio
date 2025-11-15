@@ -1,7 +1,7 @@
 // eslint-disable-next-line import/no-cycle
 import { MarkingHandler } from "@/components/pixi/viewport/marking-handlers/markingHandler";
 import { FederatedPointerEvent } from "pixi.js";
-import { PointMarking } from "@/lib/markings/PointMarking";
+import { PolygonMarking } from "@/lib/markings/PolygonMarking";
 import { getNormalizedMousePosition } from "@/components/pixi/viewport/event-handlers/utils";
 import { MarkingModePlugin } from "@/components/pixi/viewport/plugins/markingModePlugin";
 import { RotationStore } from "@/lib/stores/Rotation/Rotation";
@@ -27,7 +27,13 @@ const transformPoint = (
     };
 };
 
-export class PointMarkingHandler extends MarkingHandler {
+const distance = (p1: Point, p2: Point): number => {
+    return Math.sqrt((p1.x - p2.x) ** 2 + (p1.y - p2.y) ** 2);
+};
+
+export class PolygonMarkingHandler extends MarkingHandler {
+    private points: Point[] = [];
+
     private canvasId: CANVAS_ID;
 
     constructor(
@@ -37,7 +43,7 @@ export class PointMarkingHandler extends MarkingHandler {
     ) {
         super(plugin, typeId, startEvent);
         this.canvasId = plugin.handlerParams.id;
-        this.initMarking(startEvent);
+        this.initFirstPoint(startEvent);
     }
 
     private getAdjustedPosition(pos: Point): Point {
@@ -45,14 +51,15 @@ export class PointMarkingHandler extends MarkingHandler {
         return transformPoint(pos, -rotation, 0, 0);
     }
 
-    private initMarking(e: FederatedPointerEvent) {
+    private initFirstPoint(e: FederatedPointerEvent) {
         const { viewport, markingsStore } = this.plugin.handlerParams;
         const label = markingsStore.actions.labelGenerator.getLabel();
         const pos = this.getAdjustedPosition(
             getNormalizedMousePosition(e, viewport)
         );
+        this.points = [pos];
         markingsStore.actions.temporaryMarking.setTemporaryMarking(
-            new PointMarking(label, pos, this.typeId)
+            new PolygonMarking(label, pos, this.typeId, [pos, pos])
         );
     }
 
@@ -61,18 +68,48 @@ export class PointMarkingHandler extends MarkingHandler {
         const pos = this.getAdjustedPosition(
             getNormalizedMousePosition(e, viewport)
         );
-        markingsStore.actions.temporaryMarking.updateTemporaryMarking({
-            origin: pos,
-        });
+        if (this.points.length === 1 && this.points[0]) {
+            markingsStore.actions.temporaryMarking.updateTemporaryMarking({
+                points: [this.points[0], pos],
+            });
+        } else {
+            markingsStore.actions.temporaryMarking.updateTemporaryMarking({
+                points: [...this.points, pos],
+            });
+        }
     }
 
-    override handleLMBDown?(): void {}
-
-    handleLMBUp() {
-        const { markingsStore } = this.plugin.handlerParams;
-        markingsStore.actions.markings.addOne(
-            markingsStore.state.temporaryMarking as PointMarking
+    handleLMBUp(e: FederatedPointerEvent) {
+        const { cachedViewportStore } = this.plugin.handlerParams;
+        cachedViewportStore.actions.viewport.setRayPosition(
+            getNormalizedMousePosition(e, this.plugin.handlerParams.viewport)
         );
-        this.cleanup();
+    }
+
+    handleLMBDown(e: FederatedPointerEvent) {
+        const { viewport, markingsStore } = this.plugin.handlerParams;
+        const pos = this.getAdjustedPosition(
+            getNormalizedMousePosition(e, viewport)
+        );
+
+        if (
+            this.points.length > 2 &&
+            this.points[0] &&
+            distance(pos, this.points[0]) < 20
+        ) {
+            const updatedMarking = new PolygonMarking(
+                markingsStore.state.temporaryMarking!.label,
+                markingsStore.state.temporaryMarking!.origin,
+                markingsStore.state.temporaryMarking!.typeId,
+                this.points
+            );
+            markingsStore.actions.markings.addOne(updatedMarking);
+            this.cleanup();
+        } else {
+            this.points.push(pos);
+            markingsStore.actions.temporaryMarking.updateTemporaryMarking({
+                points: [...this.points, pos],
+            });
+        }
     }
 }

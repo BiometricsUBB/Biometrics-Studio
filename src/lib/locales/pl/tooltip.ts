@@ -16,6 +16,9 @@ const d: Dictionary = {
     "Import marking types": "Importuj typy adnotacji",
     "Markings data saved": "Dane adnotacji zapisano pomyślnie",
     "Failed to save markings data": "Nie udało się zapisać danych adnotacji",
+    "Auto rotate":
+        "automatycznie obróć obrazy używając aktualnych linii wyrównania",
+    "Reset rotation": "Zresetuj obrót obrazów",
 };
 
 export default d;

@@ -8,6 +8,7 @@ import { CanvasUpdater } from "@/lib/stores/CanvasUpdater";
 import * as PIXI from "pixi.js";
 import { Sprite } from "pixi.js";
 import { CanvasToolbarStore } from "@/lib/stores/CanvasToolbar";
+import { RotationStore } from "@/lib/stores/Rotation/Rotation";
 import { Viewport } from "../viewport/viewport";
 import { useThemeController } from "./hooks/useThemeController";
 import { useGlobalRefs } from "./hooks/useGlobalRefs";
@@ -34,6 +35,10 @@ export function PixiApp({ width, height, canvasMetadata }: PixiAppProps) {
         state => state.settings.texture.scaleMode
     );
 
+    const rotation = RotationStore(canvasMetadata.id).use(
+        state => state.rotation
+    );
+
     useEffect(() => {
         const updateViewport = () =>
             updateCanvas(canvasMetadata.id, "viewport");
@@ -46,6 +51,18 @@ export function PixiApp({ width, height, canvasMetadata }: PixiAppProps) {
         spriteRef.current.texture.baseTexture.scaleMode = newScaleMode;
         updateViewport();
     }, [canvasMetadata.id, scaleMode, updateCanvas, viewport]);
+
+    useEffect(() => {
+        if (viewport) {
+            const sprite = viewport.children.find(x => x instanceof Sprite) as
+                | Sprite
+                | undefined;
+            if (sprite) {
+                sprite.rotation = rotation;
+                updateCanvas(canvasMetadata.id, "app");
+            }
+        }
+    }, [viewport, rotation, updateCanvas, canvasMetadata.id]);
 
     useEffect(() => {
         if (viewport && viewport.plugins.get("wheel")) {
