@@ -7,6 +7,7 @@ import { Immer, produceCallback } from "../immer.helpers";
 type State = {
     tempLines: Record<CANVAS_ID, LineSegmentMarking | null>;
     finishedLines: Record<CANVAS_ID, LineSegmentMarking | null>;
+    lastDrawnCanvas: CANVAS_ID | null;
 };
 
 const INITIAL_STATE: State = {
@@ -18,6 +19,7 @@ const INITIAL_STATE: State = {
         [CANVAS_ID.LEFT]: null,
         [CANVAS_ID.RIGHT]: null,
     },
+    lastDrawnCanvas: null,
 };
 
 const createStore = () =>

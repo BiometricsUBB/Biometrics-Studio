@@ -14,11 +14,12 @@ const autoRotate = (store: StoreClass) => {
     const { getFinishedLines, resetTempLines, resetFinishedLines } =
         store.actions;
     const lines = getFinishedLines();
+    const { lastDrawnCanvas } = store.state;
 
     const leftLine = lines[CANVAS_ID.LEFT];
     const rightLine = lines[CANVAS_ID.RIGHT];
 
-    if (!leftLine || !rightLine) return;
+    if (!leftLine || !rightLine || !lastDrawnCanvas) return;
 
     const leftAngle = Math.atan2(
         leftLine.endpoint.y - leftLine.origin.y,
@@ -31,7 +32,9 @@ const autoRotate = (store: StoreClass) => {
 
     const rotationDiff = rightAngle - leftAngle;
 
-    RotationStore(CANVAS_ID.RIGHT).actions.setRotation(rotationDiff);
+    RotationStore(lastDrawnCanvas).actions.setRotation(
+        lastDrawnCanvas === CANVAS_ID.RIGHT ? -rotationDiff : rotationDiff
+    );
 
     resetTempLines();
     resetFinishedLines();
@@ -58,6 +61,8 @@ class StoreClass {
             this.state.set(draft => {
                 // eslint-disable-next-line security/detect-object-injection, no-param-reassign
                 draft.finishedLines[canvasId] = line;
+                // eslint-disable-next-line no-param-reassign
+                draft.lastDrawnCanvas = canvasId;
             });
 
             const currentState = this.use.getState();
@@ -86,6 +91,8 @@ class StoreClass {
                     [CANVAS_ID.LEFT]: null,
                     [CANVAS_ID.RIGHT]: null,
                 };
+                // eslint-disable-next-line no-param-reassign
+                draft.lastDrawnCanvas = null;
             });
         },
         getTempLines: () => this.state.tempLines,
