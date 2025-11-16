@@ -12,7 +12,7 @@ export const useTheme = () => {
 
     useEffect(() => {
         const root = document.documentElement;
-        root.classList.remove("light", "dark");
+        root.classList.remove("light", "dark", "dark_gray");
 
         if (theme === "system") {
             const systemTheme = window.matchMedia(

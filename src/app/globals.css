@@ -52,6 +52,30 @@
         --ds-background-selected: #61bd6780;
         --separator: 0 0% 100%;
     }
+
+    .dark_gray {
+    --card: 210 15% 20%;
+    --ring: 0 0% 100%;
+    --input:  210 10% 60%;
+    --muted: 210 10% 30%;
+    --accent: 210 10% 60%;
+    --border: 210 10% 40%;
+    --popover: 210 15% 20%;
+    --primary: 0 0% 100%;
+    --secondary: 210 15% 20%;
+    --background: 210 15% 15%;
+    --foreground: 0 0% 100%;
+    --destructive: 0 70% 60%;
+    --card-foreground: 210 15% 85%;
+    --muted-foreground: 210 10% 60%;
+    --accent-foreground: 210 15% 95%;
+    --popover-foreground: 210 15% 85%;
+    --primary-foreground: 210 15% 60%;
+    --secondary-foreground: 210 15% 60%;
+    --destructive-foreground: 0 0% 100%;
+    --ds-background-selected: #1f6feb80;
+    --separator: 210 10% 35%;
+    }
 }
 
 @layer base {
