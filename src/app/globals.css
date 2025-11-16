@@ -76,6 +76,54 @@
     --ds-background-selected: #1f6feb80;
     --separator: 210 10% 35%;
     }
+
+    .blue_light {
+    --card: 218, 65%, 26%;         
+    --ring: 218 65.4% 85%;        
+    --input: 218 65.4% 26.1%;          
+    --muted: 218 65.4% 85%;        
+    --accent: 218, 65%, 20%;    
+    --border: 218 65.4% 26.1%;         
+    --popover: 0 0% 100%;     
+    --primary: 218 65.4% 26.1%;      
+    --secondary: 218 65.4% 26.1%;    
+    --background: 218 65.4% 98%;    
+    --foreground: 218, 65%, 20%;     
+    --destructive: 0 70% 70%;        
+    --card-foreground: 0 0% 100%; 
+    --muted-foreground: 211 33.1% 52.6%; 
+    --accent-foreground: 0 0% 100%;
+    --popover-foreground: 218 65.4% 26.1%;
+    --primary-foreground: 218 65.4% 26.1%; 
+    --secondary-foreground: 0 0% 100%; 
+    --destructive-foreground: 218 65.4% 26.1%; 
+    --ds-background-selected: #255fc380; 
+    --separator: 218 65.4% 85%;
+    }
+
+    .blue_dark {
+    --card: 218 65.4% 26.1%;
+    --ring: 214 65% 9.9%;
+    --input: 218 20% 22%;
+    --muted: 218 65.4% 26.1%;
+    --accent: 218 15% 92%;
+    --border: 218 20% 32%;
+    --popover: 218 65.4% 26.1%;
+    --primary: 218 65.4% 26.1%;
+    --secondary: 218 65.4% 26.1%;
+    --background: 214 65% 9.9%;
+    --foreground: 218 15% 92%;
+    --destructive: 0 70% 55%;
+    --card-foreground: 218 15% 92%;
+    --muted-foreground: 214 65% 9.9%%;
+    --accent-foreground: 214 65% 9.9%;
+    --popover-foreground: 0 0% 100%;
+    --primary-foreground: 0 0% 100%;
+    --secondary-foreground: 0 0% 100%;
+    --destructive-foreground: 218 65.4% 26.1%;
+    --ds-background-selected: #2a65ff80;
+    --separator: 218 20% 28%;
+    }
 }
 
 @layer base {

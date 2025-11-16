@@ -12,6 +12,8 @@ export enum THEMES {
     LIGHT = "light",
     DARK = "dark",
     DARK_GRAY = "dark_gray",
+    BLUE_LIGHT = "blue_light",
+    BLUE_DARK = "blue_dark",
 }
 
 export enum LANGUAGES {
