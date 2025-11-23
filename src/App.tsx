@@ -1,6 +1,5 @@
 import React, { useState, Suspense, lazy } from "react";
 import { Tabs, TabsContent } from "@/components/ui/tabs";
-import { GlobalToolbar } from "@/components/toolbar/toolbar";
 import { cn } from "@/lib/utils/shadcn";
 import SelectMode from "@/views/selectMode";
 import { Menu } from "@/components/menu/menu";
@@ -57,7 +56,6 @@ export default function App() {
                         }
                     )}
                 >
-                    <GlobalToolbar />
                     <Suspense fallback={<div>Loading...</div>}>
                         <Homepage />
                     </Suspense>

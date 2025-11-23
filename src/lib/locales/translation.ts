@@ -19,12 +19,13 @@ export type i18nKeywords = Recordify<
     | "Types"
     | "Remove"
     | "Add"
+    | "Tools"
 >;
 
 export type i18nModes = Recordify<WORKING_MODE>;
 
 export type i18nCursor = {
-    Mode: Recordify<"Selection" | "Marking">;
+    Mode: Recordify<"Selection" | "Marking" | "Rotation">;
 };
 
 export type i18nObject = {

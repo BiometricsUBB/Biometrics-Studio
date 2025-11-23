@@ -4,6 +4,7 @@ const d: Dictionary = {
     Mode: {
         Marking: "Tryb adnotacji",
         Selection: "Tryb zaznaczania",
+        Rotation: "Tryb rotacji",
     },
 };
 

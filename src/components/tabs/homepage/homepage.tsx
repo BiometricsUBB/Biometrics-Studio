@@ -12,6 +12,7 @@ import {
 } from "@/components/pixi/canvas/hooks/useCanvasContext";
 import { useMemo } from "react";
 import { useKeyboardShortcuts } from "@/lib/hooks/useKeyboardShortcuts";
+import { VerticalToolbar } from "@/components/toolbar/vertical-toolbar";
 
 export function Homepage() {
     useKeyboardShortcuts();
@@ -35,7 +36,8 @@ export function Homepage() {
             direction="horizontal"
             className="flex-grow rounded-lg border"
         >
-            <ResizablePanel defaultSize={50} minSize={2}>
+            {/* Lewy Canvas z Information Tabs */}
+            <ResizablePanel defaultSize={40} minSize={10}>
                 <ResizablePanelGroup
                     direction="vertical"
                     className="rounded-lg border"
@@ -55,8 +57,11 @@ export function Homepage() {
                     </CanvasContext.Provider>
                 </ResizablePanelGroup>
             </ResizablePanel>
+
             <ResizableHandle />
-            <ResizablePanel defaultSize={50} minSize={2}>
+
+            {/* Prawy Canvas z Information Tabs */}
+            <ResizablePanel defaultSize={40} minSize={10}>
                 <ResizablePanelGroup
                     direction="vertical"
                     className="rounded-lg border"
@@ -75,6 +80,15 @@ export function Homepage() {
                         </ResizablePanel>
                     </CanvasContext.Provider>
                 </ResizablePanelGroup>
+            </ResizablePanel>
+
+            <ResizableHandle />
+
+            {/* Pionowy Toolbar po prawej */}
+            <ResizablePanel defaultSize={20} minSize={15} maxSize={30}>
+                <div className="flex flex-col h-full w-full border rounded-lg bg-background">
+                    <VerticalToolbar />
+                </div>
             </ResizablePanel>
         </ResizablePanelGroup>
     );

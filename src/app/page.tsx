@@ -1,7 +1,6 @@
 import { Tabs, TabsContent } from "@/components/ui/tabs";
 import React, { Suspense, useEffect, useState } from "react";
 import { cn } from "@/lib/utils/shadcn";
-import { GlobalToolbar } from "@/components/toolbar/toolbar";
 import { CUSTOM_GLOBAL_EVENTS } from "@/lib/utils/const";
 import { MarkingsStore } from "@/lib/stores/Markings";
 import { CANVAS_ID } from "@/components/pixi/canvas/hooks/useCanvasContext";
@@ -59,7 +58,6 @@ export default function Home() {
                         }
                     )}
                 >
-                    <GlobalToolbar />
                     <Suspense fallback={<div>Loading...</div>}>
                         <Homepage />
                     </Suspense>

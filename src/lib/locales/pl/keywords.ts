@@ -10,6 +10,7 @@ const d: Dictionary = {
     Types: "Typy",
     Remove: "Usuń",
     Add: "Dodaj",
+    Tools: "Narzędzia",
 };
 
 export default d;
