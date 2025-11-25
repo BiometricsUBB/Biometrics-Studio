@@ -29,6 +29,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { RotationStore } from "@/lib/stores/Rotation/Rotation";
 import { ToggleGroup, ToggleGroupItem } from "../ui/toggle-group";
+import { RotationPanel } from "./rotation-panel";
 
 export type VerticalToolbarProps = HTMLAttributes<HTMLDivElement>;
 
@@ -51,7 +52,7 @@ export function VerticalToolbar({ className, ...props }: VerticalToolbarProps) {
     return (
         <div
             className={cn(
-                "flex flex-col gap-4 p-4 h-full overflow-y-auto",
+                "flex flex-col gap-4 p-4 pb-8 h-full overflow-y-auto",
                 className
             )}
             {...props}
@@ -120,6 +121,17 @@ export function VerticalToolbar({ className, ...props }: VerticalToolbarProps) {
                         </span>
                     </ToggleGroupItem>
                 </ToggleGroup>
+
+                <div
+                    className={cn(
+                        "overflow-hidden transition-all duration-300 ease-in-out",
+                        cursorMode === CURSOR_MODES.AUTOROTATE
+                            ? "max-h-96 opacity-100 mt-2"
+                            : "max-h-0 opacity-0"
+                    )}
+                >
+                    <RotationPanel />
+                </div>
             </div>
 
             <div className="border-t" />

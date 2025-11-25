@@ -58,8 +58,19 @@
     * {
         @apply border-border;
     }
+    html, body, #root {
+        height: 100vh;
+        max-height: 100vh;
+        overflow: hidden;
+    }
     body {
         @apply bg-background text-foreground;
+        margin: 0;
+        display: block;
+    }
+    #root {
+        display: flex;
+        flex-direction: column;
     }
     input[type="color"] {
         border: none;
@@ -94,5 +105,34 @@
 
     .shake-animation {
         animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both;
+    }
+}
+
+@layer base {
+    /* Custom scrollbar styles */
+    * {
+        scrollbar-width: thin;
+        scrollbar-color: hsl(var(--primary)) transparent;
+    }
+
+    /* WebKit browsers (Chrome, Safari, Edge) */
+    *::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+    }
+
+    *::-webkit-scrollbar-track {
+        background: transparent;
+    }
+
+    *::-webkit-scrollbar-thumb {
+        background-color: hsl(var(--primary));
+        border-radius: 4px;
+        border: 2px solid transparent;
+        background-clip: content-box;
+    }
+
+    *::-webkit-scrollbar-thumb:hover {
+        background-color: hsl(var(--primary) / 0.8);
     }
 }

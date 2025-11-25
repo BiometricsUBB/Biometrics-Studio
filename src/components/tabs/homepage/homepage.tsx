@@ -34,13 +34,12 @@ export function Homepage() {
     return (
         <ResizablePanelGroup
             direction="horizontal"
-            className="flex-grow rounded-lg border"
+            className="flex-grow rounded-lg border overflow-hidden max-h-screen"
         >
-            {/* Lewy Canvas z Information Tabs */}
             <ResizablePanel defaultSize={40} minSize={10}>
                 <ResizablePanelGroup
                     direction="vertical"
-                    className="rounded-lg border"
+                    className="rounded-lg border overflow-hidden"
                 >
                     <CanvasContext.Provider value={leftCanvasMetadata}>
                         <ResizablePanel defaultSize={75} minSize={2}>
@@ -60,11 +59,10 @@ export function Homepage() {
 
             <ResizableHandle />
 
-            {/* Prawy Canvas z Information Tabs */}
             <ResizablePanel defaultSize={40} minSize={10}>
                 <ResizablePanelGroup
                     direction="vertical"
-                    className="rounded-lg border"
+                    className="rounded-lg border overflow-hidden"
                 >
                     <CanvasContext.Provider value={rightCanvasMetadata}>
                         <ResizablePanel defaultSize={75} minSize={2}>
@@ -84,10 +82,9 @@ export function Homepage() {
 
             <ResizableHandle />
 
-            {/* Pionowy Toolbar po prawej */}
             <ResizablePanel defaultSize={20} minSize={15} maxSize={30}>
-                <div className="flex flex-col h-full w-full border rounded-lg bg-background">
-                    <VerticalToolbar />
+                <div className="flex flex-col h-full w-full border rounded-lg bg-background overflow-hidden">
+                    <VerticalToolbar className="min-h-0" />
                 </div>
             </ResizablePanel>
         </ResizablePanelGroup>

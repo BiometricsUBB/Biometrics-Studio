@@ -82,6 +82,9 @@ export type i18nTooltip = Recordify<
     | "Failed to save markings data"
     | "Auto rotate"
     | "Reset rotation"
+    | "Rotation instructions"
+    | "Calculate and align"
+    | "Reset rotation panel"
 >;
 
 export type i18nDialog = Recordify<
