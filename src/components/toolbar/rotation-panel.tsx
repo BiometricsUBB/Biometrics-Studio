@@ -35,7 +35,7 @@ export function RotationPanel({ className, ...props }: RotationPanelProps) {
     return (
         <div
             className={cn(
-                "flex flex-col gap-3 p-3 border rounded-md bg-muted/30",
+                "flex flex-col gap-3 p-3 glass rounded-xl",
                 className
             )}
             {...props}

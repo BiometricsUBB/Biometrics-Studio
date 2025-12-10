@@ -10,7 +10,6 @@ import { listen } from "@tauri-apps/api/event";
 import { showErrorDialog } from "@/lib/errors/showErrorDialog";
 import { Point } from "@/lib/markings/Point";
 import { useCanvasContext } from "./hooks/useCanvasContext";
-import { CanvasToolbar } from "./canvas-toolbar";
 import { Canvas } from "./canvas";
 import { useGlobalViewport } from "../viewport/hooks/useGlobalViewport";
 import { CanvasInfo } from "./canvas-info";
@@ -104,7 +103,6 @@ export function CanvasContainer({ ...props }: CanvasContainerProps) {
             )}
             <div className={cn("size-full", { hidden: isViewportHidden })}>
                 {showCanvasInformation && <CanvasInfo />}
-                <CanvasToolbar />
                 <Canvas
                     aria-label="canvas"
                     width={divSize.width}

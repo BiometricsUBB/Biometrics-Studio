@@ -11,6 +11,7 @@ type Recordify<T> = { [K in Extract<T, string> as `${K}`]: string };
 
 export type i18nKeywords = Recordify<
     | "Working mode"
+    | "Control"
     | "Settings"
     | "Language"
     | "Markings"

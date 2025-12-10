@@ -23,8 +23,15 @@ export default function App() {
     return (
         <main
             data-testid="page-container"
-            className="flex w-full min-h-dvh h-full flex-col items-center justify-between"
+            className="flex w-full min-h-dvh h-full  flex-col items-center justify-between bg-[hsl(var(--background))] relative overflow-hidden"
         >
+            <div className="absolute inset-0 overflow-hidden pointer-events-none">
+                {currentTab === TABS.SELECT_MODE ? (
+                    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] rounded-full bg-primary/20 blur-[150px]" />
+                ) : (
+                    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[75%] h-[85%] brightness-150 rounded-2xl bg-primary/20 blur-[150px]" />
+                )}
+            </div>
             <Menu />
             <Tabs
                 value={currentTab}

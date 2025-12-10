@@ -32,8 +32,8 @@ export function DebugOverlay({ canvasMetadata: { id } }: DebugOverlayProps) {
 
     const imageWidth = sprite.width;
     const imageHeight = sprite.height;
-    const imageX = sprite.x - imageWidth / 2;
-    const imageY = sprite.y - imageHeight / 2;
+    const imageX = sprite.x - sprite.pivot.x;
+    const imageY = sprite.y - sprite.pivot.y;
 
     return (
         <>
