@@ -12,6 +12,11 @@ const d: Dictionary = {
     Remove: "Remove",
     Add: "Add",
     Tools: "Tools",
+    About: "About",
+    Version: "Version",
+    Description: "Description",
+    Authors: "Authors",
+    Repository: "Repository",
 };
 
 export default d;

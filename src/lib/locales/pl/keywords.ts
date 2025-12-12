@@ -12,6 +12,11 @@ const d: Dictionary = {
     Remove: "Usuń",
     Add: "Dodaj",
     Tools: "Narzędzia",
+    About: "O aplikacji",
+    Version: "Wersja",
+    Description: "Opis",
+    Authors: "Autorzy",
+    Repository: "Repozytorium",
 };
 
 export default d;

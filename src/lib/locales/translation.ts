@@ -21,6 +21,19 @@ export type i18nKeywords = Recordify<
     | "Remove"
     | "Add"
     | "Tools"
+    | "About"
+    | "Version"
+    | "Description"
+    | "Authors"
+    | "Repository"
+>;
+
+export type i18nDescription = Recordify<
+    | "Select your preferred language"
+    | "Select your preferred theme"
+    | "Application information"
+    | "Application for forensic trace comparison"
+    | "Open settings"
 >;
 
 export type i18nModes = Recordify<WORKING_MODE>;
