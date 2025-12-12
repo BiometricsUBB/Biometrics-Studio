@@ -1,5 +1,5 @@
 import { Viewport } from "pixi-viewport";
-
+import { Sprite } from "pixi.js";
 import { Point } from "@/lib/markings/Point";
 
 export type FitEvent = {
@@ -25,16 +25,43 @@ export const emitFitEvents = (
 };
 
 export const fitHeight = (viewport: Viewport | null) => {
-    viewport?.fitHeight();
-    viewport?.moveCorner(0, 0);
+    if (!viewport) return;
+    viewport.fitHeight();
+
+    const sprite = viewport.children.find(x => x instanceof Sprite) as
+        | Sprite
+        | undefined;
+    if (sprite) {
+        viewport.moveCorner(-sprite.pivot.x, 0);
+    } else {
+        viewport.moveCorner(0, 0);
+    }
 };
 
 export const fitWidth = (viewport: Viewport | null) => {
-    viewport?.fitWidth();
-    viewport?.moveCorner(0, 0);
+    if (!viewport) return;
+    viewport.fitWidth();
+
+    const sprite = viewport.children.find(x => x instanceof Sprite) as
+        | Sprite
+        | undefined;
+    if (sprite) {
+        viewport.moveCorner(0, -sprite.pivot.y);
+    } else {
+        viewport.moveCorner(0, 0);
+    }
 };
 
 export const fitWorld = (viewport: Viewport | null) => {
-    viewport?.fitWorld();
-    viewport?.moveCenter(0, 0);
+    if (!viewport) return;
+    viewport.fitWorld();
+
+    const sprite = viewport.children.find(x => x instanceof Sprite) as
+        | Sprite
+        | undefined;
+    if (sprite) {
+        viewport.moveCenter(sprite.position.x, sprite.position.y);
+    } else {
+        viewport.moveCenter(0, 0);
+    }
 };

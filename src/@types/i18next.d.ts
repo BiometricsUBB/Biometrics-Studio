@@ -6,6 +6,7 @@ import {
     i18nTooltip,
     i18nDialog,
     i18nModes,
+    i18nDescription,
 } from "@/lib/locales/translation";
 
 declare module "i18next" {
@@ -26,6 +27,7 @@ declare module "i18next" {
             cursor: i18nCursor;
             object: i18nObject;
             tooltip: i18nTooltip;
+            description: i18nDescription;
             dialog: i18nDialog;
             modes: i18nModes;
         };

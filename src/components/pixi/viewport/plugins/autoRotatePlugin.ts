@@ -10,28 +10,9 @@ import { AutoRotateStore } from "@/lib/stores/AutoRotate/AutoRotate";
 import { CachedViewportStore } from "@/lib/stores/CachedViewport";
 import { MarkingTypesStore } from "@/lib/stores/MarkingTypes/MarkingTypes";
 import { RotationStore } from "@/lib/stores/Rotation/Rotation";
-import { Point } from "@/lib/markings/Point";
 import { CANVAS_ID } from "../../canvas/hooks/useCanvasContext";
 import { getNormalizedMousePosition } from "../event-handlers/utils";
-
-const transformPoint = (
-    point: Point,
-    rotation: number,
-    centerX: number,
-    centerY: number
-): Point => {
-    if (rotation === 0) return point;
-    const cos = Math.cos(rotation);
-    const sin = Math.sin(rotation);
-    const x = point.x - centerX;
-    const y = point.y - centerY;
-    const rotatedX = x * cos - y * sin;
-    const rotatedY = x * sin + y * cos;
-    return {
-        x: rotatedX + centerX,
-        y: rotatedY + centerY,
-    };
-};
+import { getAdjustedPosition } from "../utils/transform-point";
 
 export class AutoRotatePlugin extends Plugin {
     private viewport: Viewport;
@@ -70,11 +51,6 @@ export class AutoRotatePlugin extends Plugin {
         );
     }
 
-    private getAdjustedPosition(pos: Point): Point {
-        const { rotation } = RotationStore(this.canvasId).state;
-        return transformPoint(pos, -rotation, 0, 0);
-    }
-
     private handleMouseDown = (e: FederatedPointerEvent): void => {
         if (this.isAutoRotateModeActive() && e.button === 0) {
             if (this.stage === 1) {
@@ -94,8 +70,11 @@ export class AutoRotatePlugin extends Plugin {
         );
 
         const typeId = MarkingTypesStore.state.types[0]?.id || "";
-        const pos = this.getAdjustedPosition(
-            getNormalizedMousePosition(e, this.viewport)
+        const { rotation } = RotationStore(this.canvasId).state;
+        const pos = getAdjustedPosition(
+            getNormalizedMousePosition(e, this.viewport),
+            rotation,
+            this.viewport
         );
 
         this.tempLine = new LineSegmentMarking(
@@ -131,8 +110,11 @@ export class AutoRotatePlugin extends Plugin {
     private handleMouseMove = (e: FederatedPointerEvent): void => {
         if (!this.isAutoRotateModeActive() || !this.tempLine) return;
 
-        const pos = this.getAdjustedPosition(
-            getNormalizedMousePosition(e, this.viewport)
+        const { rotation } = RotationStore(this.canvasId).state;
+        const pos = getAdjustedPosition(
+            getNormalizedMousePosition(e, this.viewport),
+            rotation,
+            this.viewport
         );
 
         if (this.stage === 1) {

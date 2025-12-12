@@ -2,6 +2,8 @@ import { Container } from "@pixi/react";
 import { MarkingsStore } from "@/lib/stores/Markings";
 import { AutoRotateStore } from "@/lib/stores/AutoRotate/AutoRotate";
 import { RotationStore } from "@/lib/stores/Rotation/Rotation";
+import { ShallowViewportStore } from "@/lib/stores/ShallowViewport";
+import * as PIXI from "pixi.js";
 import { CanvasMetadata } from "../canvas/hooks/useCanvasContext";
 import { useGlobalViewport } from "../viewport/hooks/useGlobalViewport";
 import { useGlobalApp } from "../app/hooks/useGlobalApp";
@@ -43,12 +45,32 @@ export function MarkingOverlay({ canvasMetadata }: MarkingOverlayProps) {
 
     const rotation = RotationStore(canvasId).use(state => state.rotation);
 
-    const centerX = 0;
-    const centerY = 0;
+    const { viewportWidthRatio, viewportHeightRatio } = ShallowViewportStore(
+        canvasId
+    ).use(
+        ({
+            size: {
+                screenWorldWidth,
+                screenWorldHeight,
+                worldWidth,
+                worldHeight,
+            },
+        }) => ({
+            viewportWidthRatio: screenWorldWidth / worldWidth,
+            viewportHeightRatio: screenWorldHeight / worldHeight,
+        })
+    );
 
     if (viewport === null || app == null) {
         return null;
     }
+
+    const sprite = viewport.children.find(x => x instanceof PIXI.Sprite) as
+        | PIXI.Sprite
+        | undefined;
+
+    const centerX = sprite ? (sprite.width / 2) * viewportWidthRatio : 0;
+    const centerY = sprite ? (sprite.height / 2) * viewportHeightRatio : 0;
 
     return (
         <Container position={getViewportPosition(viewport)}>

@@ -1,10 +1,6 @@
 import { CANVAS_ID } from "@/components/pixi/canvas/hooks/useCanvasContext";
 import { LineSegmentMarking } from "@/lib/markings/LineSegmentMarking";
 import { RotationStore } from "@/lib/stores/Rotation/Rotation";
-import {
-    DashboardToolbarStore,
-    CURSOR_MODES,
-} from "@/lib/stores/DashboardToolbar";
 import { _createAutoRotateStore as createStore } from "./AutoRotate.store";
 
 const useStore = createStore();
@@ -64,16 +60,6 @@ class StoreClass {
                 // eslint-disable-next-line no-param-reassign
                 draft.lastDrawnCanvas = canvasId;
             });
-
-            const currentState = this.use.getState();
-            if (
-                currentState.finishedLines[CANVAS_ID.LEFT] &&
-                currentState.finishedLines[CANVAS_ID.RIGHT] &&
-                DashboardToolbarStore.state.settings.cursor.mode ===
-                    CURSOR_MODES.AUTOROTATE
-            ) {
-                setTimeout(() => autoRotate(this), 0);
-            }
         },
         resetTempLines: () => {
             this.state.set(draft => {
@@ -97,6 +83,9 @@ class StoreClass {
         },
         getTempLines: () => this.state.tempLines,
         getFinishedLines: () => this.state.finishedLines,
+        applyRotation: () => {
+            autoRotate(this);
+        },
     };
 }
 

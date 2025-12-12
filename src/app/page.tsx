@@ -1,7 +1,6 @@
 import { Tabs, TabsContent } from "@/components/ui/tabs";
 import React, { Suspense, useEffect, useState } from "react";
 import { cn } from "@/lib/utils/shadcn";
-import { GlobalToolbar } from "@/components/toolbar/toolbar";
 import { CUSTOM_GLOBAL_EVENTS } from "@/lib/utils/const";
 import { MarkingsStore } from "@/lib/stores/Markings";
 import { CANVAS_ID } from "@/components/pixi/canvas/hooks/useCanvasContext";
@@ -42,24 +41,23 @@ export default function Home() {
     return (
         <main
             data-testid="page-container"
-            className="flex w-full min-h-dvh h-full flex-col items-center justify-between"
+            className="flex w-full h-screen max-h-screen flex-col items-center justify-between overflow-hidden"
         >
             <Tabs
                 onValueChange={tab => setCurrentTab(tab as TABS)}
                 defaultValue={initialTab}
-                className="w-full flex flex-col items-center flex-grow"
+                className="w-full flex flex-col items-center flex-grow overflow-hidden"
             >
                 <TabsContent
                     forceMount
                     value={TABS.HOMEPAGE}
                     className={cn(
-                        "flex flex-col justify-center items-center flex-grow w-full",
+                        "flex flex-col justify-center items-center flex-grow w-full overflow-hidden",
                         {
                             hidden: currentTab !== TABS.HOMEPAGE,
                         }
                     )}
                 >
-                    <GlobalToolbar />
                     <Suspense fallback={<div>Loading...</div>}>
                         <Homepage />
                     </Suspense>
