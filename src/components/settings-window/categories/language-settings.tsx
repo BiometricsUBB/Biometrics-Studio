@@ -3,6 +3,7 @@ import i18n from "@/lib/locales/i18n";
 import { LANGUAGES } from "@/lib/stores/GlobalSettings";
 import { cn } from "@/lib/utils/shadcn";
 import { Check } from "lucide-react";
+import { emitSettingsChange } from "@/lib/hooks/useSettingsSync";
 
 const languageNames: Record<LANGUAGES, string> = {
     [LANGUAGES.ENGLISH]: "English",
@@ -11,6 +12,11 @@ const languageNames: Record<LANGUAGES, string> = {
 
 export function LanguageSettings() {
     const { t } = useTranslation();
+
+    const handleLanguageChange = async (value: LANGUAGES) => {
+        i18n.changeLanguage(value);
+        await emitSettingsChange({ type: "language", value });
+    };
 
     return (
         <div className="flex flex-col gap-4">
@@ -34,7 +40,7 @@ export function LanguageSettings() {
                             <button
                                 type="button"
                                 key={key}
-                                onClick={() => i18n.changeLanguage(value)}
+                                onClick={() => handleLanguageChange(value)}
                                 className={cn(
                                     "flex items-center justify-between px-4 py-3 rounded-lg transition-all",
                                     "border hover:bg-primary/10",

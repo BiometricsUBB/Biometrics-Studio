@@ -4,6 +4,7 @@ import { useTheme } from "@/lib/hooks/useTheme";
 import { THEMES } from "@/lib/stores/GlobalSettings";
 import { cn } from "@/lib/utils/shadcn";
 import { Check, Sun, Moon, Monitor } from "lucide-react";
+import { emitSettingsChange } from "@/lib/hooks/useSettingsSync";
 
 const themeIcons: Record<THEMES, React.ReactNode> = {
     [THEMES.LIGHT]: <Sun size={18} />,
@@ -14,6 +15,11 @@ const themeIcons: Record<THEMES, React.ReactNode> = {
 export function ThemeSettings() {
     const { t } = useTranslation();
     const { theme: resolvedTheme, setTheme } = useTheme();
+
+    const handleThemeChange = async (value: THEMES) => {
+        setTheme(value);
+        await emitSettingsChange({ type: "theme", value });
+    };
 
     return (
         <div className="flex flex-col gap-4">
@@ -36,7 +42,7 @@ export function ThemeSettings() {
                         <button
                             type="button"
                             key={key}
-                            onClick={() => setTheme(value)}
+                            onClick={() => handleThemeChange(value)}
                             className={cn(
                                 "flex items-center justify-between px-4 py-3 rounded-lg transition-all",
                                 "border hover:bg-primary/10",

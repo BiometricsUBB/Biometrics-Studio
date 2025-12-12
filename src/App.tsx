@@ -4,6 +4,7 @@ import { cn } from "@/lib/utils/shadcn";
 import SelectMode from "@/views/selectMode";
 import { Menu } from "@/components/menu/menu";
 import { WorkingModeStore } from "@/lib/stores/WorkingMode";
+import { useSettingsSync } from "@/lib/hooks/useSettingsSync";
 
 const Homepage = lazy(() =>
     import("@/components/tabs/homepage/homepage").then(module => ({
@@ -19,6 +20,8 @@ const enum TABS {
 export default function App() {
     const [currentTab, setCurrentTab] = useState<TABS>(TABS.SELECT_MODE);
     const { setWorkingMode } = WorkingModeStore.use();
+
+    useSettingsSync();
 
     return (
         <main
