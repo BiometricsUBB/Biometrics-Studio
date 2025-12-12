@@ -10,7 +10,7 @@ const Menubar = React.forwardRef<
 >(({ className, ...props }, ref) => (
     <MenubarPrimitive.Root
         ref={ref}
-        className={cn("bg-secondary text-secondary-foreground", className)}
+        className={cn("text-foreground px-4 py-3", className)}
         {...props}
     />
 ));
@@ -25,7 +25,11 @@ const MenubarContent = React.forwardRef<
     <MenubarPrimitive.Content
         ref={ref}
         className={cn(
-            "border-2 border-accent bg-secondary text-secondary-foreground",
+            "rounded-lg border border-border/50 bg-popover/95 backdrop-blur-md",
+            "p-1.5 text-popover-foreground shadow-lg shadow-black/10",
+            "data-[state=open]:animate-in data-[state=closed]:animate-out",
+            "data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0",
+            "data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95",
             className
         )}
         {...props}
@@ -38,7 +42,12 @@ const MenubarTrigger = React.forwardRef<
 >((props, ref) => (
     <MenubarPrimitive.Trigger
         ref={ref}
-        className="px-2 hover:bg-accent hover:text-accent-foreground focus:outline-none"
+        className={cn(
+            "px-3 py-1.5 rounded-md transition-colors duration-150",
+            "hover:bg-accent/80 hover:text-accent-foreground",
+            "focus:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+            "data-[state=open]:bg-accent/80"
+        )}
         {...props}
     />
 ));
@@ -70,7 +79,11 @@ const MenubarCheckboxItem = React.forwardRef<
     <MenubarPrimitive.CheckboxItem
         ref={ref}
         className={cn(
-            "flex space-x-2 items-center justify-between px-1.5 py-0.5 select-none cursor-pointer hover:bg-accent hover:text-accent-foreground focus:outline-none",
+            "flex space-x-2 items-center justify-between",
+            "px-2.5 py-2 rounded-md select-none cursor-pointer",
+            "transition-colors duration-150",
+            "hover:bg-accent/90 hover:text-accent-foreground",
+            "focus:outline-none focus:bg-accent/90",
             className
         )}
         {...props}
@@ -93,7 +106,10 @@ const MenubarSubTrigger = React.forwardRef<
     <MenubarPrimitive.SubTrigger
         ref={ref}
         className={cn(
-            "flex space-x-5 items-center justify-between select-none px-1.5 py-0.5 hover:bg-accent hover:text-accent-foreground focus:outline-none",
+            "flex space-x-5 items-center justify-between select-none",
+            "px-2.5 py-2 rounded-md transition-colors duration-150",
+            "hover:bg-accent/90 hover:text-accent-foreground",
+            "focus:outline-none focus:bg-accent/90",
             className
         )}
         {...props}
@@ -110,7 +126,11 @@ const MenubarSubContent = React.forwardRef<
     <MenubarPrimitive.SubContent
         ref={ref}
         className={cn(
-            "border-2 border-accent bg-secondary text-secondary-foreground",
+            "rounded-lg border border-border/50 bg-popover/95 backdrop-blur-md",
+            "p-1.5 text-popover-foreground shadow-lg shadow-black/10",
+            "data-[state=open]:animate-in data-[state=closed]:animate-out",
+            "data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0",
+            "data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95",
             className
         )}
         {...props}

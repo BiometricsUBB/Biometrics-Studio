@@ -1,6 +1,6 @@
 import { Toggle } from "@/components/ui/toggle";
 import { cn } from "@/lib/utils/shadcn";
-import { HTMLAttributes } from "react";
+import { HTMLAttributes, useState } from "react";
 
 import {
     CURSOR_MODES,
@@ -16,6 +16,7 @@ import {
     RotateCw,
     RotateCcw,
     Crosshair,
+    Settings,
 } from "lucide-react";
 import { ICON } from "@/lib/utils/const";
 import { useTranslation } from "react-i18next";
@@ -27,6 +28,8 @@ import {
     DropdownMenuPortal,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { Dialog } from "@/components/ui/dialog";
+import MarkingTypesDialogPortal from "@/components/dialogs/marking-types/marking-types-dialog-portal";
 import { RotationStore } from "@/lib/stores/Rotation/Rotation";
 import { ToggleGroup, ToggleGroupItem } from "../ui/toggle-group";
 import { RotationPanel } from "./rotation-panel";
@@ -35,6 +38,7 @@ export type VerticalToolbarProps = HTMLAttributes<HTMLDivElement>;
 
 export function VerticalToolbar({ className, ...props }: VerticalToolbarProps) {
     const { t } = useTranslation();
+    const [isTypesDialogOpen, setIsTypesDialogOpen] = useState(false);
 
     const { mode: cursorMode } = DashboardToolbarStore.use(
         state => state.settings.cursor
@@ -59,7 +63,7 @@ export function VerticalToolbar({ className, ...props }: VerticalToolbarProps) {
         >
             <div className="flex flex-col gap-2">
                 <h3 className="text-sm font-semibold text-muted-foreground">
-                    {t("Working mode", { ns: "keywords" })}
+                    {t("Control", { ns: "keywords" })}
                 </h3>
                 <ToggleGroup
                     type="single"
@@ -134,32 +138,65 @@ export function VerticalToolbar({ className, ...props }: VerticalToolbarProps) {
                 </div>
             </div>
 
-            <div className="border-t" />
+            <div className="border-t border-border/30" />
 
             <div className="flex flex-col gap-2">
-                <h3 className="text-sm font-semibold text-muted-foreground">
-                    {t("Types", { ns: "keywords" })}
-                </h3>
+                <div className="flex items-center justify-between">
+                    <h3 className="text-sm font-semibold text-muted-foreground">
+                        {t("Types", { ns: "keywords" })}
+                    </h3>
+                    <Dialog
+                        open={isTypesDialogOpen}
+                        onOpenChange={setIsTypesDialogOpen}
+                    >
+                        <button
+                            type="button"
+                            onClick={() => setIsTypesDialogOpen(true)}
+                            className="p-1.5 rounded-md hover:bg-accent hover:text-accent-foreground transition-colors"
+                            title={t("Types", { ns: "keywords" })}
+                        >
+                            <Settings
+                                size={16}
+                                strokeWidth={ICON.STROKE_WIDTH}
+                            />
+                        </button>
+                        <MarkingTypesDialogPortal />
+                    </Dialog>
+                </div>
                 <DropdownMenu>
                     <DropdownMenuTrigger
                         className={cn(
-                            "w-full overflow-hidden text-ellipsis whitespace-nowrap flex items-center justify-between px-3 py-2 border rounded-md hover:bg-accent hover:text-accent-foreground",
-                            className
+                            "w-full overflow-hidden text-ellipsis whitespace-nowrap flex items-center justify-between gap-2 px-3 py-2.5",
+                            "border border-input rounded-md",
+                            "hover:bg-accent hover:text-accent-foreground transition-colors",
+                            "focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring",
+                            "disabled:pointer-events-none disabled:opacity-50"
                         )}
                         disabled={!availableMarkingTypes.length}
                     >
-                        <span className="overflow-hidden text-ellipsis whitespace-nowrap text-sm">
-                            {selectedMarkingType?.displayName ??
-                                t("None", { ns: "keybindings" })}
-                        </span>
+                        <div className="flex items-center gap-2 overflow-hidden">
+                            {selectedMarkingType && (
+                                <div
+                                    className="w-4 h-4 rounded-sm border border-border/40 flex-shrink-0"
+                                    style={{
+                                        backgroundColor:
+                                            selectedMarkingType.backgroundColor as string,
+                                    }}
+                                />
+                            )}
+                            <span className="overflow-hidden text-ellipsis whitespace-nowrap text-sm">
+                                {selectedMarkingType?.displayName ??
+                                    t("None", { ns: "keybindings" })}
+                            </span>
+                        </div>
                         <ChevronDown
                             size={16}
                             strokeWidth={ICON.STROKE_WIDTH}
-                            className="ml-2 flex-shrink-0"
+                            className="flex-shrink-0"
                         />
                     </DropdownMenuTrigger>
                     <DropdownMenuPortal>
-                        <DropdownMenuContent className="max-h-[50vh] overflow-y-auto z-[9999]">
+                        <DropdownMenuContent className="max-h-[50vh] overflow-y-auto z-[9999] min-w-[200px]">
                             {availableMarkingTypes.map(type => (
                                 <DropdownMenuItem
                                     key={type.id}
@@ -168,8 +205,16 @@ export function VerticalToolbar({ className, ...props }: VerticalToolbarProps) {
                                             type.id
                                         );
                                     }}
+                                    className="cursor-pointer"
                                 >
-                                    {type.displayName}
+                                    <div
+                                        className="w-4 h-4 rounded-sm border border-border/40 flex-shrink-0"
+                                        style={{
+                                            backgroundColor:
+                                                type.backgroundColor as string,
+                                        }}
+                                    />
+                                    <span>{type.displayName}</span>
                                 </DropdownMenuItem>
                             ))}
                         </DropdownMenuContent>
@@ -177,7 +222,7 @@ export function VerticalToolbar({ className, ...props }: VerticalToolbarProps) {
                 </DropdownMenu>
             </div>
 
-            <div className="border-t" />
+            <div className="border-t border-border/30" />
 
             <div className="flex flex-col gap-2">
                 <h3 className="text-sm font-semibold text-muted-foreground">

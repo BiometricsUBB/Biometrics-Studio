@@ -11,6 +11,7 @@ type Recordify<T> = { [K in Extract<T, string> as `${K}`]: string };
 
 export type i18nKeywords = Recordify<
     | "Working mode"
+    | "Control"
     | "Settings"
     | "Language"
     | "Markings"
@@ -20,6 +21,36 @@ export type i18nKeywords = Recordify<
     | "Remove"
     | "Add"
     | "Tools"
+    | "About"
+    | "Version"
+    | "Description"
+    | "Authors"
+    | "Repository"
+    | "Custom Themes"
+    | "Edit Theme"
+    | "Theme Name"
+    | "Theme name"
+    | "Colors"
+    | "Save"
+    | "Light"
+    | "Dark"
+    | "Default Theme"
+    | "Export"
+    | "Import"
+    | "Themes exported successfully"
+    | "Failed to export themes"
+    | "Themes imported successfully"
+    | "Invalid themes file"
+    | "Failed to import themes"
+>;
+
+export type i18nDescription = Recordify<
+    | "Select your preferred language"
+    | "Select your preferred theme"
+    | "Application information"
+    | "Application for forensic trace comparison"
+    | "Open settings"
+    | "Create and manage custom color themes"
 >;
 
 export type i18nModes = Recordify<WORKING_MODE>;

@@ -7,25 +7,7 @@ import { MarkingModePlugin } from "@/components/pixi/viewport/plugins/markingMod
 import { RotationStore } from "@/lib/stores/Rotation/Rotation";
 import { CANVAS_ID } from "@/components/pixi/canvas/hooks/useCanvasContext";
 import { Point } from "@/lib/markings/Point";
-
-const transformPoint = (
-    point: Point,
-    rotation: number,
-    centerX: number,
-    centerY: number
-): Point => {
-    if (rotation === 0) return point;
-    const cos = Math.cos(rotation);
-    const sin = Math.sin(rotation);
-    const x = point.x - centerX;
-    const y = point.y - centerY;
-    const rotatedX = x * cos - y * sin;
-    const rotatedY = x * sin + y * cos;
-    return {
-        x: rotatedX + centerX,
-        y: rotatedY + centerY,
-    };
-};
+import { getAdjustedPosition } from "@/components/pixi/viewport/utils/transform-point";
 
 const distance = (p1: Point, p2: Point): number => {
     return Math.sqrt((p1.x - p2.x) ** 2 + (p1.y - p2.y) ** 2);
@@ -46,16 +28,14 @@ export class PolygonMarkingHandler extends MarkingHandler {
         this.initFirstPoint(startEvent);
     }
 
-    private getAdjustedPosition(pos: Point): Point {
-        const { rotation } = RotationStore(this.canvasId).state;
-        return transformPoint(pos, -rotation, 0, 0);
-    }
-
     private initFirstPoint(e: FederatedPointerEvent) {
         const { viewport, markingsStore } = this.plugin.handlerParams;
         const label = markingsStore.actions.labelGenerator.getLabel();
-        const pos = this.getAdjustedPosition(
-            getNormalizedMousePosition(e, viewport)
+        const { rotation } = RotationStore(this.canvasId).state;
+        const pos = getAdjustedPosition(
+            getNormalizedMousePosition(e, viewport),
+            rotation,
+            viewport
         );
         this.points = [pos];
         markingsStore.actions.temporaryMarking.setTemporaryMarking(
@@ -65,8 +45,11 @@ export class PolygonMarkingHandler extends MarkingHandler {
 
     handleMouseMove(e: FederatedPointerEvent) {
         const { viewport, markingsStore } = this.plugin.handlerParams;
-        const pos = this.getAdjustedPosition(
-            getNormalizedMousePosition(e, viewport)
+        const { rotation } = RotationStore(this.canvasId).state;
+        const pos = getAdjustedPosition(
+            getNormalizedMousePosition(e, viewport),
+            rotation,
+            viewport
         );
         if (this.points.length === 1 && this.points[0]) {
             markingsStore.actions.temporaryMarking.updateTemporaryMarking({
@@ -88,8 +71,11 @@ export class PolygonMarkingHandler extends MarkingHandler {
 
     handleLMBDown(e: FederatedPointerEvent) {
         const { viewport, markingsStore } = this.plugin.handlerParams;
-        const pos = this.getAdjustedPosition(
-            getNormalizedMousePosition(e, viewport)
+        const { rotation } = RotationStore(this.canvasId).state;
+        const pos = getAdjustedPosition(
+            getNormalizedMousePosition(e, viewport),
+            rotation,
+            viewport
         );
 
         if (
