@@ -17,6 +17,22 @@ const d: Dictionary = {
     Description: "Description",
     Authors: "Authors",
     Repository: "Repository",
+    "Custom Themes": "Custom Themes",
+    "Edit Theme": "Edit Theme",
+    "Theme Name": "Theme Name",
+    "Theme name": "Theme name",
+    Colors: "Colors",
+    Save: "Save",
+    Light: "Light",
+    Dark: "Dark",
+    "Default Theme": "Default Theme",
+    Export: "Export",
+    Import: "Import",
+    "Themes exported successfully": "Themes exported successfully",
+    "Failed to export themes": "Failed to export themes",
+    "Themes imported successfully": "Themes imported successfully",
+    "Invalid themes file": "Invalid themes file",
+    "Failed to import themes": "Failed to import themes",
 };
 
 export default d;

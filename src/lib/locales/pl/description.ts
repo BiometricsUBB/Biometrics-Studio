@@ -7,6 +7,8 @@ const d: Dictionary = {
     "Application for forensic trace comparison":
         "Aplikacja do porównywania śladów kryminalistycznych",
     "Open settings": "Otwórz ustawienia",
+    "Create and manage custom color themes":
+        "Twórz i zarządzaj własnymi motywami kolorystycznymi",
 };
 
 export default d;

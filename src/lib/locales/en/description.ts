@@ -7,6 +7,8 @@ const d: Dictionary = {
     "Application for forensic trace comparison":
         "Application for forensic trace comparison",
     "Open settings": "Open settings",
+    "Create and manage custom color themes":
+        "Create and manage custom color themes",
 };
 
 export default d;

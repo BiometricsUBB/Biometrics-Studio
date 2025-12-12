@@ -17,6 +17,22 @@ const d: Dictionary = {
     Description: "Opis",
     Authors: "Autorzy",
     Repository: "Repozytorium",
+    "Custom Themes": "Własne motywy",
+    "Edit Theme": "Edytuj motyw",
+    "Theme Name": "Nazwa motywu",
+    "Theme name": "Nazwa motywu",
+    Colors: "Kolory",
+    Save: "Zapisz",
+    Light: "Jasny",
+    Dark: "Ciemny",
+    "Default Theme": "Domyślny motyw",
+    Export: "Eksportuj",
+    Import: "Importuj",
+    "Themes exported successfully": "Motywy wyeksportowane pomyślnie",
+    "Failed to export themes": "Nie udało się wyeksportować motywów",
+    "Themes imported successfully": "Motywy zaimportowane pomyślnie",
+    "Invalid themes file": "Nieprawidłowy plik motywów",
+    "Failed to import themes": "Nie udało się zaimportować motywów",
 };
 
 export default d;

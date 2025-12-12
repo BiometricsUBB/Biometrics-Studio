@@ -1,10 +1,12 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { WindowControls } from "@/components/menu/window-controls";
 import { Menubar } from "@/components/ui/menubar";
 import { cn } from "@/lib/utils/shadcn";
 import { ICON } from "@/lib/utils/const";
 import { Languages, Palette, Info, Settings } from "lucide-react";
+import { CustomThemeStore } from "@/lib/stores/CustomTheme";
+import { applyCustomTheme } from "@/lib/hooks/useCustomTheme";
 import { LanguageSettings } from "./categories/language-settings";
 import { ThemeSettings } from "./categories/theme-settings";
 import { AboutSettings } from "./categories/about-settings";
@@ -45,6 +47,17 @@ export function SettingsWindow() {
         SETTINGS_CATEGORY.LANGUAGE
     );
 
+    useEffect(() => {
+        const init = async () => {
+            await CustomThemeStore.rehydrate();
+            const activeTheme = CustomThemeStore.getActiveTheme();
+            if (activeTheme) {
+                applyCustomTheme(activeTheme);
+            }
+        };
+        init();
+    }, []);
+
     const renderCategoryContent = () => {
         switch (activeCategory) {
             case SETTINGS_CATEGORY.LANGUAGE:
@@ -63,12 +76,10 @@ export function SettingsWindow() {
             data-testid="settings-window"
             className="flex w-full min-h-dvh h-full flex-col items-center justify-between bg-[hsl(var(--background))] relative overflow-hidden"
         >
-            {/* Świecące tło */}
             <div className="absolute inset-0 overflow-hidden pointer-events-none">
                 <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[75%] h-[85%] brightness-150 rounded-2xl bg-primary/20 blur-[150px]" />
             </div>
 
-            {/* Menu bar z kontrolkami okna */}
             <Menubar
                 className={cn(
                     "flex justify-between w-screen items-center min-h-[56px]"
@@ -90,9 +101,7 @@ export function SettingsWindow() {
                 <WindowControls />
             </Menubar>
 
-            {/* Główna zawartość */}
             <div className="flex flex-1 w-full overflow-hidden p-2 gap-2">
-                {/* Lewa kolumna - kategorie (33%) */}
                 <div className="w-1/3 flex flex-col gap-1">
                     {categories.map(category => (
                         <button
@@ -115,7 +124,6 @@ export function SettingsWindow() {
                     ))}
                 </div>
 
-                {/* Prawa kolumna - zawartość ustawień (66%) */}
                 <div className="w-2/3 bg-background/70 backdrop-blur-sm border border-border/30 rounded-xl p-4 overflow-y-auto">
                     {renderCategoryContent()}
                 </div>

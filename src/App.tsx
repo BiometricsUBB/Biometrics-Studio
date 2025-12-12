@@ -1,10 +1,12 @@
-import React, { useState, Suspense, lazy } from "react";
+import React, { useState, Suspense, lazy, useEffect } from "react";
 import { Tabs, TabsContent } from "@/components/ui/tabs";
 import { cn } from "@/lib/utils/shadcn";
 import SelectMode from "@/views/selectMode";
 import { Menu } from "@/components/menu/menu";
 import { WorkingModeStore } from "@/lib/stores/WorkingMode";
 import { useSettingsSync } from "@/lib/hooks/useSettingsSync";
+import { useCustomTheme } from "@/lib/hooks/useCustomTheme";
+import { CustomThemeStore } from "@/lib/stores/CustomTheme";
 
 const Homepage = lazy(() =>
     import("@/components/tabs/homepage/homepage").then(module => ({
@@ -21,7 +23,12 @@ export default function App() {
     const [currentTab, setCurrentTab] = useState<TABS>(TABS.SELECT_MODE);
     const { setWorkingMode } = WorkingModeStore.use();
 
+    useEffect(() => {
+        CustomThemeStore.rehydrate();
+    }, []);
+
     useSettingsSync();
+    useCustomTheme();
 
     return (
         <main

@@ -5,12 +5,14 @@ import {
     LANGUAGES,
     THEMES,
 } from "@/lib/stores/GlobalSettings";
+import { CustomThemeStore, CustomTheme } from "@/lib/stores/CustomTheme";
+import { applyCustomTheme } from "@/lib/hooks/useCustomTheme";
 import i18n from "@/lib/locales/i18n";
 
-interface SettingsChangePayload {
-    type: "language" | "theme";
-    value: string;
-}
+type SettingsChangePayload =
+    | { type: "language"; value: string }
+    | { type: "theme"; value: string }
+    | { type: "customTheme"; theme: CustomTheme | null };
 
 const SETTINGS_CHANGE_EVENT = "settings-change";
 
@@ -23,17 +25,21 @@ export const useSettingsSync = () => {
         const unlisten = listen<SettingsChangePayload>(
             SETTINGS_CHANGE_EVENT,
             event => {
-                const { type, value } = event.payload;
+                const { payload } = event;
 
-                if (type === "language") {
-                    i18n.changeLanguage(value);
+                if (payload.type === "language") {
+                    i18n.changeLanguage(payload.value);
                     GlobalSettingsStore.actions.settings.language.setLanguage(
-                        value as LANGUAGES
+                        payload.value as LANGUAGES
                     );
-                } else if (type === "theme") {
+                } else if (payload.type === "theme") {
                     GlobalSettingsStore.actions.settings.interface.setTheme(
-                        value as THEMES
+                        payload.value as THEMES
                     );
+                } else if (payload.type === "customTheme") {
+                    const { theme } = payload;
+                    CustomThemeStore.actions.setActiveTheme(theme?.id ?? null);
+                    applyCustomTheme(theme);
                 }
             }
         );

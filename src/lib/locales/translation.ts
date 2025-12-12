@@ -26,6 +26,22 @@ export type i18nKeywords = Recordify<
     | "Description"
     | "Authors"
     | "Repository"
+    | "Custom Themes"
+    | "Edit Theme"
+    | "Theme Name"
+    | "Theme name"
+    | "Colors"
+    | "Save"
+    | "Light"
+    | "Dark"
+    | "Default Theme"
+    | "Export"
+    | "Import"
+    | "Themes exported successfully"
+    | "Failed to export themes"
+    | "Themes imported successfully"
+    | "Invalid themes file"
+    | "Failed to import themes"
 >;
 
 export type i18nDescription = Recordify<
@@ -34,6 +50,7 @@ export type i18nDescription = Recordify<
     | "Application information"
     | "Application for forensic trace comparison"
     | "Open settings"
+    | "Create and manage custom color themes"
 >;
 
 export type i18nModes = Recordify<WORKING_MODE>;
