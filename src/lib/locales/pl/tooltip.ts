@@ -12,6 +12,7 @@ const d: Dictionary = {
     "Toggle marking labels": "Przełącz szczegóły adnotacji",
     "Toggle viewport information": "Przełącz informacje viewportu",
     "Toggle scale mode": "Przełącz tryb skalowania",
+    "Edit mode": "Tryb edycji",
     "Export marking types": "Eksportuj typy adnotacji",
     "Import marking types": "Importuj typy adnotacji",
     "Markings data saved": "Dane adnotacji zapisano pomyślnie",

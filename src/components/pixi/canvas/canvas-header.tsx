@@ -11,6 +11,7 @@ import {
     Save,
     FileInput,
     Info,
+    Edit,
 } from "lucide-react";
 import { ICON } from "@/lib/utils/const";
 import { ToolbarGroup } from "@/components/toolbar/group";
@@ -161,6 +162,19 @@ export function CanvasHeader({ className, ...props }: CanvasHeaderProps) {
             </div>
 
             <ToolbarGroup>
+                <Toggle
+                    variant="outline"
+                    title={t("Edit mode", {
+                        ns: "tooltip",
+                    })}
+                    size="icon"
+                    onClick={() => {
+                        // TODO: Implement edit functionality
+                        console.log("Edit button clicked");
+                    }}
+                >
+                    <Edit size={ICON.SIZE} strokeWidth={ICON.STROKE_WIDTH} />
+                </Toggle>
                 <Toggle
                     variant="outline"
                     title={t("Toggle marking labels", {

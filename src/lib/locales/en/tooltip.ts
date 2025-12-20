@@ -12,6 +12,7 @@ const d: Dictionary = {
     "Toggle marking labels": "Toggle marking labels",
     "Toggle viewport information": "Toggle viewport information",
     "Toggle scale mode": "Toggle scale mode",
+    "Edit mode": "Edit mode",
     "Export marking types": "Export marking types",
     "Import marking types": "Import marking types",
     "Markings data saved": "Markings data saved",

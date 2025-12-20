@@ -107,6 +107,7 @@ export type i18nTooltip = Recordify<
     | "Toggle scale mode"
     | "Toggle marking labels"
     | "Toggle viewport information"
+    | "Edit mode"
     | "Export marking types"
     | "Import marking types"
     | "Markings data saved"
