@@ -1,13 +1,17 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { WindowControls } from "@/components/menu/window-controls";
 import { Menubar } from "@/components/ui/menubar";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils/shadcn";
 import { ICON } from "@/lib/utils/const";
-import { Edit } from "lucide-react";
+import { Edit, Save } from "lucide-react";
 import { listen } from "@tauri-apps/api/event";
-import { readFile } from "@tauri-apps/plugin-fs";
+import { readFile, writeFile } from "@tauri-apps/plugin-fs";
+import { getCurrentWindow } from "@tauri-apps/api/window";
+import { toast } from "sonner";
+import { t } from "i18next";
 
 export function EditWindow() {
     const [imagePath, setImagePath] = useState<string | null>(null);
@@ -15,6 +19,7 @@ export function EditWindow() {
     const [error, setError] = useState<string | null>(null);
     const [brightness, setBrightness] = useState<number>(100);
     const [contrast, setContrast] = useState<number>(100);
+    const imageRef = useRef<HTMLImageElement>(null);
 
     const loadImage = async (path: string) => {
         try {
@@ -75,6 +80,94 @@ export function EditWindow() {
         };
     }, [imageUrl]);
 
+    const saveEditedImage = async () => {
+        if (!imageUrl || !imagePath) {
+            return;
+        }
+
+        try {
+            // Load the original image data
+            const imageBytes = await readFile(imagePath);
+            const blob = new Blob([imageBytes]);
+            const originalImageUrl = URL.createObjectURL(blob);
+
+            // Create an image element to load the original image
+            const img = new Image();
+            await new Promise<void>((resolve, reject) => {
+                img.onload = () => resolve();
+                img.onerror = reject;
+                img.src = originalImageUrl;
+            });
+
+            // Create a canvas to render the edited image
+            const canvas = document.createElement("canvas");
+            const ctx = canvas.getContext("2d");
+            if (!ctx) {
+                URL.revokeObjectURL(originalImageUrl);
+                throw new Error("Failed to get canvas context");
+            }
+
+            canvas.width = img.naturalWidth || img.width;
+            canvas.height = img.naturalHeight || img.height;
+
+            // Apply filters using canvas context filter property
+            // Note: ctx.filter is supported in modern browsers
+            if (brightness !== 100 || contrast !== 100) {
+                ctx.filter = `brightness(${brightness / 100}) contrast(${contrast / 100})`;
+            }
+            ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+            // Reset filter for next operations
+            ctx.filter = "none";
+
+            // Clean up the temporary URL
+            URL.revokeObjectURL(originalImageUrl);
+
+            // Convert canvas to blob
+            const editedBlob = await new Promise<Blob>((resolve, reject) => {
+                canvas.toBlob(
+                    blob => {
+                        if (blob) {
+                            resolve(blob);
+                        } else {
+                            reject(
+                                new Error("Failed to convert canvas to blob")
+                            );
+                        }
+                    },
+                    "image/png",
+                    1.0
+                );
+            });
+
+            // Convert blob to Uint8Array
+            const arrayBuffer = await editedBlob.arrayBuffer();
+            const uint8Array = new Uint8Array(arrayBuffer);
+
+            // Save the file (replacing the old one)
+            await writeFile(imagePath, uint8Array);
+
+            // Emit event to main window to reload the image
+            const appWindow = getCurrentWindow();
+            await appWindow.emit("image-reload-requested", imagePath);
+
+            toast.success(t("Image saved successfully", { ns: "tooltip" }));
+
+            // Reload the image in the edit window to show the saved version
+            await loadImage(imagePath);
+        } catch (err) {
+            console.error("Error saving image:", err);
+            const errorMessage =
+                err instanceof Error ? err.message : String(err);
+            toast.error(
+                t("Failed to save image: {{error}}", {
+                    ns: "tooltip",
+                    error: errorMessage,
+                })
+            );
+        }
+    };
+
     return (
         <main
             data-testid="edit-window"
@@ -122,6 +215,7 @@ export function EditWindow() {
                         <div className="flex-1 w-full flex items-center justify-center overflow-hidden mb-4">
                             {/* eslint-disable-next-line @next/next/no-img-element */}
                             <img
+                                ref={imageRef}
                                 src={imageUrl}
                                 alt={imagePath || "Loaded image"}
                                 className="max-w-full max-h-full object-contain"
@@ -131,6 +225,15 @@ export function EditWindow() {
                             />
                         </div>
                         <div className="w-full bg-background/70 backdrop-blur-sm border border-border/30 rounded-lg p-4 space-y-4">
+                            <Button
+                                onClick={saveEditedImage}
+                                className="w-full"
+                                variant="default"
+                                disabled={!imageUrl || !imagePath}
+                            >
+                                <Save size={ICON.SIZE} className="mr-2" />
+                                {t("Save", { ns: "tooltip" })}
+                            </Button>
                             <div className="space-y-2">
                                 <div className="flex items-center justify-between">
                                     <Label

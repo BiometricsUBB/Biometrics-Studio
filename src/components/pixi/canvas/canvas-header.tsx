@@ -170,6 +170,7 @@ export function CanvasHeader({ className, ...props }: CanvasHeaderProps) {
                         ns: "tooltip",
                     })}
                     size="icon"
+                    disabled={!viewport.children.find(x => x instanceof Sprite)}
                     onClick={async () => {
                         try {
                             // Get the sprite (image) from the viewport
