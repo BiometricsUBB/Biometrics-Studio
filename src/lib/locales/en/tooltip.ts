@@ -17,6 +17,9 @@ const d: Dictionary = {
     "Import marking types": "Import marking types",
     "Markings data saved": "Markings data saved",
     "Failed to save markings data": "Failed to save markings data",
+    "Image saved successfully": "Image saved successfully",
+    "Failed to save image: {{error}}": "Failed to save image: {{error}}",
+    Save: "Save",
     "Auto rotate": "Manually rotate images using current alignment lines",
     "Reset rotation": "Reset image rotation",
     "Rotation instructions":
