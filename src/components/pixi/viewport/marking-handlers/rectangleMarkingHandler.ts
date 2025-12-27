@@ -7,25 +7,7 @@ import { MarkingModePlugin } from "@/components/pixi/viewport/plugins/markingMod
 import { RotationStore } from "@/lib/stores/Rotation/Rotation";
 import { CANVAS_ID } from "@/components/pixi/canvas/hooks/useCanvasContext";
 import { Point } from "@/lib/markings/Point";
-
-const transformPoint = (
-    point: Point,
-    rotation: number,
-    centerX: number,
-    centerY: number
-): Point => {
-    if (rotation === 0) return point;
-    const cos = Math.cos(rotation);
-    const sin = Math.sin(rotation);
-    const x = point.x - centerX;
-    const y = point.y - centerY;
-    const rotatedX = x * cos - y * sin;
-    const rotatedY = x * sin + y * cos;
-    return {
-        x: rotatedX + centerX,
-        y: rotatedY + centerY,
-    };
-};
+import { getAdjustedPosition } from "@/components/pixi/viewport/utils/transform-point";
 
 export class RectangleMarkingHandler extends MarkingHandler {
     private origin: Point | null = null;
@@ -42,18 +24,13 @@ export class RectangleMarkingHandler extends MarkingHandler {
         this.initOrigin(startEvent);
     }
 
-    private getAdjustedPosition(pos: Point): Point {
-        const { rotation } = RotationStore(this.canvasId).state;
-        return transformPoint(pos, -rotation, 0, 0);
-    }
-
     private initOrigin(e: FederatedPointerEvent) {
         const { viewport, markingsStore } = this.plugin.handlerParams;
         const label = markingsStore.actions.labelGenerator.getLabel();
         const pos = getNormalizedMousePosition(e, viewport);
         this.origin = pos;
         const { rotation } = RotationStore(this.canvasId).state;
-        const worldPos = transformPoint(pos, -rotation, 0, 0);
+        const worldPos = getAdjustedPosition(pos, rotation, viewport);
         markingsStore.actions.temporaryMarking.setTemporaryMarking(
             new RectangleMarking(label, worldPos, this.typeId, [
                 worldPos,
@@ -76,7 +53,7 @@ export class RectangleMarkingHandler extends MarkingHandler {
             { x: pos.x, y: this.origin.y },
         ];
         const worldPoints = screenPoints.map(p =>
-            transformPoint(p, -rotation, 0, 0)
+            getAdjustedPosition(p, rotation, viewport)
         );
         markingsStore.actions.temporaryMarking.updateTemporaryMarking({
             points: worldPoints,
@@ -94,14 +71,31 @@ export class RectangleMarkingHandler extends MarkingHandler {
         if (!this.origin) return;
         const { viewport, markingsStore } = this.plugin.handlerParams;
         const endpoint = getNormalizedMousePosition(e, viewport);
+        const { rotation } = RotationStore(this.canvasId).state;
 
-        const adjustedOrigin = this.getAdjustedPosition(this.origin);
-        const adjustedEndpoint = this.getAdjustedPosition(endpoint);
+        const adjustedOrigin = getAdjustedPosition(
+            this.origin,
+            rotation,
+            viewport
+        );
+        const adjustedEndpoint = getAdjustedPosition(
+            endpoint,
+            rotation,
+            viewport
+        );
         const points: Point[] = [
             adjustedOrigin,
-            this.getAdjustedPosition({ x: this.origin.x, y: endpoint.y }),
+            getAdjustedPosition(
+                { x: this.origin.x, y: endpoint.y },
+                rotation,
+                viewport
+            ),
             adjustedEndpoint,
-            this.getAdjustedPosition({ x: endpoint.x, y: this.origin.y }),
+            getAdjustedPosition(
+                { x: endpoint.x, y: this.origin.y },
+                rotation,
+                viewport
+            ),
         ];
 
         markingsStore.actions.markings.addOne(

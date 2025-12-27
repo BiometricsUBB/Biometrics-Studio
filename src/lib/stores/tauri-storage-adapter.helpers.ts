@@ -7,8 +7,9 @@ export function tauriStorage(store: LazyStore): StateStorage {
             await store.delete(key);
             await store.save();
         },
-        async getItem(key: string) {
-            return store.get(key) as string | Promise<string | null> | null;
+        async getItem(key: string): Promise<string | null> {
+            const value = await store.get<string>(key);
+            return value ?? null;
         },
         async setItem(key: string, value: string) {
             await store.set(key, value);
