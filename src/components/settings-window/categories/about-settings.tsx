@@ -8,7 +8,7 @@ export function AboutSettings() {
     const appName = "Biometrics Studio";
 
     return (
-        <div className="flex flex-col gap-6">
+        <div className="flex flex-col gap-6 ml-1">
             <div>
                 <h2 className="text-lg font-semibold text-foreground mb-1">
                     {t("About")}
@@ -59,7 +59,7 @@ export function AboutSettings() {
                         href="https://github.com/BiometricsUBB/Biometrics-Studio"
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="flex items-center gap-2 text-sm text-primary hover:underline"
+                        className="flex items-center gap-2 text-sm text-muted-foreground hover:underline"
                     >
                         <ExternalLink size={14} />
                         GitHub

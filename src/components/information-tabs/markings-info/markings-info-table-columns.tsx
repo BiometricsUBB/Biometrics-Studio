@@ -116,10 +116,14 @@ export const useColumns = (
                                                 )
                                             }
                                         >
-                                            <Trash2
-                                                size={ICON.SIZE}
-                                                strokeWidth={ICON.STROKE_WIDTH}
-                                            />
+                                            <div className="hover:text-destructive cursor-pointer">
+                                                <Trash2
+                                                    size={ICON.SIZE}
+                                                    strokeWidth={
+                                                        ICON.STROKE_WIDTH
+                                                    }
+                                                />
+                                            </div>
                                         </Toggle>
                                         <Toggle
                                             title="Merge"

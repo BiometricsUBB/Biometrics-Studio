@@ -10,10 +10,10 @@ const STORE_FILE = new LazyStore(`${STORE_NAME}.dat`);
 export enum THEMES {
     SYSTEM = "system",
     LIGHT = "light",
-    DARK = "dark",
-    DARK_GRAY = "dark_gray",
     BLUE_LIGHT = "blue_light",
     BLUE_DARK = "blue_dark",
+    DARK = "dark",
+    DARK_GRAY = "dark_gray",
 }
 
 export enum LANGUAGES {
