@@ -1,4 +1,5 @@
 @import "modern-normalize/modern-normalize.css";
+@import './colors.css';
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -36,7 +37,7 @@
         --ring: 124 41% 56%;
         --input: 124 14.72% 34.42%;
         --muted: 124 40% 11.72%;
-        --accent: 159 46.27% 21.21%;
+        --accent: 158 46.27% 21.21%;
         --border: 124 14.72% 34.42%;
         --popover: 124 39.15% 14.56%;
         --primary: 124 41% 56%;
@@ -58,27 +59,38 @@
     }
 
     .dark_gray {
-    --card: 210 15% 20%;
-    --ring: 0 0% 100%;
-    --input:  210 10% 60%;
-    --muted: 210 10% 30%;
-    --accent: 210 10% 60%;
-    --border: 210 10% 40%;
-    --popover: 210 15% 20%;
-    --primary: 0 0% 100%;
-    --secondary: 210 15% 20%;
-    --background: 210 15% 15%;
-    --foreground: 0 0% 100%;
-    --destructive: 0 70% 60%;
-    --card-foreground: 210 15% 85%;
-    --muted-foreground: 210 10% 60%;
-    --accent-foreground: 210 15% 95%;
-    --popover-foreground: 210 15% 85%;
-    --primary-foreground: 210 15% 60%;
-    --secondary-foreground: 210 15% 60%;
-    --destructive-foreground: 0 0% 100%;
-    --ds-background-selected: #1f6feb80;
-    --separator: 210 10% 35%;
+  --card: var(--gray-main);
+  --ring: var(--white);
+
+  --input: var(--gray-light-60);
+  --muted: var(--gray-light-30);
+  --accent: var(--gray-light-30);
+  --border: var(--gray-light-40);
+
+  --popover: var(--gray-dark-20);
+
+  --primary: var(--gray-dark-15); /* cień i dopasowanie buttonów */
+  --secondary: var(--gray-dark-20);
+
+  --background: var(--gray-dark-15);
+  --foreground: var(--white);
+
+  --destructive: var(--red);
+
+  --card-foreground: var(--gray-dark-85);
+  --muted-foreground: var(--gray-light-60);
+  --accent-foreground: var(--gray-dark-95);
+  --popover-foreground: var(--gray-dark-85);
+
+  --primary-foreground: var(--white);
+  --secondary-foreground: var(--gray-dark-60);
+  --destructive-foreground: var(--white);
+
+  --ds-background-selected: #4a4c4e80;
+
+  --separator: 210 10% 35%;
+  --glass-bg: var(--gray-dark-20);
+  --glass-border: var(--gray-dark-95);}
     }
 
     .blue_light {
@@ -106,28 +118,29 @@
     }
 
     .blue_dark {
-    --card: 218 65.4% 26.1%;
-    --ring: 214 65% 9.9%;
-    --input: 218 20% 22%;
-    --muted: 218 65.4% 26.1%;
-    --accent: 218 15% 92%;
-    --border: 218 20% 32%;
-    --popover: 218 65.4% 26.1%;
-    --primary: 218 65.4% 26.1%;
-    --secondary: 218 65.4% 26.1%;
-    --background: 214 65% 9.9%;
-    --foreground: 218 15% 92%;
-    --destructive: 0 70% 55%;
-    --card-foreground: 218 15% 92%;
-    --muted-foreground: 214 65% 9.9%%;
-    --accent-foreground: 214 65% 9.9%;
-    --popover-foreground: 0 0% 100%;
-    --primary-foreground: 0 0% 100%;
-    --secondary-foreground: 0 0% 100%;
-    --destructive-foreground: 218 65.4% 26.1%;
-    --ds-background-selected: #2a65ff80;
-    --separator: 218 20% 28%;
-    }
+  --background: var(--blue-dark-15);
+  --foreground: var(--white);
+  --card: var(--blue-dark-26);
+  --card-foreground: var(--white);
+  --popover: var(--blue-dark-20);
+  --popover-foreground: var(--white);
+  --primary: var(--blue-dark-35);
+  --primary-foreground: var(--white);
+  --secondary: var(--blue-dark-20);
+  --secondary-foreground: var(--gray-dark-95);
+  --border: var(--blue-light-70);
+  --input: var(--blue-light-70);
+  --ring: var(--blue-light-70);
+  --muted: var(--blue-dark-40);
+  --muted-foreground: var(--white);
+  --accent: var(--blue-dark-35);
+  --accent-foreground: var(--white);
+  --destructive: var(--red);
+  --destructive-foreground: var(--white);
+  --ds-background-selected: var(--blue-dark-15);
+  --separator: 218 15% 35%;
+  --glass-bg: var(--blue-dark-20);
+  --glass-border: var(--blue-light-85);
 }
 
 @layer base {
