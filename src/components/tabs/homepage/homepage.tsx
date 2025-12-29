@@ -11,9 +11,13 @@ import {
     CanvasContext,
     CanvasMetadata,
 } from "@/components/pixi/canvas/hooks/useCanvasContext";
-import { useMemo } from "react";
+import { useMemo, useEffect } from "react";
 import { useKeyboardShortcuts } from "@/lib/hooks/useKeyboardShortcuts";
 import { VerticalToolbar } from "@/components/toolbar/vertical-toolbar";
+import { listen } from "@tauri-apps/api/event";
+import { getCanvas } from "@/components/pixi/canvas/hooks/useCanvas";
+import { loadImage } from "@/lib/utils/viewport/loadImage";
+import { Sprite } from "pixi.js";
 
 export function Homepage() {
     useKeyboardShortcuts();
@@ -31,6 +35,55 @@ export function Homepage() {
         }),
         []
     );
+
+    // Listen for image reload requests from the edit window
+    useEffect(() => {
+        const setupListener = async () => {
+            return listen<string>("image-reload-requested", async event => {
+                const imagePath = event.payload;
+
+                // Check both viewports to find which one has this image
+                const leftCanvas = getCanvas(CANVAS_ID.LEFT, true);
+                const rightCanvas = getCanvas(CANVAS_ID.RIGHT, true);
+
+                // Check left viewport
+                if (leftCanvas.viewport) {
+                    const sprite = leftCanvas.viewport.children.find(
+                        x => x instanceof Sprite
+                    ) as Sprite | undefined;
+
+                    // @ts-expect-error custom property should exist
+                    if (sprite && sprite.path === imagePath) {
+                        await loadImage(imagePath, leftCanvas.viewport);
+                        return;
+                    }
+                }
+
+                // Check right viewport
+                if (rightCanvas.viewport) {
+                    const sprite = rightCanvas.viewport.children.find(
+                        x => x instanceof Sprite
+                    ) as Sprite | undefined;
+
+                    // @ts-expect-error custom property should exist
+                    if (sprite && sprite.path === imagePath) {
+                        await loadImage(imagePath, rightCanvas.viewport);
+                    }
+                }
+            });
+        };
+
+        let unlistenPromise: Promise<() => void> | null = null;
+        setupListener().then(unlisten => {
+            unlistenPromise = Promise.resolve(unlisten);
+        });
+
+        return () => {
+            if (unlistenPromise) {
+                unlistenPromise.then(fn => fn());
+            }
+        };
+    }, []);
 
     return (
         <ResizablePanelGroup

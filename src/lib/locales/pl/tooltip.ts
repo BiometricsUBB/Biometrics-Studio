@@ -12,10 +12,15 @@ const d: Dictionary = {
     "Toggle marking labels": "Przełącz szczegóły adnotacji",
     "Toggle viewport information": "Przełącz informacje viewportu",
     "Toggle scale mode": "Przełącz tryb skalowania",
+    "Edit mode": "Tryb edycji",
     "Export marking types": "Eksportuj typy adnotacji",
     "Import marking types": "Importuj typy adnotacji",
     "Markings data saved": "Dane adnotacji zapisano pomyślnie",
     "Failed to save markings data": "Nie udało się zapisać danych adnotacji",
+    "Image saved successfully": "Obraz zapisany pomyślnie",
+    "Failed to save image: {{error}}":
+        "Nie udało się zapisać obrazu: {{error}}",
+    Save: "Zapisz",
     "Auto rotate":
         "automatycznie obróć obrazy używając aktualnych linii wyrównania",
     "Reset rotation": "Zresetuj obrót obrazów",
