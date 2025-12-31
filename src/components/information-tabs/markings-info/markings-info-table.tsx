@@ -39,7 +39,10 @@ const TableComponent = forwardRef<
 >(({ className, ...props }, ref) => (
     <table
         ref={ref}
-        className={cn("w-full caption-bottom text-sm bg-card/10", className)}
+        className={cn(
+            "w-full caption-bottom text-sm bg-card/10 m-1",
+            className
+        )}
         {...props}
     />
 ));
@@ -78,9 +81,10 @@ const TableRowComponent = <TData,>(rows: Row<TData>[], canvasId: CANVAS_ID) => {
             <TableRow
                 ref={ref}
                 key={row.id}
-                className={cn("last:border-b-0 cursor-pointer", {
-                    "hover:bg-accent/45 bg-accent/75": isSelected,
-                })}
+                className={cn(
+                    "last:border-b-0 cursor-pointer transition-colors hover:bg-accent/45",
+                    isSelected && "bg-accent/75"
+                )}
                 data-state={isSelected && "selected"}
                 onClickCapture={() => {
                     if (selectedMarkingLabel === marking.label) {
@@ -119,7 +123,7 @@ const TableRowComponent = <TData,>(rows: Row<TData>[], canvasId: CANVAS_ID) => {
 function SortingIndicator({ isSorted }: { isSorted: SortDirection | false }) {
     if (!isSorted) return null;
     return (
-        <div className="relative w-0 right-0">
+        <div className="relative w-0 left-1">
             {
                 {
                     asc: "↑",
