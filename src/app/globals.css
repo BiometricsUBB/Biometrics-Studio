@@ -79,7 +79,7 @@
         --destructive: var(--red);
 
         --card-foreground: var(--gray-dark-85);
-        --muted-foreground: var(--gray-light-60);
+        --muted-foreground: var(--white);
         --accent-foreground: var(--gray-dark-95);
         --popover-foreground: var(--gray-dark-85);
 
