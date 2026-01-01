@@ -22,7 +22,7 @@ export function Menu() {
                     <img
                         src="/logo.svg"
                         alt="Logo"
-                        className="pointer-events-none select-none invert"
+                        className="logo pointer-events-none select-none"
                         height={ICON.SIZE}
                         width={ICON.SIZE}
                     />
