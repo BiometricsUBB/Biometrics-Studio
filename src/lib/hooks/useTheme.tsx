@@ -16,8 +16,8 @@ export const useTheme = () => {
             "light",
             "dark",
             "dark_gray",
-            "blue_light",
-            "blue_dark"
+            "light_blue",
+            "dark_blue"
         );
 
         if (theme === "system") {

@@ -35,8 +35,8 @@ const themeIcons: Record<THEMES, React.ReactNode> = {
     [THEMES.DARK]: <Moon size={18} />,
     [THEMES.SYSTEM]: <Monitor size={18} />,
     [THEMES.DARK_GRAY]: <Moon size={18} />,
-    [THEMES.BLUE_DARK]: <Moon size={18} />,
-    [THEMES.BLUE_LIGHT]: <Sun size={18} />,
+    [THEMES.DARK_BLUE]: <Moon size={18} />,
+    [THEMES.LIGHT_BLUE]: <Sun size={18} />,
 };
 
 function hslToHex(hsl: string): string {

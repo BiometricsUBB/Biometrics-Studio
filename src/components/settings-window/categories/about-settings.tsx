@@ -25,7 +25,7 @@ export function AboutSettings() {
                         <img
                             src="/logo.svg"
                             alt="Logo"
-                            className="pointer-events-none select-none invert dark:invert-0"
+                            className="logo pointer-events-none select-none"
                             height={32}
                             width={32}
                         />

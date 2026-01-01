@@ -98,7 +98,7 @@ export const useColumns = (
                         return (
                             /* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions */
                             <div
-                                className="flex gap-1"
+                                className="flex gap-1 mt-1"
                                 onClick={e => {
                                     e.stopPropagation();
                                 }}
