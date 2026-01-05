@@ -62,7 +62,7 @@ export function VerticalToolbar({ className, ...props }: VerticalToolbarProps) {
             {...props}
         >
             <div className="flex flex-col gap-2">
-                <h3 className="text-sm font-semibold text-muted-foreground">
+                <h3 className="text-sm font-semibold">
                     {t("Control", { ns: "keywords" })}
                 </h3>
                 <ToggleGroup
@@ -142,7 +142,7 @@ export function VerticalToolbar({ className, ...props }: VerticalToolbarProps) {
 
             <div className="flex flex-col gap-2">
                 <div className="flex items-center justify-between">
-                    <h3 className="text-sm font-semibold text-muted-foreground">
+                    <h3 className="text-sm font-semibold">
                         {t("Types", { ns: "keywords" })}
                     </h3>
                     <Dialog
@@ -152,7 +152,7 @@ export function VerticalToolbar({ className, ...props }: VerticalToolbarProps) {
                         <button
                             type="button"
                             onClick={() => setIsTypesDialogOpen(true)}
-                            className="p-1.5 rounded-md hover:bg-accent hover:text-accent-foreground transition-colors"
+                            className="p-1.5 rounded-md hover:bg-accent hover:text-accent-foreground"
                             title={t("Types", { ns: "keywords" })}
                         >
                             <Settings
@@ -225,7 +225,7 @@ export function VerticalToolbar({ className, ...props }: VerticalToolbarProps) {
             <div className="border-t border-border/30" />
 
             <div className="flex flex-col gap-2">
-                <h3 className="text-sm font-semibold text-muted-foreground">
+                <h3 className="text-sm font-semibold">
                     {t("Tools", { ns: "keywords" })}
                 </h3>
                 <div className="flex flex-col gap-2">

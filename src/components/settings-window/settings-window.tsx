@@ -109,8 +109,9 @@ export function SettingsWindow() {
                             key={category.id}
                             onClick={() => setActiveCategory(category.id)}
                             className={cn(
-                                "flex items-center gap-3 px-4 py-3 rounded-lg transition-all text-left",
-                                "hover:bg-primary/10",
+                                "flex items-center gap-3 px-4 py-3 rounded-lg transition-colors duration-150 text-left",
+                                "hover:bg-secondary",
+                                "focus:outline-none",
                                 activeCategory === category.id
                                     ? "bg-primary/20 text-primary-foreground border border-primary/30"
                                     : "text-foreground/80"
@@ -124,7 +125,7 @@ export function SettingsWindow() {
                     ))}
                 </div>
 
-                <div className="w-2/3 bg-background/70 backdrop-blur-sm border border-border/30 rounded-xl p-4 overflow-y-auto">
+                <div className="w-2/3 bg-background backdrop-blur-sm border border-border rounded-xl p-2 overflow-y-auto">
                     {renderCategoryContent()}
                 </div>
             </div>
