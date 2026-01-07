@@ -17,7 +17,6 @@ const d: Dictionary = {
     "Markings data saved": "Markings data saved",
     "Failed to save markings data": "Failed to save markings data",
     "Auto rotate": "Manually rotate images using current alignment lines",
-    "Reset rotation": "Reset image rotation",
     "Rotation instructions":
         "Mark a line between two identical points on each image starting from bottom, the lower point will be the rotation anchor and the upper will be used to calculate the rotation angle",
     "Calculate and align": "Calculate and align",

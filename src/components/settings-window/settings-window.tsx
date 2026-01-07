@@ -4,22 +4,24 @@ import { WindowControls } from "@/components/menu/window-controls";
 import { Menubar } from "@/components/ui/menubar";
 import { cn } from "@/lib/utils/shadcn";
 import { ICON } from "@/lib/utils/const";
-import { Languages, Palette, Info, Settings } from "lucide-react";
+import { Languages, Palette, Info, Settings, Tags } from "lucide-react";
 import { CustomThemeStore } from "@/lib/stores/CustomTheme";
 import { applyCustomTheme } from "@/lib/hooks/useCustomTheme";
 import { LanguageSettings } from "./categories/language-settings";
 import { ThemeSettings } from "./categories/theme-settings";
 import { AboutSettings } from "./categories/about-settings";
+import { MarkingTypesSettings } from "./categories/marking-types-settings";
 
-enum SETTINGS_CATEGORY {
+export enum SETTINGS_CATEGORY {
     LANGUAGE = "language",
     THEME = "theme",
+    MARKING_TYPES = "marking-types",
     ABOUT = "about",
 }
 
 interface CategoryItem {
     id: SETTINGS_CATEGORY;
-    labelKey: "Language" | "Theme" | "About";
+    labelKey: "Language" | "Theme" | "Types" | "About";
     icon: React.ReactNode;
 }
 
@@ -35,6 +37,11 @@ const categories: CategoryItem[] = [
         icon: <Palette size={ICON.SIZE} strokeWidth={ICON.STROKE_WIDTH} />,
     },
     {
+        id: SETTINGS_CATEGORY.MARKING_TYPES,
+        labelKey: "Types",
+        icon: <Tags size={ICON.SIZE} strokeWidth={ICON.STROKE_WIDTH} />,
+    },
+    {
         id: SETTINGS_CATEGORY.ABOUT,
         labelKey: "About",
         icon: <Info size={ICON.SIZE} strokeWidth={ICON.STROKE_WIDTH} />,
@@ -43,8 +50,18 @@ const categories: CategoryItem[] = [
 
 export function SettingsWindow() {
     const { t } = useTranslation();
+
+    // Parse URL params to get initial category
+    const urlParams = new URLSearchParams(window.location.search);
+    const initialCategory = urlParams.get(
+        "category"
+    ) as SETTINGS_CATEGORY | null;
+
     const [activeCategory, setActiveCategory] = useState<SETTINGS_CATEGORY>(
-        SETTINGS_CATEGORY.LANGUAGE
+        initialCategory &&
+            Object.values(SETTINGS_CATEGORY).includes(initialCategory)
+            ? initialCategory
+            : SETTINGS_CATEGORY.LANGUAGE
     );
 
     useEffect(() => {
@@ -64,6 +81,8 @@ export function SettingsWindow() {
                 return <LanguageSettings />;
             case SETTINGS_CATEGORY.THEME:
                 return <ThemeSettings />;
+            case SETTINGS_CATEGORY.MARKING_TYPES:
+                return <MarkingTypesSettings />;
             case SETTINGS_CATEGORY.ABOUT:
                 return <AboutSettings />;
             default:
