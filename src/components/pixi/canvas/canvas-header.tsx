@@ -13,8 +13,8 @@ import {
     Info,
 } from "lucide-react";
 import { ICON } from "@/lib/utils/const";
-import { ToolbarGroup } from "@/components/toolbar/group";
 import { Toggle } from "@/components/ui/toggle";
+import { Button } from "@/components/ui/button";
 import { SplitButton } from "@/components/ui/split-button";
 import { useTranslation } from "react-i18next";
 import { loadImageWithDialog } from "@/lib/utils/viewport/loadImage";
@@ -53,7 +53,7 @@ export function CanvasHeader({ className, ...props }: CanvasHeaderProps) {
     return (
         <div
             className={cn(
-                "flex items-center justify-between gap-3 w-full h-14 px-4",
+                "flex items-center justify-between gap-2 w-full h-10 px-2",
                 "bg-gradient-to-b from-muted/50 to-muted/30",
                 "border-b border-border/40",
                 "shadow-sm backdrop-blur-sm",
@@ -61,37 +61,36 @@ export function CanvasHeader({ className, ...props }: CanvasHeaderProps) {
             )}
             {...props}
         >
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-1.5">
+                <Button
+                    title={t("Save markings data to a JSON file", {
+                        ns: "tooltip",
+                    })}
+                    size="icon"
+                    variant="outline"
+                    onClick={() => {
+                        saveMarkingsDataWithDialog(viewport);
+                    }}
+                >
+                    <Save size={ICON.SIZE} strokeWidth={ICON.STROKE_WIDTH} />
+                </Button>
+
                 <SplitButton
                     mainAction={{
-                        label: t("Save markings data to a JSON file", {
+                        label: t("Load forensic mark image", {
                             ns: "tooltip",
                         }),
                         icon: (
-                            <Save
+                            <ImageUp
                                 size={ICON.SIZE}
                                 strokeWidth={ICON.STROKE_WIDTH}
                             />
                         ),
                         onClick: () => {
-                            saveMarkingsDataWithDialog(viewport);
+                            loadImageWithDialog(viewport);
                         },
                     }}
                     dropdownActions={[
-                        {
-                            label: t("Load forensic mark image", {
-                                ns: "tooltip",
-                            }),
-                            icon: (
-                                <ImageUp
-                                    size={ICON.SIZE}
-                                    strokeWidth={ICON.STROKE_WIDTH}
-                                />
-                            ),
-                            onClick: () => {
-                                loadImageWithDialog(viewport);
-                            },
-                        },
                         {
                             label: t("Load markings data from file", {
                                 ns: "tooltip",
@@ -111,7 +110,7 @@ export function CanvasHeader({ className, ...props }: CanvasHeaderProps) {
                     variant="outline"
                 />
 
-                <div className="h-6 w-px bg-border/40" />
+                <div className="h-5 w-px bg-border/40 mx-0.5" />
 
                 <SplitButton
                     mainAction={{
@@ -160,7 +159,7 @@ export function CanvasHeader({ className, ...props }: CanvasHeaderProps) {
                 />
             </div>
 
-            <ToolbarGroup>
+            <div className="flex items-center gap-1.5">
                 <Toggle
                     variant="outline"
                     title={t("Toggle marking labels", {
@@ -196,7 +195,7 @@ export function CanvasHeader({ className, ...props }: CanvasHeaderProps) {
                 >
                     <Info size={ICON.SIZE} strokeWidth={ICON.STROKE_WIDTH} />
                 </Toggle>
-            </ToolbarGroup>
+            </div>
         </div>
     );
 }
