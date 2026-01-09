@@ -17,7 +17,9 @@ import { VerticalToolbar } from "@/components/toolbar/vertical-toolbar";
 import { listen } from "@tauri-apps/api/event";
 import { getCanvas } from "@/components/pixi/canvas/hooks/useCanvas";
 import { loadImage } from "@/lib/utils/viewport/loadImage";
+import { saveMarkingsDataToPath } from "@/lib/utils/viewport/saveMarkingsDataWithDialog";
 import { Sprite } from "pixi.js";
+import { Viewport } from "pixi-viewport";
 
 export function Homepage() {
     useKeyboardShortcuts();
@@ -36,41 +38,97 @@ export function Homepage() {
         []
     );
 
+    // Helper function to check if error is forbidden/permission error
+    const isForbiddenError = (error: unknown): boolean => {
+        const errorMessage =
+            error instanceof Error ? error.message : String(error);
+        return (
+            errorMessage.toLowerCase().includes("forbidden") ||
+            errorMessage.toLowerCase().includes("not allowed") ||
+            errorMessage.toLowerCase().includes("permission")
+        );
+    };
+
+    // Helper function to handle viewport reload
+    const handleViewportReload = async (
+        viewport: Viewport,
+        originalPath: string,
+        newPath: string
+    ): Promise<boolean> => {
+        const sprite = viewport.children.find(x => x instanceof Sprite) as
+            | Sprite
+            | undefined;
+
+        // @ts-expect-error custom property should exist
+        if (!sprite || sprite.path !== originalPath) {
+            return false;
+        }
+
+        // Save annotations before reloading to preserve them
+        try {
+            const markingsFilePath = `${originalPath}.json`;
+            await saveMarkingsDataToPath(viewport, markingsFilePath);
+        } catch {
+            // Continue with reload even if saving annotations fails
+        }
+
+        try {
+            await loadImage(newPath, viewport);
+            return true;
+        } catch (error) {
+            if (isForbiddenError(error)) {
+                // Don't replace the old image if permission error
+                const { showErrorDialog } = await import(
+                    "@/lib/errors/showErrorDialog"
+                );
+                showErrorDialog(
+                    "The edited image was saved, but cannot be loaded due to path restrictions. Please try loading it manually."
+                );
+                return true; // Indicate we handled it (even though we didn't reload)
+            }
+            throw error;
+        }
+    };
+
     // Listen for image reload requests from the edit window
     useEffect(() => {
         const setupListener = async () => {
-            return listen<string>("image-reload-requested", async event => {
-                const imagePath = event.payload;
+            return listen<{ originalPath: string; newPath: string } | string>(
+                "image-reload-requested",
+                async event => {
+                    // Handle both old format (string) and new format (object with originalPath and newPath)
+                    const originalPath =
+                        typeof event.payload === "string"
+                            ? event.payload
+                            : event.payload.originalPath;
+                    const newPath =
+                        typeof event.payload === "string"
+                            ? event.payload
+                            : event.payload.newPath;
 
-                // Check both viewports to find which one has this image
-                const leftCanvas = getCanvas(CANVAS_ID.LEFT, true);
-                const rightCanvas = getCanvas(CANVAS_ID.RIGHT, true);
+                    const leftCanvas = getCanvas(CANVAS_ID.LEFT, true);
+                    const rightCanvas = getCanvas(CANVAS_ID.RIGHT, true);
 
-                // Check left viewport
-                if (leftCanvas.viewport) {
-                    const sprite = leftCanvas.viewport.children.find(
-                        x => x instanceof Sprite
-                    ) as Sprite | undefined;
+                    // Try left viewport first
+                    if (leftCanvas.viewport) {
+                        const handled = await handleViewportReload(
+                            leftCanvas.viewport,
+                            originalPath,
+                            newPath
+                        );
+                        if (handled) return;
+                    }
 
-                    // @ts-expect-error custom property should exist
-                    if (sprite && sprite.path === imagePath) {
-                        await loadImage(imagePath, leftCanvas.viewport);
-                        return;
+                    // Try right viewport
+                    if (rightCanvas.viewport) {
+                        await handleViewportReload(
+                            rightCanvas.viewport,
+                            originalPath,
+                            newPath
+                        );
                     }
                 }
-
-                // Check right viewport
-                if (rightCanvas.viewport) {
-                    const sprite = rightCanvas.viewport.children.find(
-                        x => x instanceof Sprite
-                    ) as Sprite | undefined;
-
-                    // @ts-expect-error custom property should exist
-                    if (sprite && sprite.path === imagePath) {
-                        await loadImage(imagePath, rightCanvas.viewport);
-                    }
-                }
-            });
+            );
         };
 
         let unlistenPromise: Promise<() => void> | null = null;
