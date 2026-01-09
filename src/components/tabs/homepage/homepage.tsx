@@ -1,4 +1,5 @@
 import { InformationTabs } from "@/components/information-tabs/information-tabs";
+import { useTranslation } from "react-i18next";
 import { CanvasContainer } from "@/components/pixi/canvas/container";
 import { CanvasHeader } from "@/components/pixi/canvas/canvas-header";
 import {
@@ -23,6 +24,7 @@ import { Sprite } from "pixi.js";
 import { Viewport } from "pixi-viewport";
 
 export function Homepage() {
+    const { t } = useTranslation();
     useKeyboardShortcuts();
 
     const leftCanvasMetadata: CanvasMetadata = useMemo(
@@ -96,7 +98,10 @@ export function Homepage() {
                     "@/lib/errors/showErrorDialog"
                 );
                 showErrorDialog(
-                    "The edited image was saved, but cannot be loaded due to path restrictions. Please try loading it manually."
+                    t(
+                        "The edited image was saved, but cannot be loaded due to path restrictions. Please try loading it manually.",
+                        { ns: "tooltip" }
+                    )
                 );
                 return true;
             }

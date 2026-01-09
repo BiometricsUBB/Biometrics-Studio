@@ -124,6 +124,7 @@ export type i18nTooltip = Recordify<
     | "Brightness"
     | "Contrast"
     | "Reset Zoom"
+    | "The edited image was saved, but cannot be loaded due to path restrictions. Please try loading it manually."
 >;
 
 export type i18nDialog = Recordify<
