@@ -16,7 +16,7 @@ import { toast } from "sonner";
 import { useSettingsSync } from "@/lib/hooks/useSettingsSync";
 
 export function EditWindow() {
-    const { t } = useTranslation();
+    const { t } = useTranslation("tooltip");
     useSettingsSync();
 
     const [imagePath, setImagePath] = useState<string | null>(null);
@@ -365,13 +365,12 @@ export function EditWindow() {
                 if (isForbiddenError) {
                     toast.warning(
                         t(
-                            "Image saved successfully, but could not be reloaded due to path restrictions",
-                            { ns: "tooltip" }
+                            "Image saved successfully, but could not be reloaded due to path restrictions"
                         )
                     );
                 } else {
                     toast.warning(
-                        `${t("Image saved successfully", { ns: "tooltip" })} (Reload failed: ${reloadErrorMessage})`
+                        `${t("Image saved successfully")} (Reload failed: ${reloadErrorMessage})`
                     );
                 }
             }

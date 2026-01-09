@@ -97,11 +97,7 @@ export function Homepage() {
                 const { showErrorDialog } = await import(
                     "@/lib/errors/showErrorDialog"
                 );
-                showErrorDialog(
-                    t(
-                        "The edited image was saved, but cannot be loaded due to path restrictions. Please try loading it manually."
-                    )
-                );
+                showErrorDialog(t("ImageLoadPermissionError"));
                 return true;
             }
             throw error;

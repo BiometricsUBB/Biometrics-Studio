@@ -31,7 +31,7 @@ const d: Dictionary = {
     Brightness: "Brightness",
     Contrast: "Contrast",
     "Reset Zoom": "Reset Zoom",
-    "The edited image was saved, but cannot be loaded due to path restrictions. Please try loading it manually.":
+    ImageLoadPermissionError:
         "The edited image was saved, but cannot be loaded due to path restrictions. Please try loading it manually.",
 };
 
