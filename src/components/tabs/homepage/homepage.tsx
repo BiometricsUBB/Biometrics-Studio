@@ -15,6 +15,7 @@ import { useMemo, useEffect } from "react";
 import { useKeyboardShortcuts } from "@/lib/hooks/useKeyboardShortcuts";
 import { VerticalToolbar } from "@/components/toolbar/vertical-toolbar";
 import { listen } from "@tauri-apps/api/event";
+import { readFile } from "@tauri-apps/plugin-fs";
 import { getCanvas } from "@/components/pixi/canvas/hooks/useCanvas";
 import { loadImage } from "@/lib/utils/viewport/loadImage";
 import { saveMarkingsDataToPath } from "@/lib/utils/viewport/saveMarkingsDataWithDialog";
@@ -64,12 +65,26 @@ export function Homepage() {
             return false;
         }
 
-        // Save annotations before reloading to preserve them
+        try {
+            await readFile(newPath);
+        } catch (error) {
+            if (isForbiddenError(error)) {
+                const { showErrorDialog } = await import(
+                    "@/lib/errors/showErrorDialog"
+                );
+                showErrorDialog(
+                    "The edited image was saved, but cannot be loaded into the viewport due to path restrictions. Please try loading it manually."
+                );
+                return true;
+            }
+            throw error;
+        }
+
         try {
             const markingsFilePath = `${originalPath}.json`;
             await saveMarkingsDataToPath(viewport, markingsFilePath);
         } catch {
-            // Continue with reload even if saving annotations fails
+            /* empty */
         }
 
         try {
@@ -77,68 +92,76 @@ export function Homepage() {
             return true;
         } catch (error) {
             if (isForbiddenError(error)) {
-                // Don't replace the old image if permission error
                 const { showErrorDialog } = await import(
                     "@/lib/errors/showErrorDialog"
                 );
                 showErrorDialog(
                     "The edited image was saved, but cannot be loaded due to path restrictions. Please try loading it manually."
                 );
-                return true; // Indicate we handled it (even though we didn't reload)
+                return true;
             }
             throw error;
         }
     };
 
-    // Listen for image reload requests from the edit window
     useEffect(() => {
+        let unlisten: (() => void) | undefined;
+        let isMounted = true;
+
         const setupListener = async () => {
-            return listen<{ originalPath: string; newPath: string } | string>(
-                "image-reload-requested",
-                async event => {
-                    // Handle both old format (string) and new format (object with originalPath and newPath)
-                    const originalPath =
-                        typeof event.payload === "string"
-                            ? event.payload
-                            : event.payload.originalPath;
-                    const newPath =
-                        typeof event.payload === "string"
-                            ? event.payload
-                            : event.payload.newPath;
+            const unlistenFn = await listen<
+                | {
+                      originalPath: string;
+                      newPath: string;
+                  }
+                | string
+            >("image-reload-requested", async event => {
+                // Handle both old format (string) and new format (object with originalPath and newPath)
+                const originalPath =
+                    typeof event.payload === "string"
+                        ? event.payload
+                        : event.payload.originalPath;
+                const newPath =
+                    typeof event.payload === "string"
+                        ? event.payload
+                        : event.payload.newPath;
 
-                    const leftCanvas = getCanvas(CANVAS_ID.LEFT, true);
-                    const rightCanvas = getCanvas(CANVAS_ID.RIGHT, true);
+                const leftCanvas = getCanvas(CANVAS_ID.LEFT, true);
+                const rightCanvas = getCanvas(CANVAS_ID.RIGHT, true);
 
-                    // Try left viewport first
-                    if (leftCanvas.viewport) {
-                        const handled = await handleViewportReload(
-                            leftCanvas.viewport,
-                            originalPath,
-                            newPath
-                        );
-                        if (handled) return;
-                    }
-
-                    // Try right viewport
-                    if (rightCanvas.viewport) {
-                        await handleViewportReload(
-                            rightCanvas.viewport,
-                            originalPath,
-                            newPath
-                        );
-                    }
+                // Try left viewport first
+                if (leftCanvas.viewport) {
+                    const handled = await handleViewportReload(
+                        leftCanvas.viewport,
+                        originalPath,
+                        newPath
+                    );
+                    if (handled) return;
                 }
-            );
+
+                // Try right viewport
+                if (rightCanvas.viewport) {
+                    await handleViewportReload(
+                        rightCanvas.viewport,
+                        originalPath,
+                        newPath
+                    );
+                }
+            });
+
+            if (isMounted) {
+                unlisten = unlistenFn;
+            } else {
+                unlistenFn();
+            }
         };
 
-        let unlistenPromise: Promise<() => void> | null = null;
-        setupListener().then(unlisten => {
-            unlistenPromise = Promise.resolve(unlisten);
-        });
+        setupListener();
 
         return () => {
-            if (unlistenPromise) {
-                unlistenPromise.then(fn => fn());
+            isMounted = false;
+            if (unlisten) {
+                unlisten();
             }
         };
     }, []);

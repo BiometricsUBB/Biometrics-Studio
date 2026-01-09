@@ -332,8 +332,6 @@ export function EditWindow() {
                 throw new Error(`File was not created at path: ${finalPath}`);
             }
 
-            // Emit event to main window to reload the new image
-            // Include both original and new paths so homepage can find the correct viewport
             const appWindow = getCurrentWindow();
             await appWindow.emit("image-reload-requested", {
                 originalPath: imagePath,
@@ -342,35 +340,39 @@ export function EditWindow() {
 
             toast.success(t("Image saved successfully", { ns: "tooltip" }));
 
-            // Update the image path to the new saved path and reload it
-            // If reload fails due to permission error, keep the original image visible
             try {
+                const newImageBytes = await readFile(finalPath);
+
                 setImagePath(finalPath);
-                await loadImage(finalPath);
+
+                setError(null);
+                const blob = new Blob([newImageBytes]);
+                const url = URL.createObjectURL(blob);
+                setImageUrl(url);
+                setZoom(1);
+                setPan({ x: 0, y: 0 });
             } catch (reloadErr) {
                 const reloadErrorMessage =
                     reloadErr instanceof Error
                         ? reloadErr.message
                         : String(reloadErr);
 
-                // Check if it's a forbidden path error
                 const isForbiddenError =
                     reloadErrorMessage.toLowerCase().includes("forbidden") ||
                     reloadErrorMessage.toLowerCase().includes("not allowed") ||
                     reloadErrorMessage.toLowerCase().includes("permission");
 
                 if (isForbiddenError) {
-                    // Keep the original image visible if permission error
                     toast.warning(
                         t(
                             "Image saved successfully, but could not be reloaded due to path restrictions",
                             { ns: "tooltip" }
                         )
                     );
-                    // Don't update imagePath, so the original image stays visible
                 } else {
-                    // For other errors, still try to reload but show error
-                    throw reloadErr;
+                    toast.warning(
+                        `${t("Image saved successfully", { ns: "tooltip" })} (Reload failed: ${reloadErrorMessage})`
+                    );
                 }
             }
         } catch (err) {
