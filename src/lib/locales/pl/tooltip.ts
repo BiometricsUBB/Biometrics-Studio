@@ -34,7 +34,7 @@ const d: Dictionary = {
     Contrast: "Kontrast",
     "Reset Zoom": "Resetuj powiększenie",
     "The edited image was saved, but cannot be loaded due to path restrictions. Please try loading it manually.":
-        "The edited image was saved, but cannot be loaded due to path restrictions. Please try loading it manually.",
+        "Edytowany obraz został zapisany, ale nie można go załadować z powodu ograniczeń dostępności ścieżki. Spróbuj załadować go ręcznie.",
 };
 
 export default d;
