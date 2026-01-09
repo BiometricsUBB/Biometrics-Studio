@@ -24,7 +24,7 @@ import { Sprite } from "pixi.js";
 import { Viewport } from "pixi-viewport";
 
 export function Homepage() {
-    const { t } = useTranslation();
+    const { t } = useTranslation("tooltip");
     useKeyboardShortcuts();
 
     const leftCanvasMetadata: CanvasMetadata = useMemo(
@@ -99,8 +99,7 @@ export function Homepage() {
                 );
                 showErrorDialog(
                     t(
-                        "The edited image was saved, but cannot be loaded due to path restrictions. Please try loading it manually.",
-                        { ns: "tooltip" }
+                        "The edited image was saved, but cannot be loaded due to path restrictions. Please try loading it manually."
                     )
                 );
                 return true;
