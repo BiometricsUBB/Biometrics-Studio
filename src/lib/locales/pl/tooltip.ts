@@ -18,7 +18,6 @@ const d: Dictionary = {
     "Failed to save markings data": "Nie udało się zapisać danych adnotacji",
     "Auto rotate":
         "automatycznie obróć obrazy używając aktualnych linii wyrównania",
-    "Reset rotation": "Zresetuj obrót obrazów",
     "Rotation instructions":
         "Oznacz linią dwa te same punkty na każdym obrazie rozpoczynając od dołu, dolny punkt będzie kotwicą obrotu a górny posłuży wyliczeniu kąta obrotu",
     "Calculate and align": "Oblicz i dopasuj",
