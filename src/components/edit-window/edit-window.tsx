@@ -11,7 +11,7 @@ import { Edit, Save } from "lucide-react";
 import { listen } from "@tauri-apps/api/event";
 import { readFile, writeFile, exists } from "@tauri-apps/plugin-fs";
 import { getCurrentWindow } from "@tauri-apps/api/window";
-import { basename, extname, join, documentDir } from "@tauri-apps/api/path";
+import { basename, extname, join, dirname } from "@tauri-apps/api/path";
 import { toast } from "sonner";
 import { useSettingsSync } from "@/lib/hooks/useSettingsSync";
 
@@ -310,13 +310,13 @@ export function EditWindow() {
                 await generateFilename(imagePath);
             const newFilename = `${nameWithoutExt}_edited_${timestamp}${extWithDot}`;
 
-            // Get Documents directory and create the full path
-            const documentsDir = await documentDir();
-            const newImagePath = await join(documentsDir, newFilename);
+            // Get the directory of the original image
+            const imageDir = await dirname(imagePath);
+            const newImagePath = await join(imageDir, newFilename);
 
             // Check if file exists and find a unique name if needed
             const finalPath = await findUniqueFilePath(
-                documentsDir,
+                imageDir,
                 nameWithoutExt,
                 timestamp,
                 extWithDot,
